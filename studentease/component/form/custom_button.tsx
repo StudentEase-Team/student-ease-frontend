@@ -3,6 +3,7 @@ import { Button, Text } from '@rneui/themed';
 export type CustomButtonProps = {
     buttonText: string;
     mode: string;
+    func : () => any;
 };
 
 export function CustomButton(props : CustomButtonProps) {
@@ -15,6 +16,8 @@ export function CustomButton(props : CustomButtonProps) {
             width: '50%',
             alignSelf: 'center',
             marginTop: 20
-          }}></Button>
+          }}
+          onPress={() => {props.func()}}
+          ></Button>
     );
 }

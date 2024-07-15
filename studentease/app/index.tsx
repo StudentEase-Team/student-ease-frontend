@@ -1,10 +1,9 @@
 import { View, Text } from "react-native"
+import Login from "./auth/login"
 
 const HomePage = () => {
     return (
-        <View>
-            <Text>Hello</Text>
-        </View>
+        <Login />
     )
 }
 

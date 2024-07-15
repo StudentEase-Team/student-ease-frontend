@@ -2,7 +2,12 @@ import { Input } from "@rneui/base";
 import { Icon } from '@rneui/themed';
 import { useState } from "react";
 
-export function PasswordInput() {
+export type PasswordProps = {
+    passwordCallback : React.Dispatch<React.SetStateAction<string>>
+};
+
+
+export function PasswordInput(props : PasswordProps) {
     const [hidden, setHidden] = useState(false);
     const [text, setText] = useState("");
 
@@ -29,6 +34,7 @@ export function PasswordInput() {
         onChangeText={
             (t: string) => {
             setText(t);
+            props.passwordCallback(t)
             }
         }
         />
