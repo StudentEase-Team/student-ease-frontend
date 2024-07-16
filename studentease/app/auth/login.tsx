@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { Input, Text } from '@rneui/themed';
 import { PasswordInput } from '../../component/form/password_input';
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
 
   },
   container: {
+    padding: 20,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     //backgroundColor: '#f0f0f0',
   },
   form: {
-    width: '25%',
+
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 20,
