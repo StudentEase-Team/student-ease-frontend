@@ -2,6 +2,7 @@ import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { Provider as PaperProvider, Button, TextInput, Menu, Divider, Text } from 'react-native-paper';
+import NavigationBar from '../../component/navigation/navigation-bar';
 
 const announcementCategories = [
     { label: 'University Announcement', value: 'UNIVERSITY_ANNOUNCEMENT' },
@@ -26,6 +27,8 @@ export default function NoticeboardCreateItem() {
     const [scopeCombo, setScopeCombo]  = useState("");
 
     return (
+        <>
+        <NavigationBar/>
         <PaperProvider>
             <View style={styles.container}>
                 <View style={styles.form}>
@@ -89,6 +92,7 @@ export default function NoticeboardCreateItem() {
                 </View>
             </View>
         </PaperProvider>
+        </>
     )
 }
 

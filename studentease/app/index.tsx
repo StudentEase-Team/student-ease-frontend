@@ -1,12 +1,16 @@
-import { View, Text } from "react-native"
+import { useState, createContext } from "react";
 import Login from "./auth/login"
 import NoticeboardShow from "./noticeboard/noticeboard-show"
 import NoticeboardCreateItem from "./noticeboard/noticeboard-create-item"
+import NavigationBar from "../component/navigation/navigation-bar"
+
+export const ThemeContext = createContext("day");
 
 const HomePage = () => {
     return (
-        <NoticeboardCreateItem />
+        <NavigationBar/>
     )
 }
+
 
 export default HomePage

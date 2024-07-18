@@ -4,11 +4,14 @@ import { MenuItem, Select, SelectChangeEvent, Stack } from '@mui/material';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import { Provider as PaperProvider, TextInput as PaperInput, Button } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
+import NavigationBar from '../../component/navigation/navigation-bar';
 
 export default function NoticeboardShow() {
     const [scopeCombo, setScopeCombo]  = useState("");
 
     return (
+        <>
+        <NavigationBar/>
         <PaperProvider>
             <ScrollView style={styles.container}>
                 <View style={styles.filterGrid}>
@@ -64,6 +67,7 @@ export default function NoticeboardShow() {
                 </View>
             </ScrollView>
         </PaperProvider>
+        </>
     );
 };
 

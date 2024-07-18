@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { Input, Text } from '@rneui/themed';
-import { PasswordInput } from '../../component/form/password_input';
-import { CustomButton } from '../../component/form/custom_button';
+import { PasswordInput } from '../../component/form/password-input';
+import { CustomButton } from '../../component/form/custom-button';
 import axios, { AxiosResponse } from 'axios';
 import Toast from 'react-native-toast-message';
+import NavigationBar from '../../component/navigation/navigation-bar';
 
 
 export default function Login() {
@@ -48,6 +49,7 @@ export default function Login() {
     
     <ImageBackground source={require('../../assets/web.jpg')} style={styles.background}>
       <Toast />
+      <NavigationBar/>
       <View style={styles.container}>
         <View style={styles.form}>
           <Text h3 style={styles.title}>Login</Text>
