@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { Provider as PaperProvider, Button, TextInput, Menu, Divider, Text } from 'react-native-paper';
 import NavigationBar from '../../component/navigation/navigation-bar';
+import { NoticeboardItem } from '../../model/NoticeboardItem';
 
 const announcementCategories = [
     { label: 'University Announcement', value: 'UNIVERSITY_ANNOUNCEMENT' },
@@ -17,39 +18,59 @@ const announcementCategories = [
 ];
 
 export default function NoticeboardCreateItem() {
+
     const [subject, setSubject] = React.useState('');
-    const [faculty, setFaculty] = React.useState('');
-    const [professor, setProfessor] = React.useState('');
+    const [college, setCollege] = React.useState('');
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
-    const [categoryMenuVisible, setCategoryMenuVisible] = React.useState(false);
+    const [scopeCombo, setScopeCombo]  = useState(-1);
 
-    const [scopeCombo, setScopeCombo]  = useState("");
+
+    async function crateNewNoticeboardItem() {
+        const newItem: NoticeboardItem = {
+            id: 0,
+            title: title,
+            message: description,
+            noticeboardItemCategory: scopeCombo,
+            updatedAt: new Date()
+        }
+    }
+
 
     return (
         <>
         <PaperProvider>
             <View style={styles.container}>
                 <View style={styles.form}>
+
+                    <View style={styles.categoryContainer}>
+                        <Select label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(Number.parseInt(e.target.value))}} value={scopeCombo.toString()}>
+                            <MenuItem value="-1"><em>None</em></MenuItem>
+                            <MenuItem value="0">University Announcement</MenuItem>
+                            <MenuItem value="1">University Guest Announcement</MenuItem>
+                            <MenuItem value="2">College Announcement</MenuItem>
+                            <MenuItem value="3">College Guest Announcement</MenuItem>
+                            <MenuItem value="4">Subject Announcement</MenuItem>
+                            <MenuItem value="5">Subject Exam Result Announcement</MenuItem>
+                            <MenuItem value="6">Subject Exam Date Announcement</MenuItem>
+                            <MenuItem value="7">Internship Announcement</MenuItem>
+                            <MenuItem value="8">Activities Announcement</MenuItem>
+                        </Select>
+                    </View>
+
+                    <TextInput
+                        label="College"
+                        mode="outlined"
+                        value={college}
+                        onChangeText={text => setCollege(text)}
+                        style={styles.input}
+                    />
+
                     <TextInput
                         label="Subject"
                         mode="outlined"
                         value={subject}
                         onChangeText={text => setSubject(text)}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        label="Faculty"
-                        mode="outlined"
-                        value={faculty}
-                        onChangeText={text => setFaculty(text)}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        label="Professor"
-                        mode="outlined"
-                        value={professor}
-                        onChangeText={text => setProfessor(text)}
                         style={styles.input}
                     />
                     
@@ -70,20 +91,7 @@ export default function NoticeboardCreateItem() {
                         style={styles.input}
                     />
 
-                    <View style={styles.categoryContainer}>
-                        <Select label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(e.target.value)}} value={scopeCombo}>
-                            <MenuItem value=""><em>None</em></MenuItem>
-                            <MenuItem value="UNIVERSITY_ANNOUNCEMENT">University Announcement</MenuItem>
-                            <MenuItem value="UNIVERSITY_GUEST_ANNOUNCEMENT">University Guest Announcement</MenuItem>
-                            <MenuItem value="COLLEGE_ANNOUNCEMENT">College Announcement</MenuItem>
-                            <MenuItem value="COLLEGE_GUEST_ANNOUNCEMENT">College Guest Announcement</MenuItem>
-                            <MenuItem value="SUBJECT_ANNOUNCEMENT">Subject Announcement</MenuItem>
-                            <MenuItem value="SUBJECT_EXAM_RESULT_ANNOUNCEMENT">Subject Exam Result Announcement</MenuItem>
-                            <MenuItem value="SUBJECT_EXAM_DATE_ANNOUNCEMENT">Subject Exam Date Announcement</MenuItem>
-                            <MenuItem value="INTERNSHIP_ANNOUNCEMENT">Internship Announcement</MenuItem>
-                            <MenuItem value="ACTIVITIES_ANNOUNCEMENT">Activities Announcement</MenuItem>
-                        </Select>
-                    </View>
+
 
                     <Button mode="contained" onPress={() => console.log('Announcement Submitted!')} style={styles.submitButton}>
                         Submit Announcement
@@ -94,6 +102,7 @@ export default function NoticeboardCreateItem() {
         </>
     )
 }
+
 
 const styles = StyleSheet.create({
     container: {

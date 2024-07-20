@@ -1,4 +1,4 @@
-interface NoticeboardItem {
+export interface NoticeboardItem {
     id: number,
     title: string,
     message: string,

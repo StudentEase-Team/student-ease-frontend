@@ -10,68 +10,67 @@ export type NavigationBarProps = {
 
 export default function NavigationBar(props : NavigationBarProps) {
     const [active, setActive] = React.useState('');
+    const [theme, setTheme] = React.useState('light');
     const [drawerHidden, setDrawerHidden] = React.useState(true);
 
-    if(drawerHidden)
+
+    function changeTheme()
+    {
+        theme === 'light'? setTheme('dark'):setTheme('light');
+    }
+
+    function MyDrawer() {
+        if(!drawerHidden)
+            return (
+                <Drawer.Section>
+                    <Link replace href="/auth/login">
+                        <Drawer.Item label="Login"/>
+                    </Link>
+            
+                    <Link replace href="/noticeboard/noticeboard-show">
+                        <Drawer.Item label="Show noticeboard"/>
+                    </Link>
+            
+                    <Link replace href="/noticeboard/noticeboard-create-item">
+                        <Drawer.Item label="Create noticeboard item"/>
+                    </Link>
+                </Drawer.Section>
+                )
+        else return false
+    }
+
+    function SunMoonIcon() {
+        if(theme === 'light') {
+            return(<Icon name="sun-o" type="font-awesome" style={styles.navbarItem} onPress={() => changeTheme()} size={35}></Icon>)
+        }
+        else 
+            return(<Icon name="moon-o" type="font-awesome" style={styles.navbarItem} onPress={() => changeTheme()} size={35}></Icon>)
+    }
+
     return (
         <>
             <View style={styles.navbar}>
-                <Icon name="menu" type="feather" style={styles.navbarMenuItem} onPress={() => {setDrawerHidden(false)}}></Icon>
-                <Icon name="sun-o" type="font-awesome" style={styles.navbarItem}></Icon>
-                <Icon name="moon-o" type="font-awesome" style={styles.navbarItem}></Icon>
+                <Icon name="menu" type="feather" style={styles.navbarMenuItem} size={35} onPress={() => {drawerHidden? setDrawerHidden(false):setDrawerHidden(true);}}></Icon>
+                <SunMoonIcon></SunMoonIcon>
             </View>
-        </>
-    )
-
-    else
-    return (
-        <>
-        <View style={styles.navbar}>
-            <Icon name="menu" type="feather" style={styles.navbarMenuItem} onPress={() => {setDrawerHidden(true)}}></Icon>
-            <Icon name="sun-o" type="font-awesome" style={styles.navbarItem}></Icon>
-            <Icon name="moon-o" type="font-awesome" style={styles.navbarItem}></Icon>
-        </View>
-
-        <Drawer.Section title="Some title">
-            <Link replace href="/auth/login">
-                <Drawer.Item
-                label="Login"
-                //active={active === 'first'}
-                onPress={() => setActive('first')}
-                />
-            </Link>
-
-            <Link replace href="/noticeboard/noticeboard-show">
-                <Drawer.Item
-                label="Show noticeboard"
-                //active={active === 'second'}
-                onPress={() => setActive('second')}
-                />
-            </Link>
-
-            <Link replace href="/noticeboard/noticeboard-create-item">
-                <Drawer.Item
-                label="Create noticeboard item"
-                //active={active === 'second'}
-                onPress={() => setActive('second')}
-                />
-            </Link>
-        </Drawer.Section>
+            <MyDrawer/>
         </>
     )
 }
 
+
+
 const styles = StyleSheet.create({
     navbar: {
         flexDirection: 'row',
+        justifyContent: 'space-between'
     },
 
     navbarItem: {
-        flex: 1
+        flex: 1,
     },
 
     navbarMenuItem: {
-        marginRight: 'auto',
         flex: 1
     }
 })
