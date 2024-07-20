@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { Input, Text } from '@rneui/themed';
 import { PasswordInput } from '../../component/form/password-input';
@@ -6,47 +6,23 @@ import { CustomButton } from '../../component/form/custom-button';
 import axios, { AxiosResponse } from 'axios';
 import Toast from 'react-native-toast-message';
 import NavigationBar from '../../component/navigation/navigation-bar';
+import { useAuth } from '../../context/AuthContext';
+import { UserState } from '../../model/UserState';
 
 
-export default function Login() {
+const Login : React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
 
-
-  async function attemptLogin() : Promise<AccessToken | null> {
-
-    const request : LoginRequest = {
-      email : email,
-      password : password,
-    }
-
-    try {
-      const result: AxiosResponse = await axios.post('http://localhost:8080/api/login', request);
-      //Promeni na 200 u back
-      if (result.status === 201) {
-        Toast.show({
-          type: 'success',
-          text1: 'Logged in successfully!',
-        });
-        const token: AccessToken = result.data;
-        return token;
-      }
-    } 
-    
-    catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Wrong email or password!',
-      });
-      return null;
-    }
-
-    return null;
+  function attemptLogin() {
+    login(email, password)
   }
 
 
-  return (
     
+
+  return (
     <ImageBackground source={require('../../assets/web.jpg')} style={styles.background}>
       <Toast />
       <View style={styles.container}>
@@ -75,6 +51,7 @@ const styles = StyleSheet.create({
     resizeMode: 'repeat',
 
   },
+
   container: {
     padding: 20,
     flex: 1,
@@ -84,6 +61,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
     //backgroundColor: '#f0f0f0',
   },
+
   form: {
 
     padding: 20,
@@ -95,6 +73,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
+
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -102,6 +81,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: 'center',
   },
+
   signupText: {
     color: '#007bff',
     textAlign: 'center',
@@ -109,3 +89,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'none'
   },
 });
+
+export default Login;
