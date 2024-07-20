@@ -11,7 +11,6 @@ export default function NoticeboardShow() {
 
     return (
         <>
-        <NavigationBar/>
         <PaperProvider>
             <ScrollView style={styles.container}>
                 <View style={styles.filterGrid}>

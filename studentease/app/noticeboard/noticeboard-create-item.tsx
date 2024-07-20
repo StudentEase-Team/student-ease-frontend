@@ -28,7 +28,6 @@ export default function NoticeboardCreateItem() {
 
     return (
         <>
-        <NavigationBar/>
         <PaperProvider>
             <View style={styles.container}>
                 <View style={styles.form}>

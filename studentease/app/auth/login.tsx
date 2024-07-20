@@ -49,7 +49,6 @@ export default function Login() {
     
     <ImageBackground source={require('../../assets/web.jpg')} style={styles.background}>
       <Toast />
-      <NavigationBar/>
       <View style={styles.container}>
         <View style={styles.form}>
           <Text h3 style={styles.title}>Login</Text>

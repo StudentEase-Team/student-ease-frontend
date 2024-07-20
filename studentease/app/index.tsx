@@ -8,7 +8,7 @@ export const ThemeContext = createContext("day");
 
 const HomePage = () => {
     return (
-        <NavigationBar/>
+        ''
     )
 }
 
