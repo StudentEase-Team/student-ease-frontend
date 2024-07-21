@@ -3,6 +3,8 @@ import { UserState } from '../model/UserState';
 import Toast from 'react-native-toast-message';
 import axios, { AxiosResponse } from 'axios';
 
+//TODO: Cuvaj u secure storage, jer prilikom refresh se gube ove stvari!
+
 type AuthContextType = {
   isAuthenticated: boolean;
   userState: UserState | null;
@@ -33,6 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
         const userState: UserState =  result.data;
         setIsAuthenticated(true);
+        setUserState(userState);
         return userState;
       }
     } 

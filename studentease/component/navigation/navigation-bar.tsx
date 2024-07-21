@@ -3,6 +3,9 @@ import { Appbar, Drawer } from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import { Icon } from '@rneui/themed';
 import { Link } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
+import { UserRole } from '../../model/UserRole';
+import { SecureRoute } from './secure-route';
 
 export type NavigationBarProps = {
    
@@ -12,30 +15,48 @@ export default function NavigationBar(props : NavigationBarProps) {
     const [active, setActive] = React.useState('');
     const [theme, setTheme] = React.useState('light');
     const [drawerHidden, setDrawerHidden] = React.useState(true);
+    const {isAuthenticated, userState, logout} = useAuth();
 
-
-    function changeTheme()
-    {
+    function changeTheme() {
         theme === 'light'? setTheme('dark'):setTheme('light');
     }
 
+    //TODO: Finish
+
     function MyDrawer() {
-        if(!drawerHidden)
-            return (
+        if(!drawerHidden) {
+            if(userState !== null && isAuthenticated) {
+                return (
+                    <Drawer.Section>  
+
+                        <SecureRoute route="/noticeboard/noticeboard-show" label="Show noticeboard" role={UserRole.ANY}/>      
+
+                        <Link replace href="/noticeboard/noticeboard-create-item">
+                            <Drawer.Item label="Create noticeboard item"/>
+                        </Link>
+
+                        <Link replace href="/faq/faq-show">
+                            <Drawer.Item label="Show FAQ"/>
+                        </Link>
+
+                        <Link replace href="/faq/faq-answer">
+                            <Drawer.Item label="Answer questions"/>
+                        </Link>
+
+                        <Link replace href="#" onPress={() => {logout()}}>
+                            <Drawer.Item label="Logout"/>
+                        </Link>
+                    </Drawer.Section>
+                )
+            }
+            else return (
                 <Drawer.Section>
                     <Link replace href="/auth/login">
                         <Drawer.Item label="Login"/>
                     </Link>
-            
-                    <Link replace href="/noticeboard/noticeboard-show">
-                        <Drawer.Item label="Show noticeboard"/>
-                    </Link>
-            
-                    <Link replace href="/noticeboard/noticeboard-create-item">
-                        <Drawer.Item label="Create noticeboard item"/>
-                    </Link>
                 </Drawer.Section>
-                )
+            )
+        }
         else return false
     }
 
