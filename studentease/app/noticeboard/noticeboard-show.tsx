@@ -2,52 +2,58 @@ import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
 import { MenuItem, Select, SelectChangeEvent, Stack } from '@mui/material';
 import { StyleSheet, ScrollView, View } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Provider, Card } from 'react-native-paper';
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Provider, Card, Title, Modal } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
-import NavigationBar from '../../component/navigation/navigation-bar';
-import customTheme from '../../context/ThemeContext';
-import { Dropdown, DropdownItem } from 'react-native-paper-dropdown';
+import DateTimePicker from 'react-native-ui-datepicker';
+import dayjs from 'dayjs';
+
 
 export default function NoticeboardShow() {
     const [scopeCombo, setScopeCombo]  = useState("");
     const dropdownList = [new Option("University", "University"), new Option("University", "University")]
-
+    const [date, setDate] = useState(dayjs());
+    const [modalVisible, setModalVisible] = useState(false);
+       //TODO: Testiraj mobile platforme
+       //TODO: izbaciti dugme i napraviti kontrolu nalik datepicker-a
     return (
         <>
         <ScrollView style={styles.container}>
-            <View style={styles.filterGrid}>
-                <Select style={styles.comboBox} label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(e.target.value)}} value={scopeCombo}>
-                    <MenuItem value=""><em>None</em></MenuItem>
-                    <MenuItem value="University">University</MenuItem>
-                    <MenuItem value="Faculty">Faculty</MenuItem>
-                    <MenuItem value="Subject">Subject</MenuItem>
-                </Select>
+            <View style={styles.filterAndSearchContainer}>
+                <View style={styles.containerFilter}>
+                    <Text style={styles.titleFilter}>Filter by parameters...</Text>
+                    <View style={styles.filterGrid}>
+                        <Select style={styles.comboBox} label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(e.target.value)}} value={scopeCombo}>
+                            <MenuItem value=""><em>None</em></MenuItem>
+                            <MenuItem value="University">University</MenuItem>
+                            <MenuItem value="Faculty">Faculty</MenuItem>
+                            <MenuItem value="Subject">Subject</MenuItem>
+                        </Select>
 
-                <PaperInput
-                label="Faculty"
-                mode="outlined">
-                    
-                </PaperInput>
+                        <PaperInput
+                        label="Faculty"
+                        mode="outlined">
+                            
+                        </PaperInput>
 
-                <PaperInput
-                label="Subject"
-                mode="outlined">
-                    
-                </PaperInput>
-            </View>
+                        <PaperInput
+                        label="Subject"
+                        mode="outlined">
+                            
+                        </PaperInput>
+                    </View>
+                </View>
 
-            <View style={styles.searchSortGrid}>
-                <PaperInput
-                label="Search..."
-                mode="outlined">
+                <View style={styles.containerSearch}>
+                    <Text style={styles.titleFilter}>Search and sort...</Text>
+                    <View style={styles.searchSortGrid}>
+                        <PaperInput
+                        label="Search..."
+                        mode="outlined">
+                        </PaperInput>
 
-                </PaperInput>
-
-                <PaperInput
-                label="Sort by date"
-                mode="outlined">
-
-                </PaperInput>
+                        <Button onPress={() => { setModalVisible(true) }} mode='contained'>Choose date</Button>
+                    </View>
+                </View>
             </View>
 
             <View style={styles.contentGrid}>
@@ -70,6 +76,20 @@ export default function NoticeboardShow() {
                 ))}
             </View>
         </ScrollView>
+
+ 
+        <Modal style={styles.dateContainer} visible={modalVisible} onDismiss={() => {setModalVisible(false)}}>
+            <View style={styles.datepicker}>
+                <DateTimePicker 
+                    mode="single"
+                    date={date}
+                    onChange={(params) => {
+                        setDate(dayjs(params.date?.toString()));
+                        console.log(date.toISOString());
+                    }}
+                />
+            </View>
+        </Modal>
         </>
     );
 };
@@ -80,11 +100,62 @@ const styles = StyleSheet.create({
         padding: 20,
     },
 
+    dateContainer: {
+        flex: 1,
+        width: '30%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 'auto',
+    },
+
+    datepicker: {
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+    },
+
+    filterAndSearchContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    containerFilter: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        width: '70%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+    },
+
     filterGrid: {
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+        alignItems: 'center',
         marginBottom: 20,
     }, 
+
+    containerSearch: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: 'white',
+        width: '70%',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+    },
 
     searchSortGrid: {
         flexDirection: 'row',
@@ -94,7 +165,7 @@ const styles = StyleSheet.create({
 
     comboBox: {
         width: 250,
-        height: 48
+        height: 48,
     },
 
     contentGrid: {
@@ -117,6 +188,14 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
+    },
+
+    titleFilter: {
+        fontWeight: 'bold',
+        marginLeft: 20,
+        fontSize: 24,
+        marginBottom: 20,
+        marginTop: 20,
     },
 
     description: {
