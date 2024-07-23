@@ -78,7 +78,10 @@ const FAQ : React.FC = () => {
     <>
         <Toast/>
         <View style={styles.pageContainer}>
-            <PaperInput placeholder='Search here...'  mode='outlined' style={styles.searchBar} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}></PaperInput>
+            <View style={styles.containerFilter}>
+                <Text style={styles.titleSearch}>Search FAQ here</Text>
+                <PaperInput placeholder='Search here...'  mode='outlined' label="Search here..." style={styles.searchBar} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}></PaperInput>
+            </View>
 
             <View style={styles.faqContainer}>
             {items?.map((item, index) => (
@@ -93,10 +96,10 @@ const FAQ : React.FC = () => {
 
             <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContainer}>
                 <Text style={styles.titleModal}>Ask your question here:</Text>
-                <PaperInput mode='outlined' style={styles.searchBar} value={question} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setQuestion(e.nativeEvent.text)}}></PaperInput>
+                <PaperInput mode='outlined' multiline numberOfLines={4} style={styles.input} value={question} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setQuestion(e.nativeEvent.text)}}></PaperInput>
                 <View style={styles.buttonRow}>
-                    <Button mode='contained' onPress={() => sumbitQuestion()}> Ask </Button>
-                    <Button mode='contained' onPress={() => setModalVisible(false)}> Cancel </Button>
+                    <Button mode='contained' onPress={() => sumbitQuestion()} style={styles.button}>Ask a question</Button>
+                    <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={styles.button}>Cancel</Button>
                 </View>
             </Modal>
 
@@ -113,8 +116,29 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },    
+
+    containerFilter: {
+        marginBottom: 20,
+        marginTop: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        width: '70%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+        padding: 20,
+    },
+
+    titleSearch: {
+        fontWeight: 'bold',
+        fontSize: 24,
+        marginBottom: 10,
+        marginTop: 10,
+    },
 
     modalContainer: {
         backgroundColor: 'white',
@@ -123,6 +147,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: '40%',
         alignSelf: 'center',
+    },
+
+    input: {
+        width: 700,
     },
     
     buttonRow: {
@@ -144,8 +172,9 @@ const styles = StyleSheet.create({
 
     searchBar: {
         marginTop: 30,
-        width: '75%',
-        borderRadius: 15
+        width: '100%',
+        borderRadius: 20,
+        marginBottom: 10,
     },
 
     qaContainer: {
@@ -166,6 +195,7 @@ const styles = StyleSheet.create({
     titleModal: {
         fontSize: 24,
         marginTop: 10,
+        marginBottom: 30,
         fontWeight: 'bold',
     },
 
@@ -178,8 +208,12 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: '5%',
         right: '5%',
-        width: 150,
-        height: 40,
+        height: 60,
+        borderRadius: 50,
+        justifyContent: 'center',
+    },
+    button: {
+        width: '49%'
     },
 });
 

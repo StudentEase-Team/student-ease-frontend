@@ -29,19 +29,11 @@ export default function NavigationBar(props : NavigationBarProps) {
                 return (
                     <Drawer.Section>  
 
-                        <SecureRoute route="/noticeboard/noticeboard-show" label="Show noticeboard" role={UserRole.ANY}/>      
+                        <SecureRoute route="/noticeboard" label="Show noticeboard" role={UserRole.ANY}/>      
 
-                        <Link replace href="/noticeboard/noticeboard-create-item">
-                            <Drawer.Item label="Create noticeboard item"/>
-                        </Link>
+                        <SecureRoute route="/faq/faq-show" label="Show FAQ" role={UserRole.ANY}/> 
 
-                        <Link replace href="/faq/faq-show">
-                            <Drawer.Item label="Show FAQ"/>
-                        </Link>
-
-                        <Link replace href="/faq/faq-answer">
-                            <Drawer.Item label="Answer questions"/>
-                        </Link>
+                        <SecureRoute route="/faq/faq-answer" label="Answer questions" role={UserRole.ANY}/>
 
                         <Link replace href="#" onPress={() => {logout()}}>
                             <Drawer.Item label="Logout"/>
