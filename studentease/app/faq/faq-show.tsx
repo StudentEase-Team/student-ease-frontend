@@ -1,32 +1,101 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text } from '@rneui/themed';
 import { TextInput as PaperInput, Button, Card, Modal } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
+import { NativeSyntheticEvent, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { FAQItem } from '../../model/FAQItem';
+import { useAuth } from '../../context/AuthContext';
+import axios, { AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
 
 const FAQ : React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
+    const [items, setItems] = useState<FAQItem[]>()
+    const [itemsBak, setItemsBak] = useState<FAQItem[]>()
+    const [question, setQuestion] = useState('');
+    const [searchParam, setSearchParam] = useState('');
+    const {userState} = useAuth()
+
+
+    const sumbitQuestion = async () => {
+        const config = {
+            headers: { Authorization: `Bearer ${userState?.token.accessToken}` }
+        };
+        const newQuestion : FAQItem = {
+            id: 0,
+            answer: '',
+            isAnswered: false,
+            question: question
+        }
+        const response : AxiosResponse = await axios.post('http://localhost:8080/api/faq/item', newQuestion, config)
+        if(response.status == 201) {
+            Toast.show({
+                type: 'success',
+                text1: 'Succesfully created!',
+              });
+            setModalVisible(false);
+            items?.push(newQuestion);
+            itemsBak?.push(newQuestion);
+        }
+    }
+    
+    const handleSearch = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+        const searchValue = e.nativeEvent.text;
+        setSearchParam(searchValue);
+        if (searchValue === '') {
+            setItems(itemsBak);
+        } else {
+            setItems(itemsBak?.filter(i => i.question.toLowerCase().includes(searchValue.toLowerCase())));
+        }
+    };
+
+
+    const fetchFAQ = useCallback(async () => {
+        if (!userState?.token.accessToken) return;
+
+        const config = {
+            headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+        };
+        try {
+            const response: AxiosResponse = await axios.get('http://localhost:8080/api/faq/items', config);
+            if (response.status === 200) {
+                setItems(response.data);
+                setItemsBak(response.data);
+            }
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to fetch questions',
+            });
+        }
+    }, [userState?.token.accessToken]);
+
+    useEffect(() => {
+        fetchFAQ();
+    }, [fetchFAQ]);
 
     return (
     <>
         <Toast/>
         <View style={styles.pageContainer}>
-            <PaperInput placeholder='Search here...'  mode='outlined' style={styles.searchBar}></PaperInput>
+            <PaperInput placeholder='Search here...'  mode='outlined' style={styles.searchBar} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}></PaperInput>
 
             <View style={styles.faqContainer}>
-            {Array.from({ length: 10 }).map((_, index) => (
+            {items?.map((item, index) => (
                 <Card key={index} style={styles.qaContainer}>
-                    <Card.Title title="Some thoughtful question here?" titleStyle={styles.title}></Card.Title>
-                    <Card.Content><Text style={styles.description}>This is an answer here!</Text></Card.Content>
+                    <Card.Content>
+                        <Text style={styles.title}>{item.question}</Text>
+                        <Text style={styles.description}>{item.answer}</Text>
+                    </Card.Content>
                 </Card>
             ))}
             </View>
 
             <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContainer}>
                 <Text style={styles.titleModal}>Ask your question here:</Text>
-                <PaperInput mode='outlined' style={styles.searchBar}></PaperInput>
+                <PaperInput mode='outlined' style={styles.searchBar} value={question} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setQuestion(e.nativeEvent.text)}}></PaperInput>
                 <View style={styles.buttonRow}>
-                    <Button mode='contained' onPress={() => setModalVisible(false)}> Ask </Button>
+                    <Button mode='contained' onPress={() => sumbitQuestion()}> Ask </Button>
                     <Button mode='contained' onPress={() => setModalVisible(false)}> Cancel </Button>
                 </View>
             </Modal>
@@ -82,6 +151,11 @@ const styles = StyleSheet.create({
     qaContainer: {
         marginTop: 15,
         width: '67%',
+    },
+
+    titleContainer: {
+        flex: 1,
+        flexWrap: 'wrap'
     },
 
     title: {
