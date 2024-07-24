@@ -1,89 +1,117 @@
 import * as React from 'react';
-import { Appbar, Drawer } from 'react-native-paper';
-import {StyleSheet, View} from 'react-native';
+import { Appbar, Drawer, PaperProvider } from 'react-native-paper';
+import {StyleSheet, View, Text} from 'react-native';
 import { Icon } from '@rneui/themed';
 import { Link } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../model/UserRole';
 import { SecureRoute } from './secure-route';
+import { useTheme } from '../../context/ThemeContext';
+import { themeDark, themeLight } from '../../context/PaperTheme';
 
-export type NavigationBarProps = {
-   
-};
-
-export default function NavigationBar(props : NavigationBarProps) {
-    const [active, setActive] = React.useState('');
-    const [theme, setTheme] = React.useState('light');
+export default function NavigationBar() {
     const [drawerHidden, setDrawerHidden] = React.useState(true);
-    const {isAuthenticated, userState, logout} = useAuth();
-
-    function changeTheme() {
-        theme === 'light'? setTheme('dark'):setTheme('light');
-    }
-
-    //TODO: Finish
+    const { isAuthenticated, userState, logout } = useAuth();
+    const { theme, toggleTheme } = useTheme();
 
     function MyDrawer() {
-        if(!drawerHidden) {
-            if(userState !== null && isAuthenticated) {
+        if (!drawerHidden) {
+            if (userState !== null && isAuthenticated) {
                 return (
-                    <Drawer.Section>  
-
+                    <Drawer.Section style={theme === 'light'? styles.drawerLight : styles.drawerDark}>  
                         <SecureRoute route="/noticeboard" label="Show noticeboard" role={UserRole.ANY}/>      
-
                         <SecureRoute route="/faq/faq-show" label="Show FAQ" role={UserRole.ANY}/> 
-
                         <SecureRoute route="/faq/faq-answer" label="Answer questions" role={UserRole.ANY}/>
-
-                        <Link replace href="#" onPress={() => {logout()}}>
-                            <Drawer.Item label="Logout"/>
-                        </Link>
+                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                            <Link replace href="#" onPress={() => { logout() }}>
+                                <Drawer.Item label="Logout"/>
+                            </Link>
+                        </PaperProvider>
                     </Drawer.Section>
-                )
+                );
+            } else {
+                return (
+                    <Drawer.Section style={theme === 'light'? styles.drawerLight : styles.drawerDark}>
+                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                        <Link replace href="/auth/login">
+                            <Drawer.Item label="Login"/>
+                        </Link>
+                        </PaperProvider>
+                    </Drawer.Section>
+                );
             }
-            else return (
-                <Drawer.Section>
-                    <Link replace href="/auth/login">
-                        <Drawer.Item label="Login"/>
-                    </Link>
-                </Drawer.Section>
-            )
+        } else {
+            return null;
         }
-        else return false
     }
 
     function SunMoonIcon() {
-        if(theme === 'light') {
-            return(<Icon name="sun-o" type="font-awesome" style={styles.navbarItem} onPress={() => changeTheme()} size={35}></Icon>)
-        }
-        else 
-            return(<Icon name="moon-o" type="font-awesome" style={styles.navbarItem} onPress={() => changeTheme()} size={35}></Icon>)
+        return (
+            <Icon 
+                name={theme === 'light' ? "sun-o" : "moon-o"} 
+                type="font-awesome" 
+                style={styles.navbarItem} 
+                onPress={toggleTheme} 
+                size={35} 
+                color={theme === 'light' ? '#000' : '#FFF'}
+            />
+        );
     }
 
     return (
         <>
-            <View style={styles.navbar}>
-                <Icon name="menu" type="feather" style={styles.navbarMenuItem} size={35} onPress={() => {drawerHidden? setDrawerHidden(false):setDrawerHidden(true);}}></Icon>
-                <SunMoonIcon></SunMoonIcon>
+            <View style={[styles.navbar, theme === 'light' ? styles.navbarLight : styles.navbarDark]}>
+                <Icon 
+                    name="menu" 
+                    type="feather" 
+                    style={styles.navbarMenuItem} 
+                    size={35} 
+                    onPress={() => setDrawerHidden(!drawerHidden)} 
+                    color={theme === 'light' ? '#000' : '#FFF'}
+                />
+                <SunMoonIcon />
             </View>
-            <MyDrawer/>
+            <MyDrawer />
         </>
-    )
+    );
 }
-
-
 
 const styles = StyleSheet.create({
     navbar: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        padding: 10,
     },
-
+    navbarLight: {
+        backgroundColor: '#E0E0E0',
+    },
+    navbarDark: {
+        backgroundColor: 'rgb(30,30,30)',
+    },
     navbarItem: {
         flex: 1,
     },
-
     navbarMenuItem: {
-        flex: 1
-    }
-})
+        flex: 1,
+    },
+    navbarTitleLight: {
+        flex: 2,
+        textAlign: 'center',
+        color: '#000',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    navbarTitleDark: {
+        flex: 2,
+        textAlign: 'center',
+        color: '#FFF',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    drawerLight: {
+        backgroundColor: "#FFF"
+    },
+    drawerDark: {
+        backgroundColor: "#333"
+    },
+});

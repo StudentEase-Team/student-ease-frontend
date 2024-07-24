@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
-import { MenuItem, Select, SelectChangeEvent, Stack } from '@mui/material';
+import { MenuItem, Select, SelectChangeEvent} from '@mui/material';
 import { StyleSheet, ScrollView, View } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Provider, Card, Title, Modal } from 'react-native-paper';
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { NoticeboardItem } from '../model/NoticeboardItem';
+import { themeDark, themeLight } from '../context/PaperTheme';
 
 const announcementCategories = [
     { label: 'University Announcement', value: 'UNIVERSITY_ANNOUNCEMENT' },
@@ -33,6 +35,7 @@ export default function NoticeboardShow() {
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
     const {userState} = useAuth()
+    const {theme} = useTheme()
 
     const sumbitAnnouncement = async () => {
         /*const config = {
@@ -58,13 +61,13 @@ export default function NoticeboardShow() {
     }
 
        //TODO: Testiraj mobile platforme
-       //TODO: izbaciti dugme i napraviti kontrolu nalik datepicker-a
     return (
         <>
-        <ScrollView style={styles.container}>
+        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+        <ScrollView style={theme === 'light'? styles.containerLight : styles.containerDark}>
             <View style={styles.filterAndSearchContainer}>
-                <View style={styles.containerFilter}>
-                    <Text style={styles.titleFilter}>Filter by parameters...</Text>
+                <View style={theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark}>
+                    <Text style={theme === 'light'? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters...</Text>
                     <View style={styles.filterGrid}>
                         <Select style={styles.comboBox} label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(e.target.value)}} value={scopeCombo}>
                             <MenuItem value=""><em>None</em></MenuItem>
@@ -75,7 +78,8 @@ export default function NoticeboardShow() {
 
                         <PaperInput
                         label="Faculty"
-                        mode="outlined">
+                        mode="outlined"
+                        >
                             
                         </PaperInput>
 
@@ -87,8 +91,8 @@ export default function NoticeboardShow() {
                     </View>
                 </View>
 
-                <View style={styles.containerSearch}>
-                    <Text style={styles.titleFilter}>Search and sort...</Text>
+                <View style={theme === 'light'? styles.containerSearchLight : styles.containerSearchDark}>
+                    <Text style={theme === 'light'? styles.titleFilterLight : styles.titleFilterDark}>Search and sort...</Text>
                     <View style={styles.searchSortGrid}>
                         <PaperInput
                         label="Search..."
@@ -105,24 +109,24 @@ export default function NoticeboardShow() {
                     <Card key={index} style={styles.notification}>
                         <Card.Title title="Notification title" titleStyle={styles.title}></Card.Title>
                         <Card.Content>
-                            <Text style={styles.description}>This is description of the notification</Text>
-                            <Text style={styles.meta}>Date: 15.04.2024.</Text>
-                            <Text style={styles.meta}>Subject: Example subject</Text>
-                            <Text style={styles.meta}>College: Example faculty</Text>
-                            <Text style={styles.meta}>Professor: Example professor</Text>
+                            <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>This is description of the notification</Text>
+                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>Date: 15.04.2024.</Text>
+                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>Subject: Example subject</Text>
+                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>College: Example faculty</Text>
+                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>Professor: Example professor</Text>
                         </Card.Content>
 
                         <Card.Actions>
-                            <Icon name="edit" type="feather"/>
-                            <Icon name="trash-alt" type="font-awesome-5"/>
+                            <Icon name="edit" type="feather" color={theme === 'light'? 'black':'white'}/>
+                            <Icon name="trash-alt" type="font-awesome-5" color={theme === 'light'? 'black':'white'}/>
                         </Card.Actions>
                     </Card>
                 ))}
             </View>
         </ScrollView>
  
-        <Modal style={styles.dateContainer} visible={modalVisibleDate} onDismiss={() => {setModalVisibleDate(false)}}>
-            <View style={styles.datepicker}>
+        <Modal style={styles.dateModal} visible={modalVisibleDate} onDismiss={() => {setModalVisibleDate(false)}}>
+            <View style={theme === 'light'? styles.datepickerLight : styles.datepickerDark}>
                 <DateTimePicker 
                     mode="single"
                     date={date}
@@ -134,7 +138,7 @@ export default function NoticeboardShow() {
             </View>
         </Modal>
 
-        <Modal visible={modalVisibleNewItem} contentContainerStyle={styles.modalFormCreateNoticeboardItem} onDismiss={() => {setModalVisibleNewItem(false)}}>
+        <Modal visible={modalVisibleNewItem} contentContainerStyle={theme === 'light'? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark} onDismiss={() => {setModalVisibleNewItem(false)}}>
             <View>
                 <Text style={styles.titleNewItem}>Create a new noticeboard notification</Text>
                 <Select label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(e.target.value)}} style={styles.categoryContainer} value={scopeCombo.toString()}>
@@ -194,17 +198,24 @@ export default function NoticeboardShow() {
         <Button mode='contained' style={styles.createNoticeboardNotificationButton} onPress={() => setModalVisibleNewItem(true)}>
             Create noticeboard notification
         </Button>
+        </PaperProvider>
         </>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    containerLight: {
         flex: 1,
         padding: 20,
     },
 
-    dateContainer: {
+    containerDark: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#222'
+    },
+
+    dateModal: {
         flex: 1,
         width: '30%',
         justifyContent: 'center',
@@ -212,8 +223,16 @@ const styles = StyleSheet.create({
         margin: 'auto',
     },
 
-    datepicker: {
+    datepickerLight: {
         backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+    },
+
+    //TODO Popravi ovo
+    datepickerDark: {
+        color: 'white',
+        backgroundColor: 'rgb(30,30,30)',
         borderRadius: 20,
         padding: 20,
     },
@@ -225,11 +244,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    containerFilter: {
+    containerFilterLight: {
         flex: 1,
         flexDirection: 'column',
         marginBottom: 20,
         backgroundColor: 'white',
+        borderRadius: 20,
+        width: '70%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+    },
+
+    containerFilterDark: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: 'rgb(30, 30, 30)',
         borderRadius: 20,
         width: '70%',
         shadowColor: '#000',
@@ -247,11 +280,25 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     }, 
 
-    containerSearch: {
+    containerSearchLight: {
         flex: 1,
         flexDirection: 'column',
         marginBottom: 20,
         backgroundColor: 'white',
+        width: '70%',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+    },
+
+    containerSearchDark: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: 'rgb(30,30,30)',
         width: '70%',
         borderRadius: 20,
         shadowColor: '#000',
@@ -280,8 +327,8 @@ const styles = StyleSheet.create({
     },
 
     notification: {
-        backgroundColor: '#f9f9f9',
-        borderColor: '#ddd',
+        //backgroundColor: '#f9f9f9',
+        //borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 20,
         padding: 10,
@@ -302,22 +349,43 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    titleFilter: {
+    titleFilterLight: {
         fontWeight: 'bold',
         marginLeft: 20,
         fontSize: 24,
         marginBottom: 20,
         marginTop: 20,
+        color: 'black'
     },
 
-    description: {
+    titleFilterDark: {
+        fontWeight: 'bold',
+        marginLeft: 20,
+        fontSize: 24,
+        marginBottom: 20,
+        marginTop: 20,
+        color: 'white'
+    },
+
+    descriptionLight: {
         fontSize: 18,
         marginVertical: 5,
+        color: 'black'
+    },
+
+    descriptionDark: {
+        fontSize: 18,
+        marginVertical: 5,
+        color: 'white'
     },
     
-    meta: {
+    metaLight: {
         fontSize: 16,
         color: '#666',
+    },
+    metaDark: {
+        fontSize: 16,
+        color: 'white',
     },
 
     form: {
@@ -357,8 +425,17 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
 
-    modalFormCreateNoticeboardItem: {
+    modalFormCreateNoticeboardItemLight: {
         backgroundColor: 'white',
+        padding: 20,
+        alignItems: 'center',
+        borderRadius: 20,
+        width: '40%',
+        alignSelf: 'center',
+    },
+
+    modalFormCreateNoticeboardItemDark: {
+        backgroundColor: 'rgb(30,30,30)',
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,

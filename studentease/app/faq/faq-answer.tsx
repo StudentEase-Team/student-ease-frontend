@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Text } from '@rneui/themed';
-import { TextInput as PaperInput, Button, Card, Modal } from 'react-native-paper';
+import { TextInput as PaperInput, Button, Card, Modal, PaperProvider} from 'react-native-paper';
 import { NativeSyntheticEvent, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Icon } from 'react-native-elements';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { FAQItem } from '../../model/FAQItem';
 import axios, { AxiosResponse } from 'axios';
+import { themeDark, themeLight } from '../../context/PaperTheme';
 
 const FAQ : React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -14,6 +16,7 @@ const FAQ : React.FC = () => {
     const [currentItem, setCurrentItem] = useState<FAQItem | undefined>(undefined);
     const [answer, setAnswer] = useState('');
     const { userState } = useAuth();
+    const { theme } = useTheme();
 
     useEffect(() => {
         const config = {
@@ -61,31 +64,32 @@ const FAQ : React.FC = () => {
     return (
         <>
             <Toast/>
-            <View style={styles.pageContainer}>
+            <PaperProvider theme={theme === 'light'? themeLight: themeDark}>
+            <View style={theme === 'light'? styles.pageContainerLight : styles.pageContainerDark}>
                 <View style={styles.faqContainer}>
                     {items.length === 0 ? (
                             <Card style={styles.qaContainer}>
                                 <Card.Content>
-                                    <Text style={styles.title}>No unanswered questions!</Text>
+                                    <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>No unanswered questions!</Text>
                                 </Card.Content>
                             </Card>
                     ) : (
                         items.map((item, index) => (
                             <Card key={index} style={styles.qaContainer}>
                                 <Card.Content>
-                                    <Text style={styles.title}>{item.question}</Text>
-                                    <Text style={styles.description}>{item.answer}</Text>
+                                    <Text style={theme === 'light'? styles.titleLight : styles.titleDark}>{item.question}</Text>
+                                    <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>{item.answer}</Text>
                                 </Card.Content>
                                 <Card.Actions>
-                                    <Icon name="question-answer" type='material-icons' onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
+                                    <Icon name="question-answer" type='material-icons'  color={theme === 'light'? 'black' : 'white'} onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
                                 </Card.Actions>
                             </Card>
                         ))
                     )}
                 </View>
 
-                <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContainer}>
-                    <Text style={styles.titleModal}>Answer:</Text>
+                <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={theme === 'light'? styles.modalContainerLight : styles.modalContainerDark}>
+                    <Text style={theme === 'light'? styles.titleModalLight : styles.titleModalDark}>Answer:</Text>
                     <PaperInput mode='outlined' style={styles.searchBar} value={answer} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setAnswer(e.nativeEvent.text)}}></PaperInput>
                     <View style={styles.buttonRow}>
                         <Button mode='contained' onPress={() => answerQuestion()}> Answer </Button>
@@ -93,20 +97,38 @@ const FAQ : React.FC = () => {
                     </View>
                 </Modal>
             </View>
+            </PaperProvider>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-    pageContainer: {
+
+    pageContainerLight: {
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },    
+    pageContainerDark: {
+        backgroundColor: '#222',
         flex: 1,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center'
     },    
 
-    modalContainer: {
+    modalContainerLight: {
         backgroundColor: 'white',
+        padding: 20,
+        alignItems: 'center',
+        borderRadius: 20,
+        width: '40%',
+        alignSelf: 'center',
+    },
+
+    modalContainerDark: {
+        backgroundColor: 'rgb(30,30,30)',
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,
@@ -142,25 +164,50 @@ const styles = StyleSheet.create({
         width: '67%',
     },
 
-    title: {
+    titleLight: {
         fontSize: 24,
         fontWeight: 'bold',
     },
 
-    titleModal: {
+    titleDark: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white'
+    },
+
+    titleModalLight: {
         fontSize: 24,
         marginTop: 10,
         fontWeight: 'bold',
     },
 
-    description: {
+    titleModalDark: {
+        fontSize: 24,
+        marginTop: 10,
+        fontWeight: 'bold',
+        color: 'white'
+    },
+
+    descriptionLight: {
         fontSize: 18,
         marginVertical: 5,
     },
 
-    noQuestionsText: {
+    descriptionDark: {
+        fontSize: 18,
+        marginVertical: 5,
+        color: 'white'
+    },
+
+    noQuestionsTextLight: {
         fontSize: 18,
         color: 'gray',
+        marginTop: 20,
+    },
+
+    noQuestionsTextDark: {
+        fontSize: 18,
+        color: 'white',
         marginTop: 20,
     },
 
