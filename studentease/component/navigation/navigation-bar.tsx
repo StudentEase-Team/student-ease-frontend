@@ -22,6 +22,7 @@ export default function NavigationBar() {
                         <SecureRoute route="/noticeboard" label="Show noticeboard" role={UserRole.ANY}/>      
                         <SecureRoute route="/faq/faq-show" label="Show FAQ" role={UserRole.ANY}/> 
                         <SecureRoute route="/faq/faq-answer" label="Answer questions" role={UserRole.ANY}/>
+                        <SecureRoute route="/college_list" label="List of colleges" role={UserRole.ANY}/>
                         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
                             <Link replace href="#" onPress={() => { logout() }}>
                                 <Drawer.Item label="Logout"/>

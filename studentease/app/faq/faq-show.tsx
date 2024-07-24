@@ -77,11 +77,12 @@ const FAQ: React.FC = () => {
   return (
     <>
       <Toast/>
-      <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
       <View style={theme === 'light'? styles.pageLightContainer : styles.pageDarkContainer}>
         <View style={theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark}>
           <Text style={theme === 'light' ? styles.titleSearchLight : styles.titleSearchDark}>Search FAQ here</Text>
+          <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
           <PaperInput placeholder='Search here...' mode='outlined' label="Search here..." style={styles.searchBar} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
+          </PaperProvider>
         </View>
 
         <View style={styles.faqContainer}>
@@ -97,18 +98,19 @@ const FAQ: React.FC = () => {
 
         <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={theme === 'light'? styles.modalContainerLight: styles.modalContainerDark}>
           <Text style={theme === 'light'? styles.titleModalLight: styles.titleModalDark}>Ask your question here:</Text>
+          <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
           <PaperInput mode='outlined' multiline numberOfLines={4} style={styles.input} value={question} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => { setQuestion(e.nativeEvent.text); }}/>
+          </PaperProvider>
           <View style={styles.buttonRow}>
-            <Button mode='contained' onPress={() => submitQuestion()} style={styles.button}>Ask a question</Button>
-            <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={styles.button}>Cancel</Button>
+            <Button mode='contained' onPress={() => submitQuestion()} style={ theme === 'light' ? styles.createQuestionButtonLight : styles.createQuestionButtonDark}>Ask a question</Button>
+            <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={ theme === 'light' ? styles.cancelQuestionButtonLight : styles.cancelQuestionButtonDark}>Cancel</Button>
           </View>
         </Modal>
-
-        <Button mode='contained' style={styles.askQuestionButton} onPress={() => setModalVisible(true)}>
+            
+        <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
           Ask a question
         </Button>
       </View>
-      </PaperProvider>
     </>
   );
 };
@@ -251,16 +253,42 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     color: 'white'
   },
-  askQuestionButton: {
+  askQuestionButtonLight: {
     position: 'absolute',
     bottom: '5%',
     right: '5%',
     height: 60,
     borderRadius: 50,
     justifyContent: 'center',
+    backgroundColor: '#4dabf7',
+  },
+  askQuestionButtonDark: {
+    position: 'absolute',
+    bottom: '5%',
+    right: '5%',
+    height: 60,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: '#9775fa',
   },
   button: {
     width: '49%',
+  },
+  createQuestionButtonLight: {
+    width: '49%',
+    backgroundColor: '#4dabf7',
+  },
+  createQuestionButtonDark: {
+    width: '49%',
+    backgroundColor: '#9775fa',
+  },
+  cancelQuestionButtonLight: {
+    width: '49%',
+    
+  },
+  cancelQuestionButtonDark: {
+    width: '49%',
+    backgroundColor: 'grey',
   },
 });
 

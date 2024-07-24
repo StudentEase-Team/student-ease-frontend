@@ -34,8 +34,8 @@ export default function NoticeboardShow() {
     const [college, setCollege] = React.useState('');
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
-    const {userState} = useAuth()
-    const {theme} = useTheme()
+    const {userState} = useAuth();
+    const {theme} = useTheme();
 
     const sumbitAnnouncement = async () => {
         /*const config = {
