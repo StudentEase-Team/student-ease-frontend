@@ -9,7 +9,7 @@ import NavigationBar from '../../component/navigation/navigation-bar';
 import { useAuth } from '../../context/AuthContext';
 import { UserState } from '../../model/UserState';
 import { useTheme } from '../../context/ThemeContext';
-import { Button, PaperProvider } from 'react-native-paper';
+import { Button, PaperProvider, TextInput } from 'react-native-paper';
 import { themeDark, themeLight } from '../../context/PaperTheme';
 
 
@@ -33,17 +33,21 @@ const Login : React.FC = () => {
       <View style={styles.container}>
         <View style={theme === 'light'? styles.formLight : styles.formDark}>
           <Text h3 style={theme === 'light'? styles.titleLight : styles.titleDark}>Login</Text>
-          <Input
+          <TextInput
             placeholder="University email"
             keyboardType="email-address"
             autoCapitalize="none" 
+            mode='outlined'
+            label="University email"
             style={theme === 'light'? {color:'black'}:{color:'white'}}
             onChangeText={value => setEmail(value)}
             />
           <PasswordInput passwordCallback={setPassword}/>
-          <Button onPress={attemptLogin} mode='contained'>Login</Button>
+
+          <Button onPress={attemptLogin} mode='contained' style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
+
           <TouchableOpacity style={theme === 'light'? styles.signupTextLight : styles.signupTextDark}>
-            <Text style={theme === 'light'? {color:'black'}:{color:'white'}}>You don't have a student account? Click here to sign up!</Text>
+            <Text style={theme === 'light'? {color:'#4dabf7'}:{color:'#9775fa'}}>You don't have a student account? Click here to sign up!</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -56,7 +60,6 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     resizeMode: 'repeat',
-
   },
 
   container: {
@@ -81,7 +84,7 @@ const styles = StyleSheet.create({
 
   formDark: {
     padding: 20,
-    backgroundColor: 'rgb(30,30,30)',
+    backgroundColor: '#242526',
     borderRadius: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -105,6 +108,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: 'center',
     color: 'white'
+  },
+
+  loginButtonLight: {
+    backgroundColor: '#4dabf7',
+    marginTop: 20,
+    borderRadius: 20,
+  },
+
+  loginButtonDark: {
+    backgroundColor: '#9775fa',
+    marginTop: 20,
+    borderRadius: 20,
   },
 
   signupTextLight: {

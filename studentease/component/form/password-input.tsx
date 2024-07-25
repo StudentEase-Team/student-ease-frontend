@@ -1,7 +1,6 @@
-import { Input } from "@rneui/base";
-import { Icon } from '@rneui/themed';
 import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { TextInput } from "react-native-paper";
 
 export type PasswordProps = {
     passwordCallback : React.Dispatch<React.SetStateAction<string>>
@@ -25,22 +24,17 @@ export function PasswordInput(props : PasswordProps) {
     }
     
     return (
-        <Input secureTextEntry={hiddenText}
-        style={theme === 'light'? {color:'black'}:{color:'white'}}
-        placeholder="Password"
-        rightIcon={
-            <Icon name={selectedIcon}
-            color={theme === 'light'? 'black':'white'}
-            type="font-awesome-5"
-            onPress={() => setHidden(hidden? false:true)}
-            />
-        }
-        onChangeText={
-            (t: string) => {
-            setText(t);
-            props.passwordCallback(t)
-            }
-        }
-        />
+        <TextInput
+            label="Password"
+            secureTextEntry={hiddenText}
+            mode="outlined"
+            style={theme === 'light' ? { color: 'black' } : { color: 'white' }}
+            right={<TextInput.Icon icon={selectedIcon} 
+                color={theme === 'light' ? 'black' : 'white'}
+                onPress={() => setHidden(hidden ? false : true)}/>} 
+                onChangeText={(t: string) => {
+                    setText(t);
+                    props.passwordCallback(t);
+                } }/>
     )
 }

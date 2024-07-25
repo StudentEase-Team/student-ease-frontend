@@ -11,7 +11,6 @@ export const themeLight = {
   colors: {
     ...LightTheme.colors,
     primary: '#4dabf7',
-    icon: '#4dabf7'
   },
 };
 
@@ -21,6 +20,5 @@ export const themeDark = {
     colors: {
         ...DarkTheme.colors,
         primary: '#9775fa',
-        icon: '#9775fa'
       },
   };

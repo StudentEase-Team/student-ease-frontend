@@ -67,14 +67,17 @@ const faculties: Faculty[] = [
 
 const { width } = Dimensions.get('window');
 const numColumns = 4;
-
+const cardMargin = 10;
+const outerPadding = 120;
+const cardWidth = (width - outerPadding * 2 - (numColumns - 1) * cardMargin) / numColumns;
 
 const FacultyList: React.FC = () => {
   const { theme } = useTheme();
-  const {userState} = useAuth();
+  const { userState } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
+
   const renderItem = ({ item }: { item: Faculty }) => (
-    <View style={styles.item}>
+    <View style={[styles.item, { width: cardWidth }]}>
       <Card style={theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark}>
         <Card.Content>
           <Title style={theme === 'light' ? styles.titleLight : styles.titleDark}>{item.name}</Title>
@@ -86,12 +89,14 @@ const FacultyList: React.FC = () => {
         <Card.Actions>
           <IconButton
             icon="pencil"
-            size={20}
+            size={25}
+            mode='contained-tonal'
             onPress={() => console.log('Edit', item.id)}
           />
           <IconButton
             icon="delete"
-            size={20}
+            size={25}
+            mode='contained-tonal'
             onPress={() => console.log('Delete', item.id)}
           />
         </Card.Actions>
@@ -100,11 +105,11 @@ const FacultyList: React.FC = () => {
   );
 
   return (
-    <View style={theme === 'light'? styles.pageLightContainer : styles.pageDarkContainer}>
+    <View style={[theme === 'light' ? styles.pageLightContainer : styles.pageDarkContainer, { paddingHorizontal: outerPadding }]}>
       <View style={theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark}>
         <Text style={theme === 'light' ? styles.titleSearchLight : styles.titleSearchDark}>Search FAQ here</Text>
-        <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
-        <PaperInput placeholder='Search here...' mode='outlined' label="Search here..." style={styles.searchBar} />
+        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+          <PaperInput placeholder='Search here...' mode='outlined' label="Search here..." style={styles.searchBar} />
         </PaperProvider>
       </View>
 
@@ -115,63 +120,63 @@ const FacultyList: React.FC = () => {
         numColumns={numColumns}
       />
 
-      <Modal visible={modalVisible} contentContainerStyle={theme === 'light'? styles.modalFormCreateCollegeLight : styles.modalFormCreateCollegeDark} onDismiss={() => {setModalVisible(false)}}>
-            <View>
-                <Text style={theme === 'light'? styles.titleModalLight: styles.titleModalDark}>Add a new college</Text>
-                <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
-                <PaperInput
-                    label="College name"
-                    mode="outlined"
-                    /*value={college}
-                    onChangeText={text => setCollege(text)}*/
-                    style={styles.input}
-                />
+      <Modal visible={modalVisible} contentContainerStyle={theme === 'light' ? styles.modalFormCreateCollegeLight : styles.modalFormCreateCollegeDark} onDismiss={() => { setModalVisible(false) }}>
+        <View>
+          <Text style={theme === 'light' ? styles.titleModalLight : styles.titleModalDark}>Add a new college</Text>
+          <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+            <PaperInput
+              label="College name"
+              mode="outlined"
+              /*value={college}
+              onChangeText={text => setCollege(text)}*/
+              style={styles.input}
+            />
 
-                <PaperInput
-                    label="College abbreviation"
-                    mode="outlined"
-                    /*value={subject}
-                    onChangeText={text => setSubject(text)}*/
-                    style={styles.input}
-                />
-                
-                <PaperInput
-                    label="Address"
-                    mode="outlined"
-                    /*value={title}
-                    onChangeText={text => setTitle(text)}*/
-                    style={styles.input}
-                />
-                <PaperInput
-                    label="Phone number"
-                    mode="outlined"
-                    placeholder='+38121536536'
-                    /*value={description}
-                    onChangeText={text => setDescription(text)}*/
-                    style={styles.input}
-                />
+            <PaperInput
+              label="College abbreviation"
+              mode="outlined"
+              /*value={subject}
+              onChangeText={text => setSubject(text)}*/
+              style={styles.input}
+            />
 
-                <PaperInput
-                    label="e-mail address"
-                    mode="outlined"
-                    placeholder='example@gmail.com'
-                    /*value={description}
-                    onChangeText={text => setDescription(text)}*/
-                    style={styles.input}
-                />
-                </PaperProvider>
+            <PaperInput
+              label="Address"
+              mode="outlined"
+              /*value={title}
+              onChangeText={text => setTitle(text)}*/
+              style={styles.input}
+            />
+            <PaperInput
+              label="Phone number"
+              mode="outlined"
+              placeholder='+38121536536'
+              /*value={description}
+              onChangeText={text => setDescription(text)}*/
+              style={styles.input}
+            />
 
-                <View style={styles.buttonRow}>
-                    <Button mode='contained' style={ theme === 'light' ? styles.createCollegeButtonLight : styles.createCollegeButtonDark}> Submit announcement </Button>
-                    <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={ theme === 'light' ? styles.cancelCollegeButtonLight : styles.cancelCollegeButtonDark}> Cancel </Button>
-                </View>
+            <PaperInput
+              label="e-mail address"
+              mode="outlined"
+              placeholder='example@gmail.com'
+              /*value={description}
+              onChangeText={text => setDescription(text)}*/
+              style={styles.input}
+            />
+          </PaperProvider>
 
-            </View>
-        </Modal>
-      
-      <Button mode='contained' style={ theme === 'light' ? styles.addCollegeButtonLight : styles.addCollegeButtonDark} onPress={() => setModalVisible(true)}>
-          Add new college
-        </Button>
+          <View style={styles.buttonRow}>
+            <Button mode='contained' style={theme === 'light' ? styles.createCollegeButtonLight : styles.createCollegeButtonDark}> Submit announcement </Button>
+            <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={theme === 'light' ? styles.cancelCollegeButtonLight : styles.cancelCollegeButtonDark}> Cancel </Button>
+          </View>
+
+        </View>
+      </Modal>
+
+      <Button mode='contained' style={theme === 'light' ? styles.addCollegeButtonLight : styles.addCollegeButtonDark} onPress={() => setModalVisible(true)}>
+        Add new college
+      </Button>
     </View>
   );
 };
@@ -192,9 +197,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#18191A'
   },
   item: {
-    flex: 1,
-    margin: 10,
-    maxWidth: (width / numColumns) - 20,
+    margin: cardMargin,
   },
   card: {
     flex: 1,
@@ -244,7 +247,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 10,
     marginTop: 10,
-    color:'white'
+    color: 'white'
   },
   qaContainerLight: {
     marginTop: 15,
@@ -257,7 +260,7 @@ const styles = StyleSheet.create({
   titleLight: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'black'  
+    color: 'black'
   },
   titleDark: {
     fontSize: 24,
@@ -340,7 +343,7 @@ const styles = StyleSheet.create({
   },
   cancelCollegeButtonLight: {
     width: '49%',
-    
+
   },
   cancelCollegeButtonDark: {
     width: '49%',
@@ -355,7 +358,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   titleModalDark: {
-    color:'white',
+    color: 'white',
     fontSize: 24,
     marginTop: 10,
     marginBottom: 30,

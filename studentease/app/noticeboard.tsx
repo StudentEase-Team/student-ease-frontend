@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
 import { MenuItem, Select, SelectChangeEvent} from '@mui/material';
 import { StyleSheet, ScrollView, View } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal } from 'react-native-paper';
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
@@ -63,143 +63,146 @@ export default function NoticeboardShow() {
        //TODO: Testiraj mobile platforme
     return (
         <>
-        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-        <ScrollView style={theme === 'light'? styles.containerLight : styles.containerDark}>
+        <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
             <View style={styles.filterAndSearchContainer}>
                 <View style={theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark}>
-                    <Text style={theme === 'light'? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters...</Text>
+                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters...</Text>
                     <View style={styles.filterGrid}>
-                        <Select style={styles.comboBox} label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(e.target.value)}} value={scopeCombo}>
+                        <Select style={styles.comboBox} label="University/Faculty/Subject" onChange={(e: SelectChangeEvent) => { setScopeCombo(e.target.value); } } value={scopeCombo}>
                             <MenuItem value=""><em>None</em></MenuItem>
                             <MenuItem value="University">University</MenuItem>
                             <MenuItem value="Faculty">Faculty</MenuItem>
                             <MenuItem value="Subject">Subject</MenuItem>
                         </Select>
+                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                            <PaperInput
+                                label="Faculty"
+                                mode="outlined">
+                            </PaperInput>
+                            </PaperProvider>
+                            <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                            <PaperInput
+                                label="Subject"
+                                mode="outlined">
 
-                        <PaperInput
-                        label="Faculty"
-                        mode="outlined"
-                        >
-                            
-                        </PaperInput>
-
-                        <PaperInput
-                        label="Subject"
-                        mode="outlined">
-                            
-                        </PaperInput>
+                            </PaperInput>
+                        </PaperProvider>
                     </View>
                 </View>
 
-                <View style={theme === 'light'? styles.containerSearchLight : styles.containerSearchDark}>
-                    <Text style={theme === 'light'? styles.titleFilterLight : styles.titleFilterDark}>Search and sort...</Text>
+                <View style={theme === 'light' ? styles.containerSearchLight : styles.containerSearchDark}>
+                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Search and sort...</Text>
                     <View style={styles.searchSortGrid}>
-                        <PaperInput
-                        label="Search..."
-                        mode="outlined">
-                        </PaperInput>
+                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                            <PaperInput
+                                label="Search..."
+                                mode="outlined">
+                            </PaperInput>
+                        </PaperProvider>
 
-                        <Button onPress={() => { setModalVisibleDate(true) }} mode='contained'>Choose date</Button>
+                        <Button onPress={() => { setModalVisibleDate(true); } } mode='contained'>Choose date</Button>
                     </View>
                 </View>
             </View>
 
             <View style={styles.contentGrid}>
-                {Array.from({ length: 10}).map((_, index) => (
-                    <Card key={index} style={styles.notification}>
-                        <Card.Title title="Notification title" titleStyle={styles.title}></Card.Title>
+                {Array.from({ length: 10 }).map((_, index) => (
+                    <Card key={index} style={theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark}>
                         <Card.Content>
-                            <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>This is description of the notification</Text>
-                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>Date: 15.04.2024.</Text>
-                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>Subject: Example subject</Text>
-                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>College: Example faculty</Text>
-                            <Text style={theme === 'light' ? styles.metaLight : styles.metaDark}>Professor: Example professor</Text>
+                            <Title style={theme === 'light' ? styles.titleLight : styles.titleDark}>Notification title</Title>
+                            <Paragraph style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>This is description of the notification</Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>Date: 15.04.2024.</Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>Subject: Example subject</Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>College: Example faculty</Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>Professor: Example professor</Paragraph>
                         </Card.Content>
 
                         <Card.Actions>
-                            <Icon name="edit" type="feather" color={theme === 'light'? 'black':'white'}/>
-                            <Icon name="trash-alt" type="font-awesome-5" color={theme === 'light'? 'black':'white'}/>
+                            <IconButton
+                                icon="pencil"
+                                mode='contained-tonal'
+                                size={25}
+                                onPress={() => console.log('Edit', index)} />
+                            <IconButton
+                                icon="delete"
+                                mode='outlined'
+                                size={25}
+                                onPress={() => console.log('Delete', index)} />
                         </Card.Actions>
                     </Card>
                 ))}
             </View>
         </ScrollView>
- 
-        <Modal style={styles.dateModal} visible={modalVisibleDate} onDismiss={() => {setModalVisibleDate(false)}}>
-            <View style={theme === 'light'? styles.datepickerLight : styles.datepickerDark}>
-                <DateTimePicker 
+
+        <Modal style={styles.dateModal} visible={modalVisibleDate} onDismiss={() => { setModalVisibleDate(false); } }>
+            <View style={theme === 'light' ? styles.datepickerLight : styles.datepickerDark}>
+                <DateTimePicker
                     mode="single"
                     date={date}
                     onChange={(params) => {
                         setDate(dayjs(params.date?.toString()));
                         console.log(date.toISOString());
-                    }}
-                />
+                    } } />
             </View>
         </Modal>
+            <Modal visible={modalVisibleNewItem} contentContainerStyle={theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark} onDismiss={() => { setModalVisibleNewItem(false); } }>
+                <View>
+                    <Text style={theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark}>Create a new noticeboard notification</Text>
+                    <Select label="University/Faculty/Subject" onChange={(e: SelectChangeEvent) => { setScopeCombo(e.target.value); } } style={styles.categoryContainer} value={scopeCombo.toString()}>
+                        <MenuItem value="-1"><em>None</em></MenuItem>
+                        <MenuItem value="0">University Announcement</MenuItem>
+                        <MenuItem value="1">University Guest Announcement</MenuItem>
+                        <MenuItem value="2">College Announcement</MenuItem>
+                        <MenuItem value="3">College Guest Announcement</MenuItem>
+                        <MenuItem value="4">Subject Announcement</MenuItem>
+                        <MenuItem value="5">Subject Exam Result Announcement</MenuItem>
+                        <MenuItem value="6">Subject Exam Date Announcement</MenuItem>
+                        <MenuItem value="7">Internship Announcement</MenuItem>
+                        <MenuItem value="8">Activities Announcement</MenuItem>
+                    </Select>
+                    <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                        <PaperInput
+                            label="College"
+                            mode="outlined"
+                            value={college}
+                            onChangeText={text => setCollege(text)}
+                            style={styles.input} />
 
-        <Modal visible={modalVisibleNewItem} contentContainerStyle={theme === 'light'? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark} onDismiss={() => {setModalVisibleNewItem(false)}}>
-            <View>
-                <Text style={styles.titleNewItem}>Create a new noticeboard notification</Text>
-                <Select label="University/Faculty/Subject" onChange={(e : SelectChangeEvent) => {setScopeCombo(e.target.value)}} style={styles.categoryContainer} value={scopeCombo.toString()}>
-                    <MenuItem value="-1"><em>None</em></MenuItem>
-                    <MenuItem value="0">University Announcement</MenuItem>
-                    <MenuItem value="1">University Guest Announcement</MenuItem>
-                    <MenuItem value="2">College Announcement</MenuItem>
-                    <MenuItem value="3">College Guest Announcement</MenuItem>
-                    <MenuItem value="4">Subject Announcement</MenuItem>
-                    <MenuItem value="5">Subject Exam Result Announcement</MenuItem>
-                    <MenuItem value="6">Subject Exam Date Announcement</MenuItem>
-                    <MenuItem value="7">Internship Announcement</MenuItem>
-                    <MenuItem value="8">Activities Announcement</MenuItem>
-                </Select>
+                        <PaperInput
+                            label="Subject"
+                            mode="outlined"
+                            value={subject}
+                            onChangeText={text => setSubject(text)}
+                            style={styles.input} />
 
-                <PaperInput
-                    label="College"
-                    mode="outlined"
-                    value={college}
-                    onChangeText={text => setCollege(text)}
-                    style={styles.input}
-                />
+                        <PaperInput
+                            label="Title"
+                            mode="outlined"
+                            value={title}
+                            onChangeText={text => setTitle(text)}
+                            style={styles.input} />
+                        <PaperInput
+                            label="Description"
+                            mode="outlined"
+                            multiline
+                            numberOfLines={4}
+                            value={description}
+                            onChangeText={text => setDescription(text)}
+                            style={styles.input} />
+                    </PaperProvider>
 
-                <PaperInput
-                    label="Subject"
-                    mode="outlined"
-                    value={subject}
-                    onChangeText={text => setSubject(text)}
-                    style={styles.input}
-                />
-                
-                <PaperInput
-                    label="Title"
-                    mode="outlined"
-                    value={title}
-                    onChangeText={text => setTitle(text)}
-                    style={styles.input}
-                />
-                <PaperInput
-                    label="Description"
-                    mode="outlined"
-                    multiline
-                    numberOfLines={4}
-                    value={description}
-                    onChangeText={text => setDescription(text)}
-                    style={styles.input}
-                />
+                    <View style={styles.buttonRow}>
+                        <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit announcement </Button>
+                        <Button mode='contained-tonal' onPress={() => setModalVisibleNewItem(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
+                    </View>
 
-                <View style={styles.buttonRow}>
-                    <Button mode='contained' onPress={() => sumbitAnnouncement()} style={styles.button}> Submit announcement </Button>
-                    <Button mode='contained-tonal' onPress={() => setModalVisibleNewItem(false)} style={styles.button}> Cancel </Button>
                 </View>
+            </Modal>
 
-            </View>
-        </Modal>
-
-        <Button mode='contained' style={styles.createNoticeboardNotificationButton} onPress={() => setModalVisibleNewItem(true)}>
-            Create noticeboard notification
-        </Button>
-        </PaperProvider>
-        </>
+            <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
+                Create noticeboard notification
+            </Button>
+            </>
     );
 };
 
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
     containerDark: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#222'
+        backgroundColor: '#18191A'
     },
 
     dateModal: {
@@ -239,7 +242,7 @@ const styles = StyleSheet.create({
 
     filterAndSearchContainer: {
         flex: 1,
-        flexDirection: 'column',
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -250,26 +253,28 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: 'white',
         borderRadius: 20,
-        width: '70%',
+        width: '40%',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        marginRight: 10
     },
 
     containerFilterDark: {
         flex: 1,
         flexDirection: 'column',
         marginBottom: 20,
-        backgroundColor: 'rgb(30, 30, 30)',
+        backgroundColor: '#242526',
         borderRadius: 20,
-        width: '70%',
+        width: '40%',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        marginRight: 10
     },
 
     filterGrid: {
@@ -285,33 +290,46 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         marginBottom: 20,
         backgroundColor: 'white',
-        width: '70%',
+        width: '40%',
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        marginLeft: 10
     },
 
     containerSearchDark: {
         flex: 1,
         flexDirection: 'column',
         marginBottom: 20,
-        backgroundColor: 'rgb(30,30,30)',
-        width: '70%',
+        backgroundColor: '#242526',
+        width: '40%',
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        marginLeft: 10,
     },
 
     searchSortGrid: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         marginBottom: 20
+    },
+
+    qaContainerLight: {
+        width: '30%',
+        marginTop: 15,
+        backgroundColor: 'white',
+    },
+    qaContainerDark: {
+        width: '30%',
+        marginTop: 15,
+        backgroundColor: '#242526',
     },
 
     comboBox: {
@@ -327,9 +345,6 @@ const styles = StyleSheet.create({
     },
 
     notification: {
-        //backgroundColor: '#f9f9f9',
-        //borderColor: '#ddd',
-        borderWidth: 1,
         borderRadius: 20,
         padding: 10,
         margin: 5,
@@ -344,9 +359,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 
-    title: {
+    titleLight: {
         fontSize: 24,
         fontWeight: 'bold',
+        color: 'black'
+        },
+        titleDark: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white'
     },
 
     titleFilterLight: {
@@ -435,7 +456,7 @@ const styles = StyleSheet.create({
     },
 
     modalFormCreateNoticeboardItemDark: {
-        backgroundColor: 'rgb(30,30,30)',
+        backgroundColor: '#242526',
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,
@@ -453,5 +474,54 @@ const styles = StyleSheet.create({
 
     button: {
         width: '49%'
-    }
+    },
+    titleNewItemModalLight: {
+        fontSize: 24,
+        marginTop: 10,
+        marginBottom: 30,
+        fontWeight: 'bold',
+        color: 'black',
+        textAlign: 'center',
+      },
+      titleNewItemModalDark: {
+        color: 'white',
+        fontSize: 24,
+        marginTop: 10,
+        marginBottom: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      createNoticeboardItemButtonLight: {
+        width: '49%',
+        backgroundColor: '#4dabf7',
+      },
+      createNoticeboardItemButtonDark: {
+        width: '49%',
+        backgroundColor: '#9775fa',
+      },
+      cancelNoticeboardItemButtonLight: {
+        width: '49%',
+      },
+      cancelNoticeboardItemButtonDark: {
+        width: '49%',
+        backgroundColor: 'grey',
+      },
+      addNoticeboardItemButtonLight: {
+        position: 'absolute',
+        bottom: '5%',
+        right: '5%',
+        height: 60,
+        borderRadius: 50,
+        justifyContent: 'center',
+        backgroundColor: '#4dabf7',
+      },
+      addNoticeboardItemButtonDark: {
+        position: 'absolute',
+        bottom: '5%',
+        right: '5%',
+        height: 60,
+        borderRadius: 50,
+        justifyContent: 'center',
+        backgroundColor: '#9775fa',
+      },
 });
