@@ -15,7 +15,7 @@ export function PasswordInput(props : PasswordProps) {
     let selectedIcon = "eye";
     let hiddenText = true
     if(hidden) {
-        selectedIcon = "eye-slash";
+        selectedIcon = "eye-off";
         hiddenText = false
     }
     else {
@@ -28,6 +28,7 @@ export function PasswordInput(props : PasswordProps) {
             label="Password"
             secureTextEntry={hiddenText}
             mode="outlined"
+            value={text}
             style={theme === 'light' ? { color: 'black' } : { color: 'white' }}
             right={<TextInput.Icon icon={selectedIcon} 
                 color={theme === 'light' ? 'black' : 'white'}

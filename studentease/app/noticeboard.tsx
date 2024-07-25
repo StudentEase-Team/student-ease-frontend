@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
 import { MenuItem, Select, SelectChangeEvent} from '@mui/material';
 import { StyleSheet, ScrollView, View } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph } from 'react-native-paper';
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, RadioButton } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { NoticeboardItem } from '../model/NoticeboardItem';
 import { themeDark, themeLight } from '../context/PaperTheme';
+import RadioButtonGroup from 'react-native-paper/lib/typescript/components/RadioButton/RadioButtonGroup';
 
 const announcementCategories = [
     { label: 'University Announcement', value: 'UNIVERSITY_ANNOUNCEMENT' },
@@ -25,7 +26,7 @@ const announcementCategories = [
 
 export default function NoticeboardShow() {
     const [scopeCombo, setScopeCombo]  = useState("");
-    const dropdownList = [new Option("University", "University"), new Option("University", "University")]
+    const [scopeComboFilter, setScopeComboFilter] = useState("");
     const [date, setDate] = useState(dayjs());
     const [modalVisibleDate, setModalVisibleDate] = useState(false);
     const [modalVisibleNewItem, setModalVisibleNewItem] = useState(false);
@@ -68,23 +69,30 @@ export default function NoticeboardShow() {
                 <View style={theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark}>
                     <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters...</Text>
                     <View style={styles.filterGrid}>
-                        <Select style={styles.comboBox} label="University/Faculty/Subject" onChange={(e: SelectChangeEvent) => { setScopeCombo(e.target.value); } } value={scopeCombo}>
-                            <MenuItem value=""><em>None</em></MenuItem>
-                            <MenuItem value="University">University</MenuItem>
-                            <MenuItem value="Faculty">Faculty</MenuItem>
-                            <MenuItem value="Subject">Subject</MenuItem>
-                        </Select>
+                        <RadioButton.Group value={scopeComboFilter} onValueChange={(value) => {setScopeComboFilter(value)}}>
+                            
+                                <RadioButton.Item value='University' label='University' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
+                          
+                            
+                                <RadioButton.Item value='College' label='College' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
+                        
+                           
+                                <RadioButton.Item value='Subject' label='Subject' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
+                 
+                            
+                        </RadioButton.Group>
                         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
                             <PaperInput
                                 label="Faculty"
-                                mode="outlined">
+                                mode="outlined"
+                                style={theme === 'light' ? styles.inputLight : styles.inputDark}>
                             </PaperInput>
                             </PaperProvider>
                             <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
                             <PaperInput
                                 label="Subject"
-                                mode="outlined">
-
+                                mode="outlined"
+                                style={theme === 'light' ? styles.inputLight : styles.inputDark}>
                             </PaperInput>
                         </PaperProvider>
                     </View>
@@ -96,7 +104,8 @@ export default function NoticeboardShow() {
                         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
                             <PaperInput
                                 label="Search..."
-                                mode="outlined">
+                                mode="outlined"
+                                style={theme === 'light' ? styles.inputLight : styles.inputDark}>
                             </PaperInput>
                         </PaperProvider>
 
@@ -242,7 +251,7 @@ const styles = StyleSheet.create({
 
     filterAndSearchContainer: {
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -253,13 +262,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: 'white',
         borderRadius: 20,
-        width: '40%',
+        width: '70%',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
-        marginRight: 10
     },
 
     containerFilterDark: {
@@ -268,13 +276,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: '#242526',
         borderRadius: 20,
-        width: '40%',
+        width: '70%',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
-        marginRight: 10
     },
 
     filterGrid: {
@@ -290,14 +297,13 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         marginBottom: 20,
         backgroundColor: 'white',
-        width: '40%',
+        width: '70%',
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
-        marginLeft: 10
     },
 
     containerSearchDark: {
@@ -305,14 +311,13 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         marginBottom: 20,
         backgroundColor: '#242526',
-        width: '40%',
+        width: '70%',
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
-        marginLeft: 10,
     },
 
     searchSortGrid: {
@@ -523,5 +528,22 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         backgroundColor: '#9775fa',
+      },
+      inputLight: {
+        marginBottom: 10,
+        color: '#242526',
+        width: '40%',
+      },
+    
+      inputDark: {
+        marginBottom: 10,
+        color: 'white',
+        width: '40%',
+      },
+      radioButtonLight: {
+        color: '#4dabf7'
+      },
+      radioButtonDark: {
+        color: '#9775fa'
       },
 });

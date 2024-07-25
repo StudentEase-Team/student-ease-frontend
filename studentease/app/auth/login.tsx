@@ -23,9 +23,6 @@ const Login : React.FC = () => {
     login(email, password)
   }
 
-
-    
-
   return (
     <ImageBackground source={require('../../assets/web.jpg')} style={styles.background}>
       <Toast />
@@ -37,14 +34,16 @@ const Login : React.FC = () => {
             placeholder="University email"
             keyboardType="email-address"
             autoCapitalize="none" 
+            value={email}
             mode='outlined'
             label="University email"
-            style={theme === 'light'? {color:'black'}:{color:'white'}}
+            style={theme === 'light'? styles.inputLight : styles.inputDark }
             onChangeText={value => setEmail(value)}
             />
           <PasswordInput passwordCallback={setPassword}/>
-
+          <PaperProvider>
           <Button onPress={attemptLogin} mode='contained' style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
+          </PaperProvider>
 
           <TouchableOpacity style={theme === 'light'? styles.signupTextLight : styles.signupTextDark}>
             <Text style={theme === 'light'? {color:'#4dabf7'}:{color:'#9775fa'}}>You don't have a student account? Click here to sign up!</Text>
@@ -69,6 +68,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     shadowOffset: { width: 0, height: 2 },
     opacity: 0.85,
+  },
+
+  inputLight: {
+    marginBottom: 10,
+    color: '#242526'
+  },
+
+  inputDark: {
+    marginBottom: 10,
+    color: 'white',
   },
 
   formLight: {
