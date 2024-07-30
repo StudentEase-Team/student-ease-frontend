@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
 import { MenuItem, Select, SelectChangeEvent} from '@mui/material';
-import { StyleSheet, ScrollView, View } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, RadioButton } from 'react-native-paper';
+import { StyleSheet, ScrollView, View, Platform } from 'react-native';
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, RadioButton, TextInput } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
@@ -64,59 +64,62 @@ export default function NoticeboardShow() {
        //TODO: Testiraj mobile platforme
     return (
         <>
+       
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
+        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
             <View style={styles.filterAndSearchContainer}>
-                <View style={theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark}>
-                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters...</Text>
+                <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
+                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters</Text>
                     <View style={styles.filterGrid}>
-                        <RadioButton.Group value={scopeComboFilter} onValueChange={(value) => {setScopeComboFilter(value)}}>
-                            
+                        <RadioButton.Group value={scopeComboFilter} onValueChange={(value) => {setScopeComboFilter(value)}} >
+                            <View style={styles.radioButtons}>
                                 <RadioButton.Item value='University' label='University' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
-                          
-                            
                                 <RadioButton.Item value='College' label='College' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
-                        
-                           
                                 <RadioButton.Item value='Subject' label='Subject' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
-                 
-                            
+                            </View>
                         </RadioButton.Group>
-                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                            <PaperInput
-                                label="Faculty"
-                                mode="outlined"
-                                style={theme === 'light' ? styles.inputLight : styles.inputDark}>
-                            </PaperInput>
-                            </PaperProvider>
-                            <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                            <PaperInput
-                                label="Subject"
-                                mode="outlined"
-                                style={theme === 'light' ? styles.inputLight : styles.inputDark}>
-                            </PaperInput>
-                        </PaperProvider>
+                        <View style={Platform.OS === 'web' ? styles.inputRow : styles.inputColumn}>
+                                <PaperInput
+                                    label="College"
+                                    mode="outlined"
+                                    style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
+                                </PaperInput>
+                                <PaperInput
+                                    label="Subject"
+                                    mode="outlined"
+                                    style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
+                                </PaperInput>
+                        </View>
                     </View>
                 </View>
 
-                <View style={theme === 'light' ? styles.containerSearchLight : styles.containerSearchDark}>
-                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Search and sort...</Text>
+                <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerSearchLight : styles.containerSearchDark) : (theme === 'light' ? styles.containerSearchLightMobile : styles.containerSearchDarkMobile)}>
+                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Search and sort</Text>
                     <View style={styles.searchSortGrid}>
-                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                        <View style={Platform.OS === 'web' ? styles.inputRow : styles.inputColumn}>
                             <PaperInput
                                 label="Search..."
                                 mode="outlined"
-                                style={theme === 'light' ? styles.inputLight : styles.inputDark}>
+                                style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
                             </PaperInput>
-                        </PaperProvider>
+                            <PaperInput
+                                label="Date"
+                                mode="outlined"
+                                style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
+                                right={<TextInput.Icon icon='calendar' 
+                                    onPress={() => { setModalVisibleDate(true); } }/>} 
 
-                        <Button onPress={() => { setModalVisibleDate(true); } } mode='contained'>Choose date</Button>
+                                    />
+                        </View>
                     </View>
                 </View>
             </View>
 
-            <View style={styles.contentGrid}>
+        </PaperProvider>
+
+            <View style={Platform.OS ==='web'? styles.contentGrid : styles.contentGridMobile}>
                 {Array.from({ length: 10 }).map((_, index) => (
-                    <Card key={index} style={theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark}>
+                    <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark) : (theme === 'light'? styles.qaContainerLightMobile:styles.qaContainerDarkMobile)}>
                         <Card.Content>
                             <Title style={theme === 'light' ? styles.titleLight : styles.titleDark}>Notification title</Title>
                             <Paragraph style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>This is description of the notification</Paragraph>
@@ -141,6 +144,7 @@ export default function NoticeboardShow() {
                     </Card>
                 ))}
             </View>
+            
         </ScrollView>
 
         <Modal style={styles.dateModal} visible={modalVisibleDate} onDismiss={() => { setModalVisibleDate(false); } }>
@@ -268,6 +272,22 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        padding: 20,
+    },
+
+    containerFilterLightMobile: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+        padding: 20,
     },
 
     containerFilterDark: {
@@ -282,11 +302,33 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        padding: 20,
+    },
+
+    containerFilterDarkMobile: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: '#242526',
+        borderRadius: 20,
+        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+        padding: 20,
+    },
+
+    radioButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignSelf: 'center'
     },
 
     filterGrid: {
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-evenly',
         alignItems: 'center',
         marginBottom: 20,
@@ -304,6 +346,22 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        padding: 20,
+    },
+
+    containerSearchLightMobile: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: 'white',
+        width: '100%',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+        padding: 20,
     },
 
     containerSearchDark: {
@@ -318,12 +376,29 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 3,
+        padding: 20,
+    },
+
+    containerSearchDarkMobile: {
+        flex: 1,
+        flexDirection: 'column',
+        marginBottom: 20,
+        backgroundColor: '#242526',
+        width: '100%',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        elevation: 3,
+        padding: 20,
     },
 
     searchSortGrid: {
-        flexDirection: 'row',
+        flex: 1,
+        flexDirection: 'column',
         justifyContent: 'space-evenly',
-        marginBottom: 20
+        marginBottom: 20,
     },
 
     qaContainerLight: {
@@ -331,8 +406,18 @@ const styles = StyleSheet.create({
         marginTop: 15,
         backgroundColor: 'white',
     },
+    qaContainerLightMobile: {
+        width: '100%',
+        marginTop: 15,
+        backgroundColor: 'white',
+    },
     qaContainerDark: {
         width: '30%',
+        marginTop: 15,
+        backgroundColor: '#242526',
+    },
+    qaContainerDarkMobile: {
+        width: '100%',
         marginTop: 15,
         backgroundColor: '#242526',
     },
@@ -344,6 +429,13 @@ const styles = StyleSheet.create({
 
     contentGrid: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-evenly',
+        marginTop: 20
+    },
+
+    contentGridMobile: {
+        flexDirection: 'column',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
         marginTop: 20
@@ -377,19 +469,15 @@ const styles = StyleSheet.create({
 
     titleFilterLight: {
         fontWeight: 'bold',
-        marginLeft: 20,
         fontSize: 24,
-        marginBottom: 20,
-        marginTop: 20,
+        marginBottom: 10,
         color: 'black'
     },
 
     titleFilterDark: {
         fontWeight: 'bold',
-        marginLeft: 20,
         fontSize: 24,
-        marginBottom: 20,
-        marginTop: 20,
+        marginBottom: 10,
         color: 'white'
     },
 
@@ -431,6 +519,17 @@ const styles = StyleSheet.create({
     input: {
         marginBottom: 10,
         width: 600,
+    },
+
+    inputRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: "100%"
+    },
+
+    inputColumn: {
+        flexDirection: 'column',
+        width: '100%',
     },
 
     categoryContainer: {
@@ -530,19 +629,35 @@ const styles = StyleSheet.create({
         backgroundColor: '#9775fa',
       },
       inputLight: {
-        marginBottom: 10,
+        marginTop: 10,
         color: '#242526',
-        width: '40%',
+        width: '49%',
+      },
+
+      inputLightMobile: {
+        marginTop: 10,
+        color: '#242526',
+        width: '100%',
+        alignSelf: 'center',
       },
     
       inputDark: {
-        marginBottom: 10,
+        marginTop: 10,
         color: 'white',
-        width: '40%',
+        width: '49%',
       },
+
+      inputDarkMobile: {
+        marginTop: 10,
+        color: 'white',
+        width: '100%',
+        alignSelf: 'center',
+      },
+
       radioButtonLight: {
         color: '#4dabf7'
       },
+
       radioButtonDark: {
         color: '#9775fa'
       },

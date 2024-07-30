@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     try {
-      const result: AxiosResponse = await axios.post('http://localhost:8080/api/login', request);
+      const result: AxiosResponse = await axios.post('http://192.168.0.13:8080/api/login', request);
       if (result.status === 200) {
         Toast.show({
           type: 'success',
