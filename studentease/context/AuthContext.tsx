@@ -5,6 +5,7 @@ import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
+import { API_BASE_URL } from '@env';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -78,7 +79,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     try {
-      const result: AxiosResponse = await axios.post('http://192.168.0.13:8080/api/login', request);
+      const result: AxiosResponse = await axios.post(`${API_BASE_URL}/login`, request);
       if (result.status === 200) {
         Toast.show({
           type: 'success',
@@ -93,7 +94,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Wrong email or password!',
+        text1: `Wrong email or password!`,
       });
       return null;
     }

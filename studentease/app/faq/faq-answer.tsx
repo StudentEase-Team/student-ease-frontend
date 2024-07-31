@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text } from '@rneui/themed';
 import { TextInput as PaperInput, Button, Card, Modal, PaperProvider} from 'react-native-paper';
-import { NativeSyntheticEvent, StyleSheet, TextInputChangeEventData, View } from 'react-native';
+import { NativeSyntheticEvent, Platform, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Icon } from 'react-native-elements';
 import { useAuth } from '../../context/AuthContext';
@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { FAQItem } from '../../model/FAQItem';
 import axios, { AxiosResponse } from 'axios';
 import { themeDark, themeLight } from '../../context/PaperTheme';
+import { API_BASE_URL } from '@env';
 
 const FAQ : React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -24,7 +25,7 @@ const FAQ : React.FC = () => {
         };
         const fetchFAQ = async () => {
             try {
-                const response: AxiosResponse = await axios.get('http://localhost:8080/api/faq/items/unanswered', config);
+                const response: AxiosResponse = await axios.get(`${API_BASE_URL}/faq/items/unanswered`, config);
                 if (response.status === 200) {
                     setItems(response.data);
                 }
@@ -46,7 +47,7 @@ const FAQ : React.FC = () => {
                 headers: { Authorization: `Bearer ${userState?.token.accessToken}` }
             };
             try {
-                const response: AxiosResponse = await axios.put('http://localhost:8080/api/faq/item', currentItem, config);
+                const response: AxiosResponse = await axios.put(`${API_BASE_URL}/faq/item`, currentItem, config);
                 if (response.status === 200) {
                     setItems(items?.filter(t => t.id !== currentItem.id));
                     setCurrentItem(undefined);
@@ -66,16 +67,16 @@ const FAQ : React.FC = () => {
             <Toast/>
             <PaperProvider theme={theme === 'light'? themeLight: themeDark}>
             <View style={theme === 'light'? styles.pageContainerLight : styles.pageContainerDark}>
-                <View style={styles.faqContainer}>
+                <View style={Platform.OS === 'web'? styles.faqContainer:styles.faqContainerMobile}>
                     {items.length === 0 ? (
-                            <Card style={styles.qaContainer}>
+                            <Card style={Platform.OS === 'web'? styles.qaContainer:styles.qaContainerMobile}>
                                 <Card.Content>
                                     <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>No unanswered questions!</Text>
                                 </Card.Content>
                             </Card>
                     ) : (
                         items.map((item, index) => (
-                            <Card key={index} style={styles.qaContainer}>
+                            <Card key={index} style={Platform.OS === 'web'? styles.qaContainer:styles.qaContainerMobile}>
                                 <Card.Content>
                                     <Text style={theme === 'light'? styles.titleLight : styles.titleDark}>{item.question}</Text>
                                     <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>{item.answer}</Text>
@@ -88,7 +89,7 @@ const FAQ : React.FC = () => {
                     )}
                 </View>
 
-                <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={theme === 'light'? styles.modalContainerLight : styles.modalContainerDark}>
+                <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight : styles.modalContainerDark):(theme === 'light'? styles.modalContainerLightMobile : styles.modalContainerDarkMobile)}>
                     <Text style={theme === 'light'? styles.titleModalLight : styles.titleModalDark}>Answer:</Text>
                     <PaperInput mode='outlined' style={styles.searchBar} value={answer} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setAnswer(e.nativeEvent.text)}}></PaperInput>
                     <View style={styles.buttonRow}>
@@ -127,6 +128,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 
+    modalContainerLightMobile: {
+        backgroundColor: 'white',
+        padding: 20,
+        alignItems: 'center',
+        borderRadius: 20,
+        width: '95%',
+        alignSelf: 'center',
+    },
+
     modalContainerDark: {
         backgroundColor: 'rgb(30,30,30)',
         padding: 20,
@@ -135,7 +145,16 @@ const styles = StyleSheet.create({
         width: '40%',
         alignSelf: 'center',
     },
-    
+
+    modalContainerDarkMobile: {
+        backgroundColor: 'rgb(30,30,30)',
+        padding: 20,
+        alignItems: 'center',
+        borderRadius: 20,
+        width: '95%',
+        alignSelf: 'center',
+    },
+
     buttonRow: {
         width: '100%',
         flexDirection: 'row',
@@ -153,6 +172,15 @@ const styles = StyleSheet.create({
         width: '90%',
     },
 
+    faqContainerMobile: {
+        flex: 1,
+        marginTop: 15,
+        flexDirection: 'column',
+        alignItems: 'center',
+        overflow: 'scroll',
+        width: '95%',
+    },
+
     searchBar: {
         marginTop: 30,
         width: '75%',
@@ -162,6 +190,10 @@ const styles = StyleSheet.create({
     qaContainer: {
         marginTop: 15,
         width: '67%',
+    },
+    qaContainerMobile: {
+        marginTop: 15,
+        width: '100%',
     },
 
     titleLight: {

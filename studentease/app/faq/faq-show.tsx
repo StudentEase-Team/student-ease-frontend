@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Text } from '@rneui/themed';
 import { TextInput as PaperInput, Button, Card, Modal, PaperProvider } from 'react-native-paper';
-import { NativeSyntheticEvent, StyleSheet, TextInputChangeEventData, View } from 'react-native';
+import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { FAQItem } from '../../model/FAQItem';
 import { useAuth } from '../../context/AuthContext';
 import axios, { AxiosResponse } from 'axios';
 import { useTheme } from '../../context/ThemeContext';
 import { themeLight, themeDark } from '../../context/PaperTheme';
+import { API_BASE_URL } from '@env';
 
 const FAQ: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -28,7 +29,7 @@ const FAQ: React.FC = () => {
       isAnswered: false,
       question: question
     };
-    const response: AxiosResponse = await axios.post('http://localhost:8080/api/faq/item', newQuestion, config);
+    const response: AxiosResponse = await axios.post(`${API_BASE_URL}/faq/item`, newQuestion, config);
     if (response.status === 201) {
       Toast.show({
         type: 'success',
@@ -57,7 +58,7 @@ const FAQ: React.FC = () => {
       headers: { Authorization: `Bearer ${userState.token.accessToken}` }
     };
     try {
-      const response: AxiosResponse = await axios.get('http://localhost:8080/api/faq/items', config);
+      const response: AxiosResponse = await axios.get(`${API_BASE_URL}/faq/items`, config);
       if (response.status === 200) {
         setItems(response.data);
         setItemsBak(response.data);
@@ -78,34 +79,34 @@ const FAQ: React.FC = () => {
     <>
       <Toast/>
       <View style={theme === 'light'? styles.pageLightContainer : styles.pageDarkContainer}>
-        <View style={theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark}>
+        <View style={(Platform.OS === 'web')? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
           <Text style={theme === 'light' ? styles.titleSearchLight : styles.titleSearchDark}>Search FAQ here</Text>
           <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
           <PaperInput placeholder='Search here...' mode='outlined' label="Search here..." style={styles.searchBar} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
           </PaperProvider>
         </View>
 
-        <View style={styles.faqContainer}>
+        <ScrollView style={Platform.OS === 'web'? styles.faqContainer:styles.faqContainerMobile} >
           {items?.map((item, index) => (
-            <Card key={index} style={theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark}>
+            <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark):(theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile)}>
               <Card.Content>
                 <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{item.question}</Text>
                 <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>{item.answer}</Text>
               </Card.Content>
             </Card>
           ))}
-        </View>
+        </ScrollView>
 
-        <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={theme === 'light'? styles.modalContainerLight: styles.modalContainerDark}>
+
+        <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight: styles.modalContainerDark) : (theme === 'light'? styles.modalContainerLightMobile: styles.modalContainerDarkMobile)}>
           <Text style={theme === 'light'? styles.titleModalLight: styles.titleModalDark}>Ask your question here:</Text>
-          <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
-          <PaperInput mode='outlined' multiline numberOfLines={4} style={styles.input} value={question} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => { setQuestion(e.nativeEvent.text); }}/>
-          </PaperProvider>
+          <PaperInput theme={theme === 'light'? themeLight : themeDark} mode='outlined' multiline numberOfLines={4} style={Platform.OS === 'web'? styles.input:styles.inputMobile} value={question} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => { setQuestion(e.nativeEvent.text); }}/>
           <View style={styles.buttonRow}>
             <Button mode='contained' onPress={() => submitQuestion()} style={ theme === 'light' ? styles.createQuestionButtonLight : styles.createQuestionButtonDark}>Ask a question</Button>
             <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={ theme === 'light' ? styles.cancelQuestionButtonLight : styles.cancelQuestionButtonDark}>Cancel</Button>
           </View>
         </Modal>
+
             
         <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
           Ask a question
@@ -143,12 +144,40 @@ const styles = StyleSheet.create({
     elevation: 3,
     padding: 20,
   },
+  containerFilterLightMobile: {
+    marginBottom: 20,
+    marginTop: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    width: '95%',
+    height: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 3,
+    padding: 20,
+  },
   containerFilterDark: {
     marginBottom: 20,
     marginTop: 20,
     backgroundColor: 'rgb(30,30,30)',
     borderRadius: 20,
     width: '70%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 3,
+    padding: 20,
+  },
+  containerFilterDarkMobile: {
+    marginBottom: 20,
+    marginTop: 20,
+    backgroundColor: 'rgb(30,30,30)',
+    borderRadius: 20,
+    width: '95%',
+    height: 200,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
@@ -177,6 +206,14 @@ const styles = StyleSheet.create({
     width: '40%',
     alignSelf: 'center',
   },
+  modalContainerLightMobile: {
+    backgroundColor: 'white',
+    padding: 20,
+    alignItems: 'center',
+    borderRadius: 20,
+    width: '90%',
+    alignSelf: 'center',
+  },
   modalContainerDark: {
     backgroundColor: 'rgb(30,30,30)',
     padding: 20,
@@ -185,8 +222,19 @@ const styles = StyleSheet.create({
     width: '40%',
     alignSelf: 'center',
   },
+  modalContainerDarkMobile: {
+    backgroundColor: 'rgb(30,30,30)',
+    padding: 20,
+    alignItems: 'center',
+    borderRadius: 20,
+    width: '90%',
+    alignSelf: 'center',
+  },
   input: {
-    width: 700,
+    width: '100%',
+  },
+  inputMobile: {
+    width: '100%',
   },
   buttonRow: {
     width: '100%',
@@ -198,10 +246,14 @@ const styles = StyleSheet.create({
   faqContainer: {
     flex: 1,
     marginTop: 15,
-    flexDirection: 'column',
-    alignItems: 'center',
     overflow: 'scroll',
     width: '90%',
+  },
+  faqContainerMobile: {
+    flex: 1,
+    marginTop: 15,
+    overflow: 'scroll',
+    width: '95%',
   },
   searchBar: {
     marginTop: 30,
@@ -213,11 +265,25 @@ const styles = StyleSheet.create({
     marginTop: 15,
     width: '67%',
     backgroundColor: 'white',
+    alignSelf: 'center'
+  },
+  qaContainerLightMobile: {
+    marginTop: 15,
+    width: '100%',
+    backgroundColor: 'white',
+    alignSelf: 'center'
   },
   qaContainerDark: {
     marginTop: 15,
     width: '67%',
     backgroundColor: 'rgb(30,30,30)',
+    alignSelf: 'center'
+  },
+  qaContainerDarkMobile: {
+    marginTop: 15,
+    width: '100%',
+    backgroundColor: 'rgb(30,30,30)',
+    alignSelf: 'center'
   },
   titleLight: {
     fontSize: 24,

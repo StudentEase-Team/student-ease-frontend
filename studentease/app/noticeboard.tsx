@@ -49,7 +49,7 @@ export default function NoticeboardShow() {
             updatedAt: new Date(),
             noticeboardItemCategory: new NoticeboardItemCategory,
         }
-        const response : AxiosResponse = await axios.post('http://localhost:8080/api/faq/item', newQuestion, config)
+        const response : AxiosResponse = await axios.post('${API_BASE_URL}/api/faq/item', newQuestion, config)
         if(response.status == 201) {
             Toast.show({
                 type: 'success',
