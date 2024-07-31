@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { Card, Title, Paragraph, IconButton, TextInput as PaperInput, Text, PaperProvider, Button, Modal } from 'react-native-paper';
-import { useTheme } from '../context/ThemeContext';
-import { themeDark, themeLight } from '../context/PaperTheme';
-import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { themeDark, themeLight } from '../../context/PaperTheme';
+import { useAuth } from '../../context/AuthContext';
 
 type Faculty = {
   id: string;

@@ -3,11 +3,11 @@ import { Text } from '@rneui/themed';
 import { TextInput as PaperInput, Button, Card, Modal, PaperProvider } from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { FAQItem } from '../../model/FAQItem';
-import { useAuth } from '../../context/AuthContext';
+import { FAQItem } from '../../../model/FAQItem';
+import { useAuth } from '../../../context/AuthContext';
 import axios, { AxiosResponse } from 'axios';
-import { useTheme } from '../../context/ThemeContext';
-import { themeLight, themeDark } from '../../context/PaperTheme';
+import { useTheme } from '../../../context/ThemeContext';
+import { themeLight, themeDark } from '../../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
 
 const FAQ: React.FC = () => {

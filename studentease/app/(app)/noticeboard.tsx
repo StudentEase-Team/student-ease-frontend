@@ -6,10 +6,10 @@ import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title
 import { Icon } from '@rneui/themed';
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
-import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { NoticeboardItem } from '../model/NoticeboardItem';
-import { themeDark, themeLight } from '../context/PaperTheme';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { NoticeboardItem } from '../../model/NoticeboardItem';
+import { themeDark, themeLight } from '../../context/PaperTheme';
 import RadioButtonGroup from 'react-native-paper/lib/typescript/components/RadioButton/RadioButtonGroup';
 
 const announcementCategories = [
