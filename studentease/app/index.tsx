@@ -1,0 +1,152 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, ImageBackground, Platform } from 'react-native';
+import { Input, Text } from '@rneui/themed';
+import { PasswordInput } from '../component/form/password-input';
+import { CustomButton } from '../component/form/custom-button';
+import axios, { AxiosResponse } from 'axios';
+import Toast from 'react-native-toast-message';
+import NavigationBar from '../component/navigation/navigation-bar';
+import { useAuth } from '../context/AuthContext';
+import { UserState } from '../model/UserState';
+import { useTheme } from '../context/ThemeContext';
+import { Button, PaperProvider, TextInput } from 'react-native-paper';
+import { themeDark, themeLight } from '../context/PaperTheme';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
+
+
+const Login : React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useAuth();
+  const { theme } = useTheme();
+
+  function attemptLogin() {
+    login(email, password)
+  }
+
+  return (
+    <ImageBackground source={require('../assets/web.jpg')} style={styles.background}>
+      <Toast />
+      <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
+      <View style={styles.container}>
+        <View style={theme === 'light'? styles.formLight : styles.formDark}>
+          <Text h3 style={theme === 'light'? styles.titleLight : styles.titleDark}>Login</Text>
+          <TextInput
+            placeholder="University email"
+            keyboardType="email-address"
+            autoCapitalize="none" 
+            value={email}
+            mode='outlined'
+            label="University email"
+            style={theme === 'light'? styles.inputLight : styles.inputDark }
+            onChangeText={value => setEmail(value)}
+            />
+          <PasswordInput passwordCallback={setPassword}/>
+          <PaperProvider>
+          <Button onPress={attemptLogin} mode='contained' style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
+          </PaperProvider>
+
+          <TouchableOpacity style={theme === 'light'? styles.signupTextLight : styles.signupTextDark}>
+            <Text style={theme === 'light'? {color:'#4dabf7'}:{color:'#9775fa'}}>You don't have a student account? Click here to sign up!</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      </PaperProvider>
+    </ImageBackground>
+  );
+}
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'repeat',
+  },
+
+  container: {
+    padding: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowOffset: { width: 0, height: 2 },
+    opacity: 0.85,
+    height: "50%"
+  },
+
+  inputLight: {
+    marginBottom: 10,
+    color: '#242526',
+  },
+
+  inputDark: {
+    marginBottom: 10,
+    color: 'white',
+  },
+
+  formLight: {
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    height: "45%"
+  },
+
+  formDark: {
+    padding: 20,
+    backgroundColor: '#242526',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+
+  titleLight: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    marginTop: 10,
+    textAlign: 'center',
+  },
+
+  titleDark: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    marginTop: 10,
+    textAlign: 'center',
+    color: 'white'
+  },
+
+  loginButtonLight: {
+    backgroundColor: '#4dabf7',
+    marginTop: 20,
+    borderRadius: 20,
+  },
+
+  loginButtonDark: {
+    backgroundColor: '#9775fa',
+    marginTop: 20,
+    borderRadius: 20,
+  },
+
+  signupTextLight: {
+    color: '#007bff',
+    textAlign: 'center',
+    marginTop: 10,
+    textDecorationLine: 'none'
+  },
+
+  signupTextDark: {
+    color: 'white',
+    textAlign: 'center',
+    marginTop: 10,
+    textDecorationLine: 'none'
+  },
+});
+
+export default Login;
