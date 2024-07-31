@@ -114,7 +114,6 @@ export default function NoticeboardShow() {
                     </View>
                 </View>
             </View>
-
         </PaperProvider>
 
             <View style={Platform.OS ==='web'? styles.contentGrid : styles.contentGridMobile}>
@@ -132,13 +131,15 @@ export default function NoticeboardShow() {
                         <Card.Actions>
                             <IconButton
                                 icon="pencil"
-                                mode='contained-tonal'
+                                mode='outlined'
                                 size={25}
+                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
                                 onPress={() => console.log('Edit', index)} />
                             <IconButton
                                 icon="delete"
                                 mode='outlined'
                                 size={25}
+                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
                                 onPress={() => console.log('Delete', index)} />
                         </Card.Actions>
                     </Card>
@@ -158,64 +159,65 @@ export default function NoticeboardShow() {
                     } } />
             </View>
         </Modal>
-            <Modal visible={modalVisibleNewItem} contentContainerStyle={theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark} onDismiss={() => { setModalVisibleNewItem(false); } }>
-                <View>
-                    <Text style={theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark}>Create a new noticeboard notification</Text>
-                    <Select label="University/Faculty/Subject" onChange={(e: SelectChangeEvent) => { setScopeCombo(e.target.value); } } style={styles.categoryContainer} value={scopeCombo.toString()}>
-                        <MenuItem value="-1"><em>None</em></MenuItem>
-                        <MenuItem value="0">University Announcement</MenuItem>
-                        <MenuItem value="1">University Guest Announcement</MenuItem>
-                        <MenuItem value="2">College Announcement</MenuItem>
-                        <MenuItem value="3">College Guest Announcement</MenuItem>
-                        <MenuItem value="4">Subject Announcement</MenuItem>
-                        <MenuItem value="5">Subject Exam Result Announcement</MenuItem>
-                        <MenuItem value="6">Subject Exam Date Announcement</MenuItem>
-                        <MenuItem value="7">Internship Announcement</MenuItem>
-                        <MenuItem value="8">Activities Announcement</MenuItem>
-                    </Select>
-                    <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                        <PaperInput
-                            label="College"
-                            mode="outlined"
-                            value={college}
-                            onChangeText={text => setCollege(text)}
-                            style={styles.input} />
 
-                        <PaperInput
-                            label="Subject"
-                            mode="outlined"
-                            value={subject}
-                            onChangeText={text => setSubject(text)}
-                            style={styles.input} />
+        <Modal visible={modalVisibleNewItem} contentContainerStyle={theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark} onDismiss={() => { setModalVisibleNewItem(false); } }>
+            <View>
+                <Text style={theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark}>Create a new noticeboard notification</Text>
+                <Select label="University/Faculty/Subject" onChange={(e: SelectChangeEvent) => { setScopeCombo(e.target.value); } } style={styles.categoryContainer} value={scopeCombo.toString()}>
+                    <MenuItem value="-1"><em>None</em></MenuItem>
+                    <MenuItem value="0">University Announcement</MenuItem>
+                    <MenuItem value="1">University Guest Announcement</MenuItem>
+                    <MenuItem value="2">College Announcement</MenuItem>
+                    <MenuItem value="3">College Guest Announcement</MenuItem>
+                    <MenuItem value="4">Subject Announcement</MenuItem>
+                    <MenuItem value="5">Subject Exam Result Announcement</MenuItem>
+                    <MenuItem value="6">Subject Exam Date Announcement</MenuItem>
+                    <MenuItem value="7">Internship Announcement</MenuItem>
+                    <MenuItem value="8">Activities Announcement</MenuItem>
+                </Select>
+                <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                    <PaperInput
+                        label="College"
+                        mode="outlined"
+                        value={college}
+                        onChangeText={text => setCollege(text)}
+                        style={styles.input} />
 
-                        <PaperInput
-                            label="Title"
-                            mode="outlined"
-                            value={title}
-                            onChangeText={text => setTitle(text)}
-                            style={styles.input} />
-                        <PaperInput
-                            label="Description"
-                            mode="outlined"
-                            multiline
-                            numberOfLines={4}
-                            value={description}
-                            onChangeText={text => setDescription(text)}
-                            style={styles.input} />
-                    </PaperProvider>
+                    <PaperInput
+                        label="Subject"
+                        mode="outlined"
+                        value={subject}
+                        onChangeText={text => setSubject(text)}
+                        style={styles.input} />
 
-                    <View style={styles.buttonRow}>
-                        <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit announcement </Button>
-                        <Button mode='contained-tonal' onPress={() => setModalVisibleNewItem(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
-                    </View>
+                    <PaperInput
+                        label="Title"
+                        mode="outlined"
+                        value={title}
+                        onChangeText={text => setTitle(text)}
+                        style={styles.input} />
+                    <PaperInput
+                        label="Description"
+                        mode="outlined"
+                        multiline
+                        numberOfLines={4}
+                        value={description}
+                        onChangeText={text => setDescription(text)}
+                        style={styles.input} />
+                </PaperProvider>
 
+                <View style={styles.buttonRow}>
+                    <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit announcement </Button>
+                    <Button mode='contained-tonal' onPress={() => setModalVisibleNewItem(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
                 </View>
-            </Modal>
 
-            <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
-                Create noticeboard notification
-            </Button>
-            </>
+            </View>
+        </Modal>
+
+        <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
+            Create noticeboard notification
+        </Button>
+    </>
     );
 };
 
@@ -406,16 +408,19 @@ const styles = StyleSheet.create({
         marginTop: 15,
         backgroundColor: 'white',
     },
+
     qaContainerLightMobile: {
         width: '100%',
         marginTop: 15,
         backgroundColor: 'white',
     },
+
     qaContainerDark: {
         width: '30%',
         marginTop: 15,
         backgroundColor: '#242526',
     },
+
     qaContainerDarkMobile: {
         width: '100%',
         marginTop: 15,
@@ -497,6 +502,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#666',
     },
+
     metaDark: {
         fontSize: 16,
         color: 'white',
@@ -579,6 +585,7 @@ const styles = StyleSheet.create({
     button: {
         width: '49%'
     },
+
     titleNewItemModalLight: {
         fontSize: 24,
         marginTop: 10,
@@ -586,31 +593,37 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
         textAlign: 'center',
-      },
-      titleNewItemModalDark: {
+    },
+
+    titleNewItemModalDark: {
         color: 'white',
         fontSize: 24,
         marginTop: 10,
         marginBottom: 30,
         fontWeight: 'bold',
         textAlign: 'center',
-      },
-      createNoticeboardItemButtonLight: {
+    },
+
+    createNoticeboardItemButtonLight: {
         width: '49%',
         backgroundColor: '#4dabf7',
-      },
-      createNoticeboardItemButtonDark: {
+    },
+
+    createNoticeboardItemButtonDark: {
         width: '49%',
         backgroundColor: '#9775fa',
-      },
-      cancelNoticeboardItemButtonLight: {
+    },
+    
+    cancelNoticeboardItemButtonLight: {
         width: '49%',
-      },
-      cancelNoticeboardItemButtonDark: {
+    },
+
+    cancelNoticeboardItemButtonDark: {
         width: '49%',
         backgroundColor: 'grey',
-      },
-      addNoticeboardItemButtonLight: {
+    },
+
+    addNoticeboardItemButtonLight: {
         position: 'absolute',
         bottom: '5%',
         right: '5%',
@@ -618,8 +631,9 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         backgroundColor: '#4dabf7',
-      },
-      addNoticeboardItemButtonDark: {
+    },
+
+    addNoticeboardItemButtonDark: {
         position: 'absolute',
         bottom: '5%',
         right: '5%',
@@ -627,38 +641,39 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         backgroundColor: '#9775fa',
-      },
-      inputLight: {
+    },
+
+    inputLight: {
         marginTop: 10,
         color: '#242526',
         width: '49%',
-      },
+    },
 
-      inputLightMobile: {
+    inputLightMobile: {
         marginTop: 10,
         color: '#242526',
         width: '100%',
         alignSelf: 'center',
-      },
+    },
     
-      inputDark: {
+    inputDark: {
         marginTop: 10,
         color: 'white',
         width: '49%',
-      },
+    },
 
-      inputDarkMobile: {
+    inputDarkMobile: {
         marginTop: 10,
         color: 'white',
         width: '100%',
         alignSelf: 'center',
-      },
+    },
 
-      radioButtonLight: {
+    radioButtonLight: {
         color: '#4dabf7'
-      },
+    },
 
-      radioButtonDark: {
+    radioButtonDark: {
         color: '#9775fa'
-      },
+    },
 });

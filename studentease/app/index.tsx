@@ -67,14 +67,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
     opacity: 0.85,
-    height: "50%"
+    elevation: 5
   },
 
   inputLight: {
     marginBottom: 10,
     color: '#242526',
+    
   },
 
   inputDark: {
@@ -90,8 +93,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 5,
-    height: "45%"
+    height: '45%'
   },
 
   formDark: {
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 5,
+    height: '45%'
   },
 
   titleLight: {

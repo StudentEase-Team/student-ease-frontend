@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text } from '@rneui/themed';
-import { TextInput as PaperInput, Button, Card, Modal, PaperProvider} from 'react-native-paper';
-import { NativeSyntheticEvent, Platform, StyleSheet, TextInputChangeEventData, View } from 'react-native';
+import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton} from 'react-native-paper';
+import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Icon } from 'react-native-elements';
 import { useAuth } from '../../context/AuthContext';
@@ -65,40 +65,38 @@ const FAQ : React.FC = () => {
     return (
         <>
             <Toast/>
-            <PaperProvider theme={theme === 'light'? themeLight: themeDark}>
-            <View style={theme === 'light'? styles.pageContainerLight : styles.pageContainerDark}>
-                <View style={Platform.OS === 'web'? styles.faqContainer:styles.faqContainerMobile}>
+            <ScrollView style={theme === 'light'? styles.pageContainerLight : styles.pageContainerDark}>
+                <View style={Platform.OS === 'web' ? styles.faqContainer: styles.faqContainerMobile}>
                     {items.length === 0 ? (
-                            <Card style={Platform.OS === 'web'? styles.qaContainer:styles.qaContainerMobile}>
+                            <Card style={Platform.OS === 'web'? (theme === 'light' ? styles.faqContainerLight : styles.faqContainerDark) : (theme === 'light' ? styles.faqContainerLightMobile : styles.faqContainerDarkMobile)}>
                                 <Card.Content>
-                                    <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>No unanswered questions!</Text>
+                                    <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>No unanswered questions!</Text>
                                 </Card.Content>
                             </Card>
                     ) : (
                         items.map((item, index) => (
-                            <Card key={index} style={Platform.OS === 'web'? styles.qaContainer:styles.qaContainerMobile}>
+                            <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.faqContainerLight : styles.faqContainerDark) : (theme === 'light' ? styles.faqContainerLightMobile : styles.faqContainerDarkMobile)}>
                                 <Card.Content>
-                                    <Text style={theme === 'light'? styles.titleLight : styles.titleDark}>{item.question}</Text>
-                                    <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>{item.answer}</Text>
+                                    <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.question}</Text>
+                                    <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
                                 </Card.Content>
                                 <Card.Actions>
-                                    <Icon name="question-answer" type='material-icons'  color={theme === 'light'? 'black' : 'white'} onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
+                                    <IconButton icon="forum" mode='contained-tonal' onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
                                 </Card.Actions>
                             </Card>
                         ))
                     )}
                 </View>
+            </ScrollView>
 
-                <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight : styles.modalContainerDark):(theme === 'light'? styles.modalContainerLightMobile : styles.modalContainerDarkMobile)}>
-                    <Text style={theme === 'light'? styles.titleModalLight : styles.titleModalDark}>Answer:</Text>
-                    <PaperInput mode='outlined' style={styles.searchBar} value={answer} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setAnswer(e.nativeEvent.text)}}></PaperInput>
-                    <View style={styles.buttonRow}>
-                        <Button mode='contained' onPress={() => answerQuestion()}> Answer </Button>
-                        <Button mode='contained' onPress={() => {setModalVisible(false); setCurrentItem(undefined);}}> Cancel </Button>
-                    </View>
-                </Modal>
-            </View>
-            </PaperProvider>
+            <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight : styles.modalContainerDark):(theme === 'light'? styles.modalContainerLightMobile : styles.modalContainerDarkMobile)}>
+                <Text style={Platform.OS === 'web' ? (theme === 'light'? styles.titleModalLight : styles.titleModalDark) : theme === 'light'? styles.titleModalLightMobile : styles.titleModalDarkMobile}>Answer:</Text>
+                <PaperInput theme={theme === 'light'? themeLight : themeDark} mode='outlined' multiline numberOfLines={4} style={styles.input} label="Answer here" value={answer} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setAnswer(e.nativeEvent.text)}}></PaperInput>
+                <View style={styles.buttonRow}>
+                    <Button mode='contained' onPress={() => answerQuestion()} style={ theme === 'light' ? styles.answerButtonLight : styles.answerButtonDark}> Answer </Button>
+                    <Button mode='contained-tonal' onPress={() => {setModalVisible(false); setCurrentItem(undefined);}} style={ theme === 'light' ? styles.cancelButtonLight : styles.cancelButtonDark}> Cancel </Button>
+                </View>
+            </Modal>
         </>
     );
 }
@@ -107,17 +105,34 @@ const styles = StyleSheet.create({
 
     pageContainerLight: {
         flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
+        padding: 20,
     },    
+
     pageContainerDark: {
-        backgroundColor: '#222',
         flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },    
+        padding: 20,
+        backgroundColor: '#18191A'
+    },  
+    
+    faqContainerLight: {
+        backgroundColor: 'white',
+        width: '60%'
+    },
+
+    faqContainerLightMobile: {
+        backgroundColor: 'white',
+        width: '100%'
+    },
+
+    faqContainerDark: {
+        backgroundColor: '#242526',
+        width: '60%'
+    },
+
+    faqContainerDarkMobile: {
+        backgroundColor: '#242526',
+        width: '100%'
+    },
 
     modalContainerLight: {
         backgroundColor: 'white',
@@ -133,12 +148,12 @@ const styles = StyleSheet.create({
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,
-        width: '95%',
+        width: '90%',
         alignSelf: 'center',
     },
 
     modalContainerDark: {
-        backgroundColor: 'rgb(30,30,30)',
+        backgroundColor: '#242526',
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,
@@ -147,11 +162,11 @@ const styles = StyleSheet.create({
     },
 
     modalContainerDarkMobile: {
-        backgroundColor: 'rgb(30,30,30)',
+        backgroundColor: '#242526',
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,
-        width: '95%',
+        width: '90%',
         alignSelf: 'center',
     },
 
@@ -160,25 +175,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         marginBottom: 10,
-        marginTop: 20
+        marginTop: 20,
     },
     
     faqContainer: {
-        flex: 1,
-        marginTop: 15,
         flexDirection: 'column',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
-        overflow: 'scroll',
-        width: '90%',
+        marginBottom: 20,
     },
 
     faqContainerMobile: {
-        flex: 1,
-        marginTop: 15,
         flexDirection: 'column',
-        alignItems: 'center',
-        overflow: 'scroll',
-        width: '95%',
+        flexWrap: 'wrap',
+        justifyContent: 'space-evenly',
+        marginTop: 20
     },
 
     searchBar: {
@@ -189,15 +200,22 @@ const styles = StyleSheet.create({
 
     qaContainer: {
         marginTop: 15,
-        width: '67%',
+        width: '60%',
+        alignSelf: 'center',
     },
+
     qaContainerMobile: {
-        marginTop: 15,
         width: '100%',
+        marginTop: 15,
     },
 
     titleLight: {
         fontSize: 24,
+        fontWeight: 'bold',
+    },
+
+    titleLightMobile: {
+        fontSize: 20,
         fontWeight: 'bold',
     },
 
@@ -207,17 +225,44 @@ const styles = StyleSheet.create({
         color: 'white'
     },
 
+    titleDarkMobile: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white'
+    },
+
     titleModalLight: {
         fontSize: 24,
         marginTop: 10,
         fontWeight: 'bold',
+        alignSelf: 'flex-start',
+        marginBottom: 15,
+    },
+
+    titleModalLightMobile: {
+        fontSize: 20,
+        marginTop: 10,
+        fontWeight: 'bold',
+        alignSelf: 'flex-start',
+        marginBottom: 15,
     },
 
     titleModalDark: {
         fontSize: 24,
         marginTop: 10,
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
+        alignSelf: 'flex-start',
+        marginBottom: 15,
+    },
+
+    titleModalDarkMobile: {
+        fontSize: 20,
+        marginTop: 10,
+        fontWeight: 'bold',
+        color: 'white',
+        alignSelf: 'flex-start',
+        marginBottom: 15,
     },
 
     descriptionLight: {
@@ -225,8 +270,19 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
 
+    descriptionLightMobile: {
+        fontSize: 16,
+        marginVertical: 5,
+    },
+
     descriptionDark: {
         fontSize: 18,
+        marginVertical: 5,
+        color: 'white'
+    },
+
+    descriptionDarkMobile: {
+        fontSize: 16,
         marginVertical: 5,
         color: 'white'
     },
@@ -249,6 +305,29 @@ const styles = StyleSheet.create({
         right: '5%',
         width: 150,
         height: 40,
+    },
+
+    input: {
+        width: '100%',
+    },
+
+    answerButtonLight: {
+        width: '49%',
+        backgroundColor: '#4dabf7',
+    },
+    
+    answerButtonDark: {
+        width: '49%',
+        backgroundColor: '#9775fa',
+    },
+    
+    cancelButtonLight: {
+        width: '49%',
+    },
+    
+    cancelButtonDark: {
+        width: '49%',
+        backgroundColor: 'grey',
     },
 });
 
