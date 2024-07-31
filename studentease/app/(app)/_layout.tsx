@@ -3,23 +3,38 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { useAuth } from '../../context/AuthContext';
 import React from 'react';
+import {Text} from 'react-native-paper'
+import { useTheme } from '../../context/ThemeContext';
 
 export default function AppLayout() {
   const { isAuthenticated, userState } = useAuth();
-
+  const { theme } = useTheme()
   if (!isAuthenticated || isAuthenticated === undefined) {
     return <Redirect href="/" />;
   }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-            <Drawer>
+            
+                <Drawer
+                  screenOptions={{
+                    drawerStyle: {
+                      backgroundColor: theme === 'light' ? '#FFF' : '#333',
+                    },
+                    headerStyle: {
+                      backgroundColor: theme === 'light' ? '#FFF' : '#333',
+                    },
+                    headerTintColor: theme === 'light' ? '#000' : '#FFF',
+                    headerShadowVisible: false, 
+                    drawerActiveTintColor: theme === 'light' ? '#000' : '#FFF',
+                    drawerInactiveTintColor: theme === 'light' ? '#888' : '#BBB',
+                  }}>
+
                 <Drawer.Screen
-                  name="Noticeboard"
+                  name="noticeboard"
                   options={{
-                    drawerLabel: 'noticeboard',
-                    title: '',
-                    //drawerItemStyle: { display: 'none' }
+                    drawerLabel: 'Noticeboard',
+                    title: 'Noticeboard',
                   }}
                 />
 
@@ -28,7 +43,7 @@ export default function AppLayout() {
                     name="college_list"
                     options={{
                     drawerLabel: 'College list',
-                    title: '',
+                    title: 'Colleges',
                     }}
                 />
                 ) : (
@@ -41,24 +56,47 @@ export default function AppLayout() {
                 />
                 )}
 
-
               <Drawer.Screen
                   name="faq/faq-show"
                   options={{
                     drawerLabel: 'Show FAQ',
-                    title: '',
-                    //drawerItemStyle: { display: 'none' }
+                    title: 'FAQ',
                   }}
                 />
 
+                {userState?.role === 'ADMIN' || userState?.role === 'PROFESSOR' ? (
                 <Drawer.Screen
-                  name="faq/faq-answer"
-                  options={{
-                    drawerLabel: 'Answer FAQs',
-                    title: '',
-                    //drawerItemStyle: { display: 'none' }
-                  }}
+                    name="faq/faq-answer"
+                    options={{
+                    drawerLabel: 'Answer FAQ',
+                    title: 'Answer FAQ',
+                    }}
                 />
+                ) : (
+                <Drawer.Screen
+                    name="answer_faq_hidden"
+                    options={{
+                    drawerLabel: '',
+                    drawerItemStyle: { display: 'none' }
+                    }}
+                />
+                )}
+
+                <Drawer.Screen
+                    name="change-theme"
+                    options={{
+                    drawerLabel: 'Change theme',
+                    }}
+                />
+
+                <Drawer.Screen
+                    name="logout"
+                    options={{
+                    drawerLabel: 'Logout',
+                    }}
+                />
+
+
             </Drawer>
               
     </GestureHandlerRootView>
