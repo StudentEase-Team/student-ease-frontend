@@ -29,6 +29,9 @@ export function PasswordInput(props : PasswordProps) {
             secureTextEntry={hiddenText}
             mode="outlined"
             value={text}
+            theme={{
+                roundness: 30, 
+              }}
             style={theme === 'light' ? { color: 'black' } : { color: 'white' }}
             right={<TextInput.Icon icon={selectedIcon} 
                 color={theme === 'light' ? 'black' : 'white'}

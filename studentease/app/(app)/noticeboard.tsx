@@ -607,20 +607,32 @@ const styles = StyleSheet.create({
     createNoticeboardItemButtonLight: {
         width: '49%',
         backgroundColor: '#4dabf7',
+        height: 50,
+        borderRadius: 50,
+        justifyContent: 'center',
     },
 
     createNoticeboardItemButtonDark: {
         width: '49%',
         backgroundColor: '#9775fa',
+        height: 50,
+        borderRadius: 50,
+        justifyContent: 'center',
     },
     
     cancelNoticeboardItemButtonLight: {
         width: '49%',
+        height: 50,
+        borderRadius: 50,
+        justifyContent: 'center',
     },
 
     cancelNoticeboardItemButtonDark: {
         width: '49%',
         backgroundColor: 'grey',
+        height: 50,
+        borderRadius: 50,
+        justifyContent: 'center',
     },
 
     addNoticeboardItemButtonLight: {
