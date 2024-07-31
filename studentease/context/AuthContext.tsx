@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { API_BASE_URL } from '@env';
+import { useRouter } from 'expo-router';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userState, setUserState] = useState<UserState | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const loadUserState = async () => {
@@ -89,6 +91,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsAuthenticated(true);
         setUserState(userState);
         await saveUserState(userState);
+        router.replace('/noticeboard');
         return userState;
       }
     } catch (error) {
