@@ -1,23 +1,18 @@
 import React from 'react';
-import NavigationBar from '../component/navigation/navigation-bar';
-import { Stack } from 'expo-router';
 import { AuthProvider } from '../context/AuthContext';
-import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
-import { themeDark, themeLight } from '../context/PaperTheme';
+import { Slot } from 'expo-router';
 
 export default function layout() {
   return (
     <>
         <AuthProvider>
           <ThemeProvider>
-            <NavigationBar />
-            <Stack  screenOptions={{headerShown: false }}/>
+            <Slot />
           </ThemeProvider>
         </AuthProvider>
       
     </>
   );
 };
-
 

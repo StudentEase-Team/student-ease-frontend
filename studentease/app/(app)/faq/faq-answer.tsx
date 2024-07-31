@@ -4,11 +4,11 @@ import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Icon } from 'react-native-elements';
-import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
-import { FAQItem } from '../../model/FAQItem';
+import { useAuth } from '../../../context/AuthContext';
+import { useTheme } from '../../../context/ThemeContext';
+import { FAQItem } from '../../../model/FAQItem';
 import axios, { AxiosResponse } from 'axios';
-import { themeDark, themeLight } from '../../context/PaperTheme';
+import { themeDark, themeLight } from '../../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
 
 const FAQ : React.FC = () => {
