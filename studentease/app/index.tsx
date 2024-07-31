@@ -27,14 +27,14 @@ const Login: React.FC = () => {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
         >
           <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.formLight : styles.formDark) : (theme === 'light' ? styles.formLightMobile : styles.formDarkMobile)}>
-            <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>Login</Text>
+            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Login</Text>
             <TextInput
-              placeholder="Univerzitetski email"
+              placeholder="University email"
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
               mode="outlined"
-              label="Univerzitetski email"
+              label="University email"
               style={theme === 'light' ? styles.inputLight : styles.inputDark}
               theme={{
                 roundness: 30, 
@@ -126,6 +126,14 @@ const styles = StyleSheet.create({
   },
 
   titleLight: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    marginTop: 10,
+    textAlign: 'center',
+  },
+
+  titleLightMobile: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
@@ -134,6 +142,15 @@ const styles = StyleSheet.create({
   },
 
   titleDark: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    marginTop: 10,
+    textAlign: 'center',
+    color: 'white',
+  },
+
+  titleDarkMobile: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
@@ -145,13 +162,17 @@ const styles = StyleSheet.create({
   loginButtonLight: {
     backgroundColor: '#4dabf7',
     marginTop: 20,
-    borderRadius: 20,
+    borderRadius: 50,
+    height: 50,
+    justifyContent: 'center',
   },
 
   loginButtonDark: {
     backgroundColor: '#9775fa',
     marginTop: 20,
-    borderRadius: 20,
+    borderRadius: 50,
+    height: 50,
+    justifyContent: 'center',
   },
 
   signupTextLight: {

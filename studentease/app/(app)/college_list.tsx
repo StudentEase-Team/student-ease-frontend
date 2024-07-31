@@ -138,7 +138,6 @@ const FacultyList: React.FC = () => {
 const styles = StyleSheet.create({
   pageLightContainer: {
     flex: 1,
-    backgroundColor: 'white',
     padding: 20
   },
   pageDarkContainer: {
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       flexWrap: 'wrap',
       justifyContent: 'space-evenly',
-      marginTop: 20
+      marginTop: 10
   },
 
   metaLight: {
@@ -182,6 +181,7 @@ const styles = StyleSheet.create({
   searchBar: {
     marginTop: 10,
     width: '100%',
+    height: 45
   },
 
   containerFilterLight: {

@@ -69,7 +69,7 @@ export default function NoticeboardShow() {
         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
             <View style={styles.filterAndSearchContainer}>
                 <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
-                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters</Text>
+                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Filter by parameters</Text>
                     <View style={styles.filterGrid}>
                         <RadioButton.Group value={scopeComboFilter} onValueChange={(value) => {setScopeComboFilter(value)}} >
                             <View style={styles.radioButtons}>
@@ -94,7 +94,7 @@ export default function NoticeboardShow() {
                 </View>
 
                 <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerSearchLight : styles.containerSearchDark) : (theme === 'light' ? styles.containerSearchLightMobile : styles.containerSearchDarkMobile)}>
-                    <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Search and sort</Text>
+                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Search and sort</Text>
                     <View style={styles.searchSortGrid}>
                         <View style={Platform.OS === 'web' ? styles.inputRow : styles.inputColumn}>
                             <PaperInput
@@ -106,7 +106,7 @@ export default function NoticeboardShow() {
                                 label="Date"
                                 mode="outlined"
                                 style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
-                                right={<TextInput.Icon icon='calendar' 
+                                right={<TextInput.Icon icon='calendar'
                                     onPress={() => { setModalVisibleDate(true); } }/>} 
 
                                     />
@@ -120,12 +120,12 @@ export default function NoticeboardShow() {
                 {Array.from({ length: 10 }).map((_, index) => (
                     <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark) : (theme === 'light'? styles.qaContainerLightMobile:styles.qaContainerDarkMobile)}>
                         <Card.Content>
-                            <Title style={theme === 'light' ? styles.titleLight : styles.titleDark}>Notification title</Title>
-                            <Paragraph style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>This is description of the notification</Paragraph>
-                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>Date: 15.04.2024.</Paragraph>
-                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>Subject: Example subject</Paragraph>
-                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>College: Example faculty</Paragraph>
-                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>Professor: Example professor</Paragraph>
+                            <Title style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Notification title</Title>
+                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>This is description of the notification</Paragraph>
+                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Date: 15.04.2024.</Paragraph>
+                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Subject: Example subject</Paragraph>
+                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>College: Example faculty</Paragraph>
+                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Professor: Example professor</Paragraph>
                         </Card.Content>
 
                         <Card.Actions>
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
-        marginTop: 20
+        marginTop: 10
     },
 
     notification: {
@@ -465,9 +465,22 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: 'black'
-        },
-        titleDark: {
+    },
+
+    titleLightMobile: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'black'
+    },
+
+    titleDark: {
         fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white'
+    },
+
+    titleDarkMobile: {
+        fontSize: 20,
         fontWeight: 'bold',
         color: 'white'
     },
@@ -479,9 +492,23 @@ const styles = StyleSheet.create({
         color: 'black'
     },
 
+    titleFilterLightMobile: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        marginBottom: 10,
+        color: 'black'
+    },
+
     titleFilterDark: {
         fontWeight: 'bold',
         fontSize: 24,
+        marginBottom: 10,
+        color: 'white'
+    },
+
+    titleFilterDarkMobile: {
+        fontWeight: 'bold',
+        fontSize: 20,
         marginBottom: 10,
         color: 'white'
     },
@@ -492,8 +519,20 @@ const styles = StyleSheet.create({
         color: 'black'
     },
 
+    descriptionLightMobile: {
+        fontSize: 16,
+        marginVertical: 5,
+        color: 'black'
+    },
+
     descriptionDark: {
         fontSize: 18,
+        marginVertical: 5,
+        color: 'white'
+    },
+
+    descriptionDarkMobile: {
+        fontSize: 16,
         marginVertical: 5,
         color: 'white'
     },
@@ -503,8 +542,18 @@ const styles = StyleSheet.create({
         color: '#666',
     },
 
+    metaLightMobile: {
+        fontSize: 14,
+        color: '#666',
+    },
+
     metaDark: {
         fontSize: 16,
+        color: 'white',
+    },
+
+    metaDarkMobile: {
+        fontSize: 14,
         color: 'white',
     },
 
@@ -659,6 +708,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: '#242526',
         width: '49%',
+        height: 45
     },
 
     inputLightMobile: {
@@ -666,12 +716,14 @@ const styles = StyleSheet.create({
         color: '#242526',
         width: '100%',
         alignSelf: 'center',
+        height: 45
     },
     
     inputDark: {
         marginTop: 10,
         color: 'white',
         width: '49%',
+        height: 45
     },
 
     inputDarkMobile: {
@@ -679,6 +731,7 @@ const styles = StyleSheet.create({
         color: 'white',
         width: '100%',
         alignSelf: 'center',
+        height: 45
     },
 
     radioButtonLight: {

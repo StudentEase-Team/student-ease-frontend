@@ -275,15 +275,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexWrap: 'wrap',
     justifyContent: 'space-evenly',
-    marginTop: 20
+    marginTop: 10
   },
 
   searchBar: {
     marginTop: 10,
     width: '100%',
-    marginBottom: 10,
     color: '#242526',
     alignSelf: 'center',
+    height: 45
   },
 
   qaContainerLight: {
