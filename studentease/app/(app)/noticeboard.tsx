@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
-import { MenuItem, Select, SelectChangeEvent} from '@mui/material';
 import { StyleSheet, ScrollView, View, Platform, Pressable } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, RadioButton, TextInput } from 'react-native-paper';;
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, TextInput } from 'react-native-paper';;
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import { useAuth } from '../../context/AuthContext';
@@ -20,9 +19,12 @@ type AnnouncementType =
   | 'INTERNSHIP_ANNOUNCEMENT'
   | 'ACTIVITIES_ANNOUNCEMENT';
 
+type FilterType = 
+  | 'UNIVERSITY'
+  | 'COLLEGE'
+  | 'SUBJECT';
+
 export default function NoticeboardShow() {
-    const [scopeCombo, setScopeCombo]  = useState("");
-    const [scopeComboFilter, setScopeComboFilter] = useState("");
     const [date, setDate] = useState(dayjs());
     const [modalVisibleDate, setModalVisibleDate] = useState(false);
     const [modalVisibleNewItem, setModalVisibleNewItem] = useState(false);
@@ -35,6 +37,7 @@ export default function NoticeboardShow() {
     const {theme} = useTheme();
 
     const [selectedValue, setSelectedValue] = useState<AnnouncementType | null>(null);
+    const [selectedValueFilterType, setSelectedValueFilterType] = useState<FilterType | null>(null);
 
     const options: { value: AnnouncementType; label: string }[] = [
         { value: 'UNIVERSITY_ANNOUNCEMENT', label: 'University Announcement' },
@@ -48,8 +51,18 @@ export default function NoticeboardShow() {
         { value: 'ACTIVITIES_ANNOUNCEMENT', label: 'Activities Announcement' },
     ];
 
+    const filterOptions: { value: FilterType; label: string }[] = [
+        { value: 'UNIVERSITY', label: 'University' },
+        { value: 'COLLEGE', label: 'College' },
+        { value: 'SUBJECT', label: 'Subject' },
+    ];
+
     const handlePress = (value: AnnouncementType) => {
         setSelectedValue(value);
+    };
+
+    const handlePressFilterOptions = (value: FilterType) => {
+        setSelectedValueFilterType(value);
     };
 
     const sumbitAnnouncement = async () => {
@@ -75,7 +88,6 @@ export default function NoticeboardShow() {
         }*/
     }
 
-       //TODO: Testiraj mobile platforme
     return (
         <>
        
@@ -84,14 +96,24 @@ export default function NoticeboardShow() {
             <View style={styles.filterAndSearchContainer}>
                 <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
                     <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Filter by parameters</Text>
-                    <View style={styles.filterGrid}>
-                        <RadioButton.Group value={scopeComboFilter} onValueChange={(value) => {setScopeComboFilter(value)}} >
-                            <View style={styles.radioButtons}>
-                                <RadioButton.Item value='University' label='University' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
-                                <RadioButton.Item value='College' label='College' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
-                                <RadioButton.Item value='Subject' label='Subject' position='leading' color={theme === 'light' ? '#4dabf7' : '#9775fa' }></RadioButton.Item>
-                            </View>
-                        </RadioButton.Group>
+                        <View style={styles.container}>
+                            {filterOptions.map((option) => (
+                            <Pressable
+                                key={option.value}
+                                style={[styles.pressable, selectedValueFilterType === option.value
+                                    ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
+                                    : { borderColor: 'grey', borderWidth: 0.5 },]}
+                                onPress={() => handlePressFilterOptions(option.value)}>
+
+                                <Text
+                                    style={[
+                                    styles.text,
+                                    { color: selectedValueFilterType === option.value ? '#fff' : theme === 'light' ?  '#4dabf7' : '#9775fa' }, ]}>
+                                    {option.label}
+                                </Text>
+                            </Pressable>
+                        ))}
+                        
                         <View style={Platform.OS === 'web' ? styles.inputRow : styles.inputColumn}>
                                 <PaperInput
                                     label="College"
@@ -119,10 +141,11 @@ export default function NoticeboardShow() {
                             <PaperInput
                                 label="Date"
                                 mode="outlined"
+                                value={date.toDate().toLocaleDateString()}
                                 style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
-                                right={<TextInput.Icon icon='calendar'
+                                right={<TextInput.Icon icon='calendar-outline'
+                                    color={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
                                     onPress={() => { setModalVisibleDate(true); } }/>} 
-
                                     />
                         </View>
                     </View>
@@ -162,18 +185,22 @@ export default function NoticeboardShow() {
             
         </ScrollView>
 
-        <Modal style={styles.dateModal} visible={modalVisibleDate} onDismiss={() => { setModalVisibleDate(false); } }>
+        <Modal style={Platform.OS ==='web'? styles.dateModal : styles.dateModalMobile } visible={modalVisibleDate} onDismiss={() => { setModalVisibleDate(false); } }>
             <View style={theme === 'light' ? styles.datepickerLight : styles.datepickerDark}>
                 <DateTimePicker
                     mode="single"
                     date={date}
+                    selectedItemColor={theme === 'light' ? '#4dabf7' : '#9775fa'}
+                    headerButtonColor={theme === 'light' ? 'black' : 'white'}
+                    calendarTextStyle={theme === 'light' ?{ color:'black'}:{color: 'white'}}
+                    headerTextStyle={theme === 'light' ?{ color:'black'}:{color: 'white'}}
+                    weekDaysTextStyle={theme === 'light' ?{ color:'black'}:{color: 'white'}}
                     onChange={(params) => {
+                        setModalVisibleDate(false);
                         setDate(dayjs(params.date?.toString()));
-                        console.log(date.toISOString());
                     } } />
             </View>
         </Modal>
-
         <Modal visible={modalVisibleNewItem} contentContainerStyle={Platform.OS ==='web'? (theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark) : (theme === 'light' ? styles.modalFormCreateNoticeboardItemLightMobile : styles.modalFormCreateNoticeboardItemDarkMobile)} onDismiss={() => { setModalVisibleNewItem(false); } }>
             <ScrollView>
                 <Text style={Platform.OS ==='web'? (theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark) : (theme === 'light' ? styles.titleNewItemModalLightMobile : styles.titleNewItemModalDarkMobile)}>Create a new noticeboard notification</Text>
@@ -229,16 +256,26 @@ export default function NoticeboardShow() {
                 </PaperProvider>
 
                 <View style={styles.buttonRow}>
-                    <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit announcement </Button>
+                    {Platform.OS === 'web' ? (
+                        <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit announcement </Button>
+                    ) : (
+                        <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit </Button>
+                    )}
                     <Button mode='contained-tonal' onPress={() => setModalVisibleNewItem(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
                 </View>
 
             </ScrollView>
         </Modal>
-
-        <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
+        {Platform.OS === 'web'? (
+            <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
             Create noticeboard notification
-        </Button>
+            </Button>
+        ) : (
+            <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.addNoticeboardItemButtonLightMobile : styles.addNoticeboardItemButtonDarkMobile} onPress={() => setModalVisibleNewItem(true)}>
+            </IconButton>
+        )
+        }
+
     </>
     );
 };
@@ -282,18 +319,28 @@ const styles = StyleSheet.create({
         margin: 'auto',
     },
 
+    dateModalMobile: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+    },
+
     datepickerLight: {
+        alignSelf: 'center',
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
+        width: '95%',
     },
 
-    //TODO Popravi ovo
     datepickerDark: {
-        color: 'white',
-        backgroundColor: 'rgb(30,30,30)',
+        alignSelf: 'center',
+        backgroundColor: '#242526',
         borderRadius: 20,
         padding: 20,
+        width: '95%',
     },
 
     filterAndSearchContainer: {
@@ -771,11 +818,29 @@ const styles = StyleSheet.create({
         backgroundColor: '#4dabf7',
     },
 
+    addNoticeboardItemButtonLightMobile: {
+        position: 'absolute',
+        bottom: '5%',
+        right: '5%',
+        borderRadius: 50,
+        justifyContent: 'center',
+        backgroundColor: '#4dabf7',
+    },
+
     addNoticeboardItemButtonDark: {
         position: 'absolute',
         bottom: '5%',
         right: '5%',
         height: 60,
+        borderRadius: 50,
+        justifyContent: 'center',
+        backgroundColor: '#9775fa',
+    },
+
+    addNoticeboardItemButtonDarkMobile: {
+        position: 'absolute',
+        bottom: '5%',
+        right: '5%',
         borderRadius: 50,
         justifyContent: 'center',
         backgroundColor: '#9775fa',
@@ -793,7 +858,7 @@ const styles = StyleSheet.create({
         color: '#242526',
         width: '100%',
         alignSelf: 'center',
-        height: 45
+        height: 45,
     },
     
     inputDark: {
@@ -808,7 +873,8 @@ const styles = StyleSheet.create({
         color: 'white',
         width: '100%',
         alignSelf: 'center',
-        height: 45
+        height: 45,
+        fontSize: 14
     },
 
     radioButtonLight: {
