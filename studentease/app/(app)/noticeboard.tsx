@@ -27,6 +27,8 @@ type FilterType =
 export default function NoticeboardShow() {
     const [date, setDate] = useState(dayjs());
     const [modalVisibleDate, setModalVisibleDate] = useState(false);
+    const [collegeFilterEnabled, setCollegeFilterEnabled] = useState(false);
+    const [subjectFilterEnabled, setSubjectFilterEnabled] = useState(false);
     const [modalVisibleNewItem, setModalVisibleNewItem] = useState(false);
 
     const [subject, setSubject] = React.useState('');
@@ -37,7 +39,7 @@ export default function NoticeboardShow() {
     const {theme} = useTheme();
 
     const [selectedValue, setSelectedValue] = useState<AnnouncementType | null>(null);
-    const [selectedValueFilterType, setSelectedValueFilterType] = useState<FilterType | null>(null);
+    const [selectedValueFilterType, setSelectedValueFilterType] = useState<FilterType | null>('UNIVERSITY');
 
     const options: { value: AnnouncementType; label: string }[] = [
         { value: 'UNIVERSITY_ANNOUNCEMENT', label: 'University Announcement' },
@@ -62,6 +64,18 @@ export default function NoticeboardShow() {
     };
 
     const handlePressFilterOptions = (value: FilterType) => {
+        if(value === 'UNIVERSITY') {
+            setCollegeFilterEnabled(false);
+            setSubjectFilterEnabled(false);
+        }
+        else if(value === 'COLLEGE') {
+            setCollegeFilterEnabled(true);
+            setSubjectFilterEnabled(false);
+        }
+        else if(value === 'SUBJECT') {
+            setCollegeFilterEnabled(true);
+            setSubjectFilterEnabled(true);
+        }
         setSelectedValueFilterType(value);
     };
 
@@ -118,11 +132,13 @@ export default function NoticeboardShow() {
                                 <PaperInput
                                     label="College"
                                     mode="outlined"
+                                    disabled={!collegeFilterEnabled}
                                     style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
                                 </PaperInput>
                                 <PaperInput
                                     label="Subject"
                                     mode="outlined"
+                                    disabled={!subjectFilterEnabled}
                                     style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
                                 </PaperInput>
                         </View>
@@ -165,7 +181,8 @@ export default function NoticeboardShow() {
                             <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Professor: Example professor</Paragraph>
                         </Card.Content>
 
-                        <Card.Actions>
+                        {userState?.role !== 'STUDENT'? (
+                            <Card.Actions>
                             <IconButton
                                 icon="pencil"
                                 mode='outlined'
@@ -179,6 +196,7 @@ export default function NoticeboardShow() {
                                 iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
                                 onPress={() => console.log('Delete', index)} />
                         </Card.Actions>
+                        ):('')}
                     </Card>
                 ))}
             </View>
@@ -201,6 +219,7 @@ export default function NoticeboardShow() {
                     } } />
             </View>
         </Modal>
+
         <Modal visible={modalVisibleNewItem} contentContainerStyle={Platform.OS ==='web'? (theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark) : (theme === 'light' ? styles.modalFormCreateNoticeboardItemLightMobile : styles.modalFormCreateNoticeboardItemDarkMobile)} onDismiss={() => { setModalVisibleNewItem(false); } }>
             <ScrollView>
                 <Text style={Platform.OS ==='web'? (theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark) : (theme === 'light' ? styles.titleNewItemModalLightMobile : styles.titleNewItemModalDarkMobile)}>Create a new noticeboard notification</Text>
@@ -266,15 +285,18 @@ export default function NoticeboardShow() {
 
             </ScrollView>
         </Modal>
-        {Platform.OS === 'web'? (
-            <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
-            Create noticeboard notification
-            </Button>
-        ) : (
-            <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.addNoticeboardItemButtonLightMobile : styles.addNoticeboardItemButtonDarkMobile} onPress={() => setModalVisibleNewItem(true)}>
-            </IconButton>
-        )
-        }
+
+        {userState?.role !== 'STUDENT'? (
+                    Platform.OS === 'web'? (
+                        <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
+                        Create noticeboard notification
+                        </Button>
+                    ) : (
+                        <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.addNoticeboardItemButtonLightMobile : styles.addNoticeboardItemButtonDarkMobile} onPress={() => setModalVisibleNewItem(true)}>
+                        </IconButton>
+                    )
+        ):('')}
+
 
     </>
     );
