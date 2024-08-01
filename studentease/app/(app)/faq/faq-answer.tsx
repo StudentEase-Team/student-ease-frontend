@@ -10,6 +10,7 @@ import { FAQItem } from '../../../model/FAQItem';
 import axios, { AxiosResponse } from 'axios';
 import { themeDark, themeLight } from '../../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
+import { useFocusEffect } from 'expo-router';
 
 const FAQ : React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -18,27 +19,27 @@ const FAQ : React.FC = () => {
     const [answer, setAnswer] = useState('');
     const { userState } = useAuth();
     const { theme } = useTheme();
-
-    useEffect(() => {
-        const config = {
-            headers: { Authorization: `Bearer ${userState?.token.accessToken}` }
-        };
-        const fetchFAQ = async () => {
-            try {
-                const response: AxiosResponse = await axios.get(`${API_BASE_URL}/faq/items/unanswered`, config);
-                if (response.status === 200) {
-                    setItems(response.data);
-                }
-            } catch (error) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Failed to fetch questions',
-                });
+    const config = {
+        headers: { Authorization: `Bearer ${userState?.token.accessToken}` }
+    };
+    const fetchFAQ = async () => {
+        try {
+            const response: AxiosResponse = await axios.get(`${API_BASE_URL}/faq/items/unanswered`, config);
+            if (response.status === 200) {
+                setItems(response.data);
             }
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to fetch questions',
+            });
         }
+    }
 
-        fetchFAQ();
-    }, [userState?.token.accessToken]);
+    useFocusEffect(
+        React.useCallback(() => {
+          fetchFAQ();
+      }, []));
 
     async function answerQuestion() {
         if (currentItem !== undefined) {
@@ -64,7 +65,6 @@ const FAQ : React.FC = () => {
 
     return (
         <>
-            <Toast/>
             <ScrollView style={theme === 'light'? styles.pageContainerLight : styles.pageContainerDark}>
                 <View style={Platform.OS === 'web' ? styles.faqContainer: styles.faqContainerMobile}>
                     {items.length === 0 ? (
@@ -97,6 +97,7 @@ const FAQ : React.FC = () => {
                     <Button mode='contained-tonal' onPress={() => {setModalVisible(false); setCurrentItem(undefined);}} style={ theme === 'light' ? styles.cancelButtonLight : styles.cancelButtonDark}> Cancel </Button>
                 </View>
             </Modal>
+            <Toast/>
         </>
     );
 }

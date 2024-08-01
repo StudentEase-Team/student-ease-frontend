@@ -48,7 +48,7 @@ export default function AppLayout() {
                 />
                 ) : (
                 <Drawer.Screen
-                    name="college_list_hidden"
+                    name="college_list"
                     options={{
                     drawerLabel: '',
                     drawerItemStyle: { display: 'none' }
@@ -74,7 +74,7 @@ export default function AppLayout() {
                 />
                 ) : (
                 <Drawer.Screen
-                    name="answer_faq_hidden"
+                    name="faq/faq-answer"
                     options={{
                     drawerLabel: '',
                     drawerItemStyle: { display: 'none' }

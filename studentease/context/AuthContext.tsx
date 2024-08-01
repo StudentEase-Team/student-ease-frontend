@@ -25,20 +25,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const loadUserState = async () => {
       try {
+        let storedUserState: string | null = null;
+        
         if (Platform.OS === 'web') {
-          const storedUserState = Cookies.get('userState');
-          if (storedUserState) {
-            const userState: UserState = JSON.parse(storedUserState);
-            setUserState(userState);
-            setIsAuthenticated(true);
-          }
+          let state = Cookies.get('userState');
+          if(state !== undefined)
+            storedUserState = state;
         } else {
-          const storedUserState = await SecureStore.getItemAsync('userState');
-          if (storedUserState) {
-            const userState: UserState = JSON.parse(storedUserState);
-            setUserState(userState);
-            setIsAuthenticated(true);
+          storedUserState = await SecureStore.getItemAsync('userState');
+        }
+
+        if (storedUserState) {
+          const userState: UserState = JSON.parse(storedUserState);
+          
+          const { createdAt, expiresIn } = userState.token;
+          const expirationDate = new Date(new Date(createdAt).getTime() + expiresIn * 1000);
+          const currentTime = new Date();
+
+          if (expirationDate < currentTime) {
+            await clearUserState();
+            router.replace('/');
+            return;
           }
+
+          setUserState(userState);
+          setIsAuthenticated(true);
         }
       } catch (error) {
         console.log('Failed to load user state from storage', error);
