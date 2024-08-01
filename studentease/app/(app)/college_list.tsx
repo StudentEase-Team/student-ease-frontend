@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20
   },
+  
   pageDarkContainer: {
     flex: 1,
     backgroundColor: '#18191A', 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput, Button, PaperProvider, Text, ThemeProvider } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
@@ -6,12 +6,19 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { themeDark, themeLight } from '../context/PaperTheme';
 import { PasswordInput } from '../component/form/password-input';
+import { useRouter } from 'expo-router';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth();
+  const { login, userState } = useAuth();
   const { theme } = useTheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    if(userState !== null)
+      router.replace("/noticeboard")
+  }, [userState]);
 
   function attemptLogin() {
     login(email, password);

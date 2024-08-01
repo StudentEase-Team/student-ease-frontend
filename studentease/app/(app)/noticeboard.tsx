@@ -1,28 +1,24 @@
 import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
 import { MenuItem, Select, SelectChangeEvent} from '@mui/material';
-import { StyleSheet, ScrollView, View, Platform } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, RadioButton, TextInput } from 'react-native-paper';
-import { Icon } from '@rneui/themed';
+import { StyleSheet, ScrollView, View, Platform, Pressable } from 'react-native';
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, RadioButton, TextInput } from 'react-native-paper';;
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { NoticeboardItem } from '../../model/NoticeboardItem';
 import { themeDark, themeLight } from '../../context/PaperTheme';
-import RadioButtonGroup from 'react-native-paper/lib/typescript/components/RadioButton/RadioButtonGroup';
 
-const announcementCategories = [
-    { label: 'University Announcement', value: 'UNIVERSITY_ANNOUNCEMENT' },
-    { label: 'University Guest Announcement', value: 'UNIVERSITY_GUEST_ANNOUNCEMENT' },
-    { label: 'College Announcement', value: 'COLLEGE_ANNOUNCEMENT' },
-    { label: 'College Guest Announcement', value: 'COLLEGE_GUEST_ANNOUNCEMENT' },
-    { label: 'Subject Announcement', value: 'SUBJECT_ANNOUNCEMENT' },
-    { label: 'Subject Exam Result Announcement', value: 'SUBJECT_EXAM_RESULT_ANNOUNCEMENT' },
-    { label: 'Subject Exam Date Announcement', value: 'SUBJECT_EXAM_DATE_ANNOUNCEMENT' },
-    { label: 'Internship Announcement', value: 'INTERNSHIP_ANNOUNCEMENT' },
-    { label: 'Activities Announcement', value: 'ACTIVITIES_ANNOUNCEMENT' },
-];
+type AnnouncementType =
+  | 'UNIVERSITY_ANNOUNCEMENT'
+  | 'UNIVERSITY_GUEST_ANNOUNCEMENT'
+  | 'COLLEGE_ANNOUNCEMENT'
+  | 'COLLEGE_GUEST_ANNOUNCEMENT'
+  | 'SUBJECT_ANNOUNCEMENT'
+  | 'SUBJECT_EXAM_RESULT_ANNOUNCEMENT'
+  | 'SUBJECT_EXAM_DATE_ANNOUNCEMENT'
+  | 'INTERNSHIP_ANNOUNCEMENT'
+  | 'ACTIVITIES_ANNOUNCEMENT';
 
 export default function NoticeboardShow() {
     const [scopeCombo, setScopeCombo]  = useState("");
@@ -37,6 +33,24 @@ export default function NoticeboardShow() {
     const [description, setDescription] = React.useState('');
     const {userState} = useAuth();
     const {theme} = useTheme();
+
+    const [selectedValue, setSelectedValue] = useState<AnnouncementType | null>(null);
+
+    const options: { value: AnnouncementType; label: string }[] = [
+        { value: 'UNIVERSITY_ANNOUNCEMENT', label: 'University Announcement' },
+        { value: 'UNIVERSITY_GUEST_ANNOUNCEMENT', label: 'University Guest Announcement' },
+        { value: 'COLLEGE_ANNOUNCEMENT', label: 'College Announcement' },
+        { value: 'COLLEGE_GUEST_ANNOUNCEMENT', label: 'College Guest Announcement' },
+        { value: 'SUBJECT_ANNOUNCEMENT', label: 'Subject Announcement' },
+        { value: 'SUBJECT_EXAM_RESULT_ANNOUNCEMENT', label: 'Subject Exam Result Announcement' },
+        { value: 'SUBJECT_EXAM_DATE_ANNOUNCEMENT', label: 'Subject Exam Date Announcement' },
+        { value: 'INTERNSHIP_ANNOUNCEMENT', label: 'Internship Announcement' },
+        { value: 'ACTIVITIES_ANNOUNCEMENT', label: 'Activities Announcement' },
+    ];
+
+    const handlePress = (value: AnnouncementType) => {
+        setSelectedValue(value);
+    };
 
     const sumbitAnnouncement = async () => {
         /*const config = {
@@ -160,21 +174,29 @@ export default function NoticeboardShow() {
             </View>
         </Modal>
 
-        <Modal visible={modalVisibleNewItem} contentContainerStyle={theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark} onDismiss={() => { setModalVisibleNewItem(false); } }>
-            <View>
-                <Text style={theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark}>Create a new noticeboard notification</Text>
-                <Select label="University/Faculty/Subject" onChange={(e: SelectChangeEvent) => { setScopeCombo(e.target.value); } } style={styles.categoryContainer} value={scopeCombo.toString()}>
-                    <MenuItem value="-1"><em>None</em></MenuItem>
-                    <MenuItem value="0">University Announcement</MenuItem>
-                    <MenuItem value="1">University Guest Announcement</MenuItem>
-                    <MenuItem value="2">College Announcement</MenuItem>
-                    <MenuItem value="3">College Guest Announcement</MenuItem>
-                    <MenuItem value="4">Subject Announcement</MenuItem>
-                    <MenuItem value="5">Subject Exam Result Announcement</MenuItem>
-                    <MenuItem value="6">Subject Exam Date Announcement</MenuItem>
-                    <MenuItem value="7">Internship Announcement</MenuItem>
-                    <MenuItem value="8">Activities Announcement</MenuItem>
-                </Select>
+        <Modal visible={modalVisibleNewItem} contentContainerStyle={Platform.OS ==='web'? (theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark) : (theme === 'light' ? styles.modalFormCreateNoticeboardItemLightMobile : styles.modalFormCreateNoticeboardItemDarkMobile)} onDismiss={() => { setModalVisibleNewItem(false); } }>
+            <ScrollView>
+                <Text style={Platform.OS ==='web'? (theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark) : (theme === 'light' ? styles.titleNewItemModalLightMobile : styles.titleNewItemModalDarkMobile)}>Create a new noticeboard notification</Text>
+                <View style={styles.container}>
+                    {options.map((option) => (
+                        <Pressable
+                        key={option.value}
+                        style={[styles.pressable, selectedValue === option.value
+                            ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
+                            : { borderColor: 'grey', borderWidth: 1 },]}
+                        onPress={() => handlePress(option.value)}
+                        >
+                        <Text
+                            style={[
+                            styles.text,
+                            { color: selectedValue === option.value ? '#fff' : theme === 'light' ?  '#4dabf7' : '#9775fa' },
+                            ]}
+                        >
+                            {option.label}
+                        </Text>
+                        </Pressable>
+                    ))}
+                </View>
                 <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
                     <PaperInput
                         label="College"
@@ -211,7 +233,7 @@ export default function NoticeboardShow() {
                     <Button mode='contained-tonal' onPress={() => setModalVisibleNewItem(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
                 </View>
 
-            </View>
+            </ScrollView>
         </Modal>
 
         <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setModalVisibleNewItem(true)}>
@@ -222,6 +244,25 @@ export default function NoticeboardShow() {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+
+    pressable: {
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        margin: 5,
+    },
+
+    text: {
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+
     containerLight: {
         flex: 1,
         padding: 20,
@@ -573,7 +614,6 @@ const styles = StyleSheet.create({
 
     input: {
         marginBottom: 10,
-        width: 600,
     },
 
     inputRow: {
@@ -610,8 +650,19 @@ const styles = StyleSheet.create({
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,
-        width: '40%',
+        width: '45%',
         alignSelf: 'center',
+    },
+
+    modalFormCreateNoticeboardItemLightMobile: {
+        backgroundColor: 'white',
+        padding: 20,
+        alignItems: 'center',
+        borderRadius: 20,
+        width: '95%',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        marginTop: -20,
     },
 
     modalFormCreateNoticeboardItemDark: {
@@ -619,8 +670,18 @@ const styles = StyleSheet.create({
         padding: 20,
         alignItems: 'center',
         borderRadius: 20,
-        width: '40%',
+        width: '45%',
         alignSelf: 'center',
+    },
+
+    modalFormCreateNoticeboardItemDarkMobile: {
+        backgroundColor: '#242526',
+        padding: 20,
+        alignItems: 'center',
+        borderRadius: 20,
+        width: '95%',
+        alignSelf: 'center',
+
     },
 
     buttonRow: {
@@ -644,10 +705,26 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 
+    titleNewItemModalLightMobile: {
+        fontSize: 20,
+        marginBottom: 30,
+        fontWeight: 'bold',
+        color: 'black',
+        textAlign: 'center',
+    },
+
     titleNewItemModalDark: {
         color: 'white',
         fontSize: 24,
         marginTop: 10,
+        marginBottom: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+
+    titleNewItemModalDarkMobile: {
+        color: 'white',
+        fontSize: 20,
         marginBottom: 30,
         fontWeight: 'bold',
         textAlign: 'center',

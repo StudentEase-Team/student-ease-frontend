@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Text } from '@rneui/themed';
-import { TextInput as PaperInput, Button, Card, Modal, PaperProvider } from 'react-native-paper';
+import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton } from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { FAQItem } from '../../../model/FAQItem';
@@ -93,6 +93,15 @@ const FAQ: React.FC = () => {
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.question}</Text>
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
               </Card.Content>
+
+              <Card.Actions>
+                <IconButton
+                    icon="delete"
+                    mode='outlined'
+                    size={25}
+                    iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
+                    onPress={() => console.log('Delete', index)} />
+              </Card.Actions>
             </Card>
           ))}
         </View>
