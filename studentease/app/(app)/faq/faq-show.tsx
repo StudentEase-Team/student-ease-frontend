@@ -148,9 +148,15 @@ const FAQ: React.FC = () => {
         </Modal>
 
             
-        <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
+        {Platform.OS === 'web' ? (
+          <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
           Ask a question
-        </Button>
+          </Button>
+        ) : (
+          <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.askQuestionButtonLightMobile : styles.askQuestionButtonDarkMobile} onPress={() => setModalVisible(true)}>
+            </IconButton>
+        )}
+        
       <Toast/>
     </>
   );
@@ -445,11 +451,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#4dabf7',
   },
 
+  askQuestionButtonLightMobile: {
+    position: 'absolute',
+    bottom: '5%',
+    right: '5%',
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: '#4dabf7',
+  },
+
   askQuestionButtonDark: {
     position: 'absolute',
     bottom: '5%',
     right: '5%',
     height: 60,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: '#9775fa',
+  },
+
+  askQuestionButtonDarkMobile: {
+    position: 'absolute',
+    bottom: '5%',
+    right: '5%',
     borderRadius: 50,
     justifyContent: 'center',
     backgroundColor: '#9775fa',

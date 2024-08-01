@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, Dimensions, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, Platform, ScrollView } from 'react-native';
 import { Card, Title, Paragraph, IconButton, TextInput as PaperInput, Text, PaperProvider, Button, Modal } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
 import { themeDark, themeLight } from '../../context/PaperTheme';
 import { useAuth } from '../../context/AuthContext';
 
-const { width } = Dimensions.get('window');
-const numColumns = 4;
 const cardMargin = 10;
-const outerPadding = 120;
-const cardWidth = (width - outerPadding * 2 - (numColumns - 1) * cardMargin) / numColumns;
 
 const FacultyList: React.FC = () => {
   const { theme } = useTheme();
@@ -59,10 +55,9 @@ const FacultyList: React.FC = () => {
             
       </ScrollView>
 
-      <Modal visible={modalVisible} contentContainerStyle={theme === 'light' ? styles.modalFormCreateCollegeLight : styles.modalFormCreateCollegeDark} onDismiss={() => { setModalVisible(false) }}>
+      <Modal visible={modalVisible} contentContainerStyle={Platform.OS ==='web'? (theme === 'light' ? styles.modalFormCreateCollegeLight : styles.modalFormCreateCollegeDark) : (theme === 'light' ? styles.modalFormCreateCollegeLightMobile : styles.modalFormCreateCollegeDarkMobile)} onDismiss={() => { setModalVisible(false) }}>
         <View>
-          <Text style={theme === 'light' ? styles.titleModalLight : styles.titleModalDark}>Add a new college</Text>
-          <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+          <Text style={Platform.OS ==='web'? (theme === 'light' ? styles.titleModalLight : styles.titleModalDark) : (theme === 'light' ? styles.titleModalLightMobile : styles.titleModalDarkMobile)}>Add a new college</Text>
             <PaperInput
               label="College name"
               mode="outlined"
@@ -118,19 +113,30 @@ const FacultyList: React.FC = () => {
                 roundness: 7, 
               }}
             />
-          </PaperProvider>
 
           <View style={styles.buttonRow}>
-            <Button mode='contained' style={theme === 'light' ? styles.createCollegeButtonLight : styles.createCollegeButtonDark}> Submit announcement </Button>
+
+            {Platform.OS === 'web' ? (
+              <Button mode='contained' style={theme === 'light' ? styles.createCollegeButtonLight : styles.createCollegeButtonDark}> Submit announcement </Button>
+            ) : (
+              <Button mode='contained' style={theme === 'light' ? styles.createCollegeButtonLight : styles.createCollegeButtonDark}> Submit </Button>
+            )}
             <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={theme === 'light' ? styles.cancelCollegeButtonLight : styles.cancelCollegeButtonDark}> Cancel </Button>
           </View>
 
         </View>
       </Modal>
 
-      <Button mode='contained' style={theme === 'light' ? styles.addCollegeButtonLight : styles.addCollegeButtonDark} onPress={() => setModalVisible(true)}>
+
+      {Platform.OS === 'web' ? (
+        <Button mode='contained' style={theme === 'light' ? styles.addCollegeButtonLight : styles.addCollegeButtonDark} onPress={() => setModalVisible(true)}>
         Add new college
-      </Button>
+        </Button>
+      ) : (
+        <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.addCollegeButtonLightMobile : styles.addCollegeButtonDarkMobile} onPress={() => setModalVisible(true)}>
+            </IconButton>
+      )}
+      
       </>
   );
 };
@@ -355,11 +361,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#4dabf7',
   },
 
+  addCollegeButtonLightMobile: {
+    position: 'absolute',
+    bottom: '5%',
+    right: '5%',
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: '#4dabf7',
+  },
+
   addCollegeButtonDark: {
     position: 'absolute',
     bottom: '5%',
     right: '5%',
     height: 60,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: '#9775fa',
+  },
+
+  addCollegeButtonDarkMobile: {
+    position: 'absolute',
+    bottom: '5%',
+    right: '5%',
     borderRadius: 50,
     justifyContent: 'center',
     backgroundColor: '#9775fa',
@@ -394,6 +418,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 
+  modalFormCreateCollegeLightMobile: {
+    backgroundColor: 'white',
+    padding: 20,
+    alignItems: 'center',
+    borderRadius: 20,
+    width: '95%',
+    alignSelf: 'center',
+  },
+
   modalFormCreateCollegeDark: {
     backgroundColor: '#242526',
     padding: 20,
@@ -403,9 +436,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 
+  modalFormCreateCollegeDarkMobile: {
+    backgroundColor: '#242526',
+    padding: 20,
+    alignItems: 'center',
+    borderRadius: 20,
+    width: '95%',
+    alignSelf: 'center',
+  },
+
   input: {
     marginBottom: 10,
-    width: 600,
   },
 
   createCollegeButtonLight: {
@@ -448,9 +489,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  titleModalLightMobile: {
+    fontSize: 20,
+    marginTop: 10,
+    marginBottom: 30,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+  },
+
   titleModalDark: {
     color: 'white',
     fontSize: 24,
+    marginTop: 10,
+    marginBottom: 30,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  titleModalDarkMobile: {
+    color: 'white',
+    fontSize: 20,
     marginTop: 10,
     marginBottom: 30,
     fontWeight: 'bold',

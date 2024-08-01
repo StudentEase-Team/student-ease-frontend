@@ -81,7 +81,7 @@ const FAQ : React.FC = () => {
                                     <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
                                 </Card.Content>
                                 <Card.Actions>
-                                    <IconButton icon="forum" mode='contained-tonal' onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
+                                    <IconButton icon="forum" mode='outlined' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'} onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
                                 </Card.Actions>
                             </Card>
                         ))
