@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Text } from '@rneui/themed';
-import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton } from 'react-native-paper';
+import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton, Snackbar } from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { FAQItem } from '../../../model/FAQItem';
@@ -9,6 +9,8 @@ import axios, { AxiosResponse } from 'axios';
 import { useTheme } from '../../../context/ThemeContext';
 import { themeLight, themeDark } from '../../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
+import zIndex from '@mui/material/styles/zIndex';
+import { useFocusEffect } from 'expo-router';
 
 const FAQ: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,7 +35,7 @@ const FAQ: React.FC = () => {
     if (response.status === 201) {
       Toast.show({
         type: 'success',
-        text1: 'Successfully created!',
+        text1: 'Asked succesfully!',
       });
       setModalVisible(false);
       items?.push(newQuestion);
@@ -69,15 +71,38 @@ const FAQ: React.FC = () => {
         text1: 'Failed to fetch questions',
       });
     }
-  }, [userState?.token.accessToken]);
+  }, []);
 
-  useEffect(() => {
-    fetchFAQ();
-  }, [fetchFAQ]);
+  async function deleteFAQ(id: number) {
+    if (!userState?.token.accessToken) return;
+
+    const config = {
+      headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+    };
+    try {
+      const response: AxiosResponse = await axios.delete(`${API_BASE_URL}/faq/item/${id}`, config);
+      if (response.status === 200) {
+        fetchFAQ();
+        Toast.show({
+          type: 'success',
+          text1: 'Succesfully deleted!',
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to delete question. Can delete only if you answered it.',
+      });
+    }
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchFAQ();
+  }, []));
 
   return (
     <>
-      <Toast/>
       <ScrollView style={theme === 'light'? styles.pageLightContainer : styles.pageDarkContainer}>
         <View style={(Platform.OS === 'web')? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
           <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleSearchLight : styles.titleSearchDark) : (theme === 'light' ? styles.titleSearchLightMobile : styles.titleSearchDarkMobile)}>Search FAQ here</Text>
@@ -93,15 +118,20 @@ const FAQ: React.FC = () => {
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.question}</Text>
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
               </Card.Content>
-
+              {userState?.role !== "STUDENT"? (
               <Card.Actions>
                 <IconButton
                     icon="delete"
                     mode='outlined'
                     size={25}
                     iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                    onPress={() => console.log('Delete', index)} />
+                    onPress={() => deleteFAQ(item.id)}
+                    />
               </Card.Actions>
+              ):(
+                ''
+              )}
+
             </Card>
           ))}
         </View>
@@ -121,7 +151,7 @@ const FAQ: React.FC = () => {
         <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
           Ask a question
         </Button>
-      
+      <Toast/>
     </>
   );
 };

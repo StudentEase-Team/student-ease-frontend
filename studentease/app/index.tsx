@@ -26,7 +26,6 @@ const Login: React.FC = () => {
 
   return (
     <ImageBackground source={theme === 'light' ? require('../assets/web.jpg') : require('../assets/webDark.png')} style={styles.background}>
-      <Toast />
       <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
         <KeyboardAvoidingView
           style={styles.container}
@@ -58,6 +57,7 @@ const Login: React.FC = () => {
           </View>
         </KeyboardAvoidingView>
       </PaperProvider>
+      <Toast />
     </ImageBackground>
   );
 }
