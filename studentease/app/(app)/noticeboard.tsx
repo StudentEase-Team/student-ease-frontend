@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text } from '@rneui/themed';
-import { StyleSheet, ScrollView, View, Platform, Pressable } from 'react-native';
+import { StyleSheet, ScrollView, View, Platform, Pressable, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, TextInput } from 'react-native-paper';;
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { themeDark, themeLight } from '../../context/PaperTheme';
+import { useFocusEffect } from 'expo-router';
+import axios, { AxiosResponse } from 'axios';
+import { NoticeboardItem } from '../../model/NoticeboardItem';
+import { NoticeboardItemCategory } from '../../model/NoticeboardItemCategory';
+import { API_BASE_URL } from '@env';
+import Toast from 'react-native-toast-message';
 
 type AnnouncementType =
   | 'UNIVERSITY_ANNOUNCEMENT'
@@ -20,16 +26,20 @@ type AnnouncementType =
   | 'ACTIVITIES_ANNOUNCEMENT';
 
 type FilterType = 
+  | 'ALL'
   | 'UNIVERSITY'
   | 'COLLEGE'
-  | 'SUBJECT';
+  | 'SUBJECT'
+  | 'OTHER';
 
 export default function NoticeboardShow() {
     const [date, setDate] = useState(dayjs());
     const [modalVisibleDate, setModalVisibleDate] = useState(false);
-    const [collegeFilterEnabled, setCollegeFilterEnabled] = useState(false);
-    const [subjectFilterEnabled, setSubjectFilterEnabled] = useState(false);
+    const [collegeFilterEnabled, setCollegeFilterEnabled] = useState(true);
+    const [subjectFilterEnabled, setSubjectFilterEnabled] = useState(true);
     const [modalVisibleNewItem, setModalVisibleNewItem] = useState(false);
+    const [items, setItems] = useState<NoticeboardItem[]>();
+    const [itemsBak, setItemsBak] = useState<NoticeboardItem[]>();
 
     const [subject, setSubject] = React.useState('');
     const [college, setCollege] = React.useState('');
@@ -39,24 +49,29 @@ export default function NoticeboardShow() {
     const {theme} = useTheme();
 
     const [selectedValue, setSelectedValue] = useState<AnnouncementType | null>(null);
-    const [selectedValueFilterType, setSelectedValueFilterType] = useState<FilterType | null>('UNIVERSITY');
+    const [selectedFilterType, setSelectedFilterType] = useState<FilterType | null>('ALL');
+
+    const [collegeSearchParam, setCollegeSearchParam] = useState('');
+    const [subjectSearchParam, setSubjectSearchParam] = useState('');
 
     const options: { value: AnnouncementType; label: string }[] = [
-        { value: 'UNIVERSITY_ANNOUNCEMENT', label: 'University Announcement' },
-        { value: 'UNIVERSITY_GUEST_ANNOUNCEMENT', label: 'University Guest Announcement' },
-        { value: 'COLLEGE_ANNOUNCEMENT', label: 'College Announcement' },
-        { value: 'COLLEGE_GUEST_ANNOUNCEMENT', label: 'College Guest Announcement' },
-        { value: 'SUBJECT_ANNOUNCEMENT', label: 'Subject Announcement' },
-        { value: 'SUBJECT_EXAM_RESULT_ANNOUNCEMENT', label: 'Subject Exam Result Announcement' },
-        { value: 'SUBJECT_EXAM_DATE_ANNOUNCEMENT', label: 'Subject Exam Date Announcement' },
-        { value: 'INTERNSHIP_ANNOUNCEMENT', label: 'Internship Announcement' },
-        { value: 'ACTIVITIES_ANNOUNCEMENT', label: 'Activities Announcement' },
+        { value: NoticeboardItemCategory.UNIVERSITY_ANNOUNCEMENT, label: 'University Announcement' },
+        { value: NoticeboardItemCategory.UNIVERSITY_GUEST_ANNOUNCEMENT, label: 'University Guest Announcement' },
+        { value: NoticeboardItemCategory.COLLEGE_ANNOUNCEMENT, label: 'College Announcement' },
+        { value: NoticeboardItemCategory.COLLEGE_GUEST_ANNOUNCEMENT, label: 'College Guest Announcement' },
+        { value: NoticeboardItemCategory.SUBJECT_ANNOUNCEMENT, label: 'Subject Announcement' },
+        { value: NoticeboardItemCategory.SUBJECT_EXAM_RESULT_ANNOUNCEMENT, label: 'Subject Exam Result Announcement' },
+        { value: NoticeboardItemCategory.SUBJECT_EXAM_DATE_ANNOUNCEMENT, label: 'Subject Exam Date Announcement' },
+        { value: NoticeboardItemCategory.INTERNSHIP_ANNOUNCEMENT, label: 'Internship Announcement' },
+        { value: NoticeboardItemCategory.ACTIVITIES_ANNOUNCEMENT, label: 'Activities Announcement' },
     ];
 
     const filterOptions: { value: FilterType; label: string }[] = [
+        { value: 'ALL', label: 'All' },
         { value: 'UNIVERSITY', label: 'University' },
         { value: 'COLLEGE', label: 'College' },
         { value: 'SUBJECT', label: 'Subject' },
+        { value: 'OTHER', label: 'Other' },
     ];
 
     const handlePress = (value: AnnouncementType) => {
@@ -67,28 +82,68 @@ export default function NoticeboardShow() {
         if(value === 'UNIVERSITY') {
             setCollegeFilterEnabled(false);
             setSubjectFilterEnabled(false);
+            setItems(itemsBak?.filter(i => i.category === "UNIVERSITY_ANNOUNCEMENT" || i.category === "UNIVERSITY_GUEST_ANNOUNCEMENT"))
+        }        
+        else if(value === 'ALL') {
+            setCollegeFilterEnabled(true);
+            setSubjectFilterEnabled(true);
+            setItems(itemsBak);
+        }
+        else if(value === 'OTHER') {
+            setCollegeFilterEnabled(false);
+            setSubjectFilterEnabled(false);
+            setItems(itemsBak?.filter(i => i.category === "INTERNSHIP_ANNOUNCEMENT" || i.category === "ACTIVITIES_ANNOUNCEMENT"))
         }
         else if(value === 'COLLEGE') {
             setCollegeFilterEnabled(true);
             setSubjectFilterEnabled(false);
+            setItems(itemsBak?.filter(i => i.category === "COLLEGE_ANNOUNCEMENT" || i.category === "COLLEGE_GUEST_ANNOUNCEMENT"))
+        
         }
         else if(value === 'SUBJECT') {
             setCollegeFilterEnabled(true);
             setSubjectFilterEnabled(true);
+            setItems(itemsBak?.filter(i => i.category === "SUBJECT_ANNOUNCEMENT" || i.category === "SUBJECT_EXAM_RESULT_ANNOUNCEMENT" || i.category === "SUBJECT_EXAM_DATE_ANNOUNCEMENT"))
         }
-        setSelectedValueFilterType(value);
+        setSelectedFilterType(value);
     };
 
+    const handleSearchCollege = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+        const searchValue = e.nativeEvent.text;
+        setCollegeSearchParam(searchValue)
+        if (searchValue === '') {
+            if(subjectSearchParam === '')
+                setItems(itemsBak);
+        } else if(searchValue !== null) {
+          setItems(itemsBak?.filter(i => i.collegeName.toLowerCase().includes(searchValue.toLowerCase())));
+        }
+      };
+
+      const handleSearchSubject = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+        const searchValue = e.nativeEvent.text;
+        setSubjectSearchParam(searchValue)
+        if (searchValue === '') {
+            if(collegeSearchParam === '')
+                setItems(itemsBak);
+        } else if(searchValue !== null) {
+          setItems(itemsBak?.filter(i => i.subjectName.toLowerCase().includes(searchValue.toLowerCase())));
+        }
+      };
+
     const sumbitAnnouncement = async () => {
-        /*const config = {
+       /* const config = {
             headers: { Authorization: `Bearer ${userState?.token.accessToken}` }
         };
-        const newNoticeboardItem : NoticeboardItem = {
+        let newNoticeboardItem : NoticeboardItem;
+        if(selectedValue !== null)
+        newNoticeboardItem  = {
             id: 0,
             title: "",
             message: "",
             updatedAt: new Date(),
-            noticeboardItemCategory: new NoticeboardItemCategory,
+            category: selectedValue,
+            subjectName: '',
+            collegeName: '',
         }
         const response : AxiosResponse = await axios.post('${API_BASE_URL}/api/faq/item', newQuestion, config)
         if(response.status == 201) {
@@ -102,6 +157,55 @@ export default function NoticeboardShow() {
         }*/
     }
 
+    async function deleteNoticeboardItem(id: number) {
+        if (!userState?.token.accessToken) return;
+    
+        const config = {
+          headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+        };
+        try {
+          const response: AxiosResponse = await axios.delete(`${API_BASE_URL}/noticeboard/item/${id}`, config);
+          if (response.status === 200) {
+            fetchNoticeboardItems();
+            Toast.show({
+              type: 'success',
+              text1: 'Succesfully deleted!',
+            });
+          }
+        } catch (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to delete question. Can delete only if you answered it.',
+          });
+        }
+      }
+    
+
+    const fetchNoticeboardItems = useCallback(async () => {
+        if (!userState?.token.accessToken) return;
+    
+        const config = {
+          headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+        };
+        try {
+          const response: AxiosResponse = await axios.get(`${API_BASE_URL}/noticeboard/items/all`, config);
+          if (response.status === 200) {
+            setItems(response.data);
+            setItemsBak(response.data);
+          }
+        } catch (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to noticeboard items',
+          });
+        }
+      }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+          fetchNoticeboardItems();
+      }, []));
+
     return (
         <>
        
@@ -114,7 +218,7 @@ export default function NoticeboardShow() {
                             {filterOptions.map((option) => (
                             <Pressable
                                 key={option.value}
-                                style={[styles.pressable, selectedValueFilterType === option.value
+                                style={[styles.pressable, selectedFilterType === option.value
                                     ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
                                     : { borderColor: 'grey', borderWidth: 0.5 },]}
                                 onPress={() => handlePressFilterOptions(option.value)}>
@@ -122,7 +226,7 @@ export default function NoticeboardShow() {
                                 <Text
                                     style={[
                                     styles.text,
-                                    { color: selectedValueFilterType === option.value ? '#fff' : theme === 'light' ?  '#4dabf7' : '#9775fa' }, ]}>
+                                    { color: selectedFilterType === option.value ? '#fff' : theme === 'light' ?  '#4dabf7' : '#9775fa' }, ]}>
                                     {option.label}
                                 </Text>
                             </Pressable>
@@ -132,12 +236,14 @@ export default function NoticeboardShow() {
                                 <PaperInput
                                     label="College"
                                     mode="outlined"
+                                    onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearchCollege(e)}
                                     disabled={!collegeFilterEnabled}
                                     style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
                                 </PaperInput>
                                 <PaperInput
                                     label="Subject"
                                     mode="outlined"
+                                    onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearchSubject(e)}
                                     disabled={!subjectFilterEnabled}
                                     style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
                                 </PaperInput>
@@ -170,15 +276,20 @@ export default function NoticeboardShow() {
         </PaperProvider>
 
             <View style={Platform.OS ==='web'? styles.contentGrid : styles.contentGridMobile}>
-                {Array.from({ length: 10 }).map((_, index) => (
+                {items?.map((item, index) => (
                     <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark) : (theme === 'light'? styles.qaContainerLightMobile:styles.qaContainerDarkMobile)}>
                         <Card.Content>
-                            <Title style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Notification title</Title>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>This is description of the notification</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Date: 15.04.2024.</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Subject: Example subject</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>College: Example faculty</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Professor: Example professor</Paragraph>
+                            <Title style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.title}</Title>
+                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.message}</Paragraph>
+                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Date: {item.updatedAt.toString()}</Paragraph>
+                            {item.subjectName !== null?(
+                                <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Subject: {item.subjectName}</Paragraph>
+                            )
+                            :('')}
+                           {item.collegeName !== null?(
+                                <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>College: {item.collegeName}</Paragraph>
+                            )
+                            :('')}
                         </Card.Content>
 
                         {userState?.role !== 'STUDENT'? (
@@ -194,7 +305,7 @@ export default function NoticeboardShow() {
                                 mode='outlined'
                                 size={25}
                                 iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                                onPress={() => console.log('Delete', index)} />
+                                onPress={() => deleteNoticeboardItem(item.id)} />
                         </Card.Actions>
                         ):('')}
                     </Card>
@@ -297,7 +408,7 @@ export default function NoticeboardShow() {
                     )
         ):('')}
 
-
+        <Toast/>
     </>
     );
 };
