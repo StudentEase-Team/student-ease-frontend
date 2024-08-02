@@ -83,6 +83,14 @@ export default function AppLayout() {
                 )}
 
                 <Drawer.Screen
+                  name="map"
+                  options={{
+                    drawerLabel: 'Show maps of buildings',
+                    title: 'Maps',
+                  }}
+                />
+
+                <Drawer.Screen
                     name="change-theme"
                     options={{
                     drawerLabel: 'Change theme',

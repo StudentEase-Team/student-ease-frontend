@@ -5,5 +5,10 @@
     "paths": {
       "@env": ["./env.d.ts"]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "node_modules"
+  ]
 }
