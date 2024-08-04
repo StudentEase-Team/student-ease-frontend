@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const userState: UserState = JSON.parse(storedUserState);
           
           const { createdAt, expiresIn } = userState.token;
-          const expirationDate = new Date(new Date(createdAt).getTime() + expiresIn * 1000);
+          const expirationDate = new Date(new Date(createdAt).getTime() + expiresIn);
           const currentTime = new Date();
 
           if (expirationDate < currentTime) {

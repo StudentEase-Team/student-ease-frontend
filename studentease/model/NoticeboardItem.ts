@@ -8,4 +8,7 @@ export interface NoticeboardItem {
     category: NoticeboardItemCategory,
     subjectName: string,
     collegeName: string,
+    subjectId: number,
+    collegeId: number,
+    shouldNotify: boolean
 }

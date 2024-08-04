@@ -10,7 +10,12 @@ import { Subject } from "../../model/Subject";
 
 type CollegeSubjectDropdownsProps = {
     filterableData: any[],
-    onChangeAny: () => void
+    collegeEnabled: boolean,
+    subjectEnabled: boolean
+    setSelectedCollege: React.Dispatch<React.SetStateAction<string>>,
+    setSelectedCollegeID: React.Dispatch<React.SetStateAction<number>>,
+    setSelectedSubject: React.Dispatch<React.SetStateAction<string>>,
+    setSelectedSubjectID: React.Dispatch<React.SetStateAction<number>>,
 };
 
 function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
@@ -47,6 +52,7 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
         fetchColleges();
     }, [userState?.token.accessToken]);
 
+    
     const handleCollegeChange = (selectedCollege: { label: any, value: College | 'any' }) => {
         if (selectedCollege.value === 'any') {
             setSubjectData([{ label: 'Any', value: 'any' }]);
@@ -57,7 +63,18 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
             }));
             setSubjectData([{ label: 'Any', value: 'any' }, ...selectedSubjects]);
         }
+        if(selectedCollege.value !== 'any'){
+            props.setSelectedCollege(selectedCollege.value.name);
+            props.setSelectedCollegeID(selectedCollege.value.id);
+        }
     };
+
+    const handleSubjectChange = (selectedSubject: { label: any, value: Subject | 'any' }) => {
+        if(selectedSubject.value !== 'any'){
+            props.setSelectedSubject(selectedSubject.value.name);
+            props.setSelectedSubjectID(selectedSubject.value.id);
+        }
+    }
 
     return (
         <>
@@ -66,13 +83,15 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
                     data={collegeData} 
                     labelField='label' 
                     valueField='value' 
+                    disable={props.collegeEnabled}
                     onChange={handleCollegeChange} 
                 />
                 <CustomDropdown 
                     data={subjectData} 
                     labelField='label' 
                     valueField='value' 
-                    onChange={() => {}} 
+                    disable={props.subjectEnabled}
+                    onChange={handleSubjectChange} 
                 />
         </>
     );

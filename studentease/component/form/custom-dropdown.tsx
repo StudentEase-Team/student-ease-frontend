@@ -14,6 +14,7 @@ function CustomDropdown(props: DropdownProps<any>) {
     onFocus={() => {setIsFocus(true)}}
     onBlur={() => {setIsFocus(false)}}
     search
+    disable={props.disable}
     placeholderStyle={styles.placeholderStyle}
     itemTextStyle={theme === 'light'? styles.selectedTextStyleLight:styles.selectedTextStyleDark}
     containerStyle={theme === 'light'? styles.itemLight:styles.itemDark}

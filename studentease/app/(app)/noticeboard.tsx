@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Text } from '@rneui/themed';
 import { StyleSheet, ScrollView, View, Platform, Pressable, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
-import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, TextInput } from 'react-native-paper';;
+import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, TextInput, Checkbox } from 'react-native-paper';;
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import { useAuth } from '../../context/AuthContext';
@@ -40,12 +40,17 @@ export default function NoticeboardShow() {
     const [modalVisibleDate, setModalVisibleDate] = useState(false);
     const [collegeFilterEnabled, setCollegeFilterEnabled] = useState(true);
     const [subjectFilterEnabled, setSubjectFilterEnabled] = useState(true);
+    const [collegeComboModalEnabled, setCollegeComboModalEnabled] = useState(true);
+    const [subjectComboModalEnabled, setSubjectComboModalEnabled] = useState(true);
     const [modalVisibleNewItem, setModalVisibleNewItem] = useState(false);
     const [items, setItems] = useState<NoticeboardItem[]>();
     const [itemsBak, setItemsBak] = useState<NoticeboardItem[]>();
 
+    const [checkedMail, setCheckedMail] = React.useState(false);
     const [subject, setSubject] = React.useState('');
     const [college, setCollege] = React.useState('');
+    const [subjectId, setSubjectID] = React.useState(-1);
+    const [collegeId, setCollegeID] = React.useState(-1);
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
     const {userState} = useAuth();
@@ -78,6 +83,27 @@ export default function NoticeboardShow() {
     ];
 
     const handlePress = (value: AnnouncementType) => {
+        if(value === 'UNIVERSITY_ANNOUNCEMENT' || value === 'UNIVERSITY_GUEST_ANNOUNCEMENT') {
+            setCollege('')
+            setSubject('')
+            setCollegeComboModalEnabled(false);
+            setSubjectComboModalEnabled(false);
+        }
+        else if(value === 'COLLEGE_ANNOUNCEMENT' || value === 'COLLEGE_GUEST_ANNOUNCEMENT') {
+            setSubject('')
+            setCollegeComboModalEnabled(true);
+            setSubjectComboModalEnabled(false);
+        }
+        else if(value === 'SUBJECT_ANNOUNCEMENT' || value === 'SUBJECT_EXAM_DATE_ANNOUNCEMENT' || value === 'SUBJECT_EXAM_RESULT_ANNOUNCEMENT') {
+            setCollegeComboModalEnabled(true);
+            setSubjectComboModalEnabled(true);
+        }
+        else {
+            setCollege('')
+            setSubject('')
+            setCollegeComboModalEnabled(false);
+            setSubjectComboModalEnabled(false);
+        }
         setSelectedValue(value);
     };
 
@@ -134,30 +160,33 @@ export default function NoticeboardShow() {
       };
 
     const sumbitAnnouncement = async () => {
-       /* const config = {
+        const config = {
             headers: { Authorization: `Bearer ${userState?.token.accessToken}` }
         };
-        let newNoticeboardItem : NoticeboardItem;
-        if(selectedValue !== null)
-        newNoticeboardItem  = {
-            id: 0,
-            title: "",
-            message: "",
-            updatedAt: new Date(),
-            category: selectedValue,
-            subjectName: '',
-            collegeName: '',
+        if(selectedValue !== null) {
+            let newNoticeboardItem : NoticeboardItem = {
+                id: 0,
+                title: title,
+                message: description,
+                updatedAt: new Date(),
+                category:  selectedValue as NoticeboardItemCategory,
+                subjectName: subject,
+                collegeName: college,
+                subjectId: subjectId,
+                collegeId: collegeId,
+                shouldNotify: checkedMail
+            }
+            const response : AxiosResponse = await axios.post(`${API_BASE_URL}/noticeboard/item`, newNoticeboardItem, config)
+            if(response.status == 201) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Succesfully created!',
+                });
+                setModalVisibleNewItem(false);
+                //items?.push(newNoticeboardItem);
+                //itemsBak?.push(newNoticeboardItem);
+            }
         }
-        const response : AxiosResponse = await axios.post('${API_BASE_URL}/api/faq/item', newQuestion, config)
-        if(response.status == 201) {
-            Toast.show({
-                type: 'success',
-                text1: 'Succesfully created!',
-              });
-            setModalVisible(false);
-            items?.push(newQuestion);
-            itemsBak?.push(newQuestion);
-        }*/
     }
 
     async function deleteNoticeboardItem(id: number) {
@@ -236,7 +265,13 @@ export default function NoticeboardShow() {
                         ))}
                         
                         <View style={styles.inputColumn}>
-                                <CollegeSubjectDropdowns filterableData={[]} onChangeAny={() => {}}/>
+                                <CollegeSubjectDropdowns subjectEnabled={false} collegeEnabled={false} filterableData={[]} setSelectedCollege={function (value: React.SetStateAction<string>): void {
+                                    } } setSelectedSubject={function (value: React.SetStateAction<string>): void {
+                                    } } setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
+                                        throw new Error('Function not implemented.');
+                                    } } setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
+                                        throw new Error('Function not implemented.');
+                                    } }/>
                         </View>
                     </View>
                 </View>
@@ -272,11 +307,11 @@ export default function NoticeboardShow() {
                             <Title style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.title}</Title>
                             <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.message}</Paragraph>
                             <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Date: {item.updatedAt.toString()}</Paragraph>
-                            {item.subjectName !== null?(
+                            {item.subjectName !== ''?(
                                 <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Subject: {item.subjectName}</Paragraph>
                             )
                             :('')}
-                           {item.collegeName !== null?(
+                           {item.collegeName !== ''?(
                                 <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>College: {item.collegeName}</Paragraph>
                             )
                             :('')}
@@ -345,8 +380,7 @@ export default function NoticeboardShow() {
                     ))}
                 </View>
                 <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <CollegeSubjectDropdowns/>
-
+                    <CollegeSubjectDropdowns filterableData={[]} setSelectedSubjectID={setSubjectID} setSelectedCollegeID={setCollegeID} subjectEnabled={!subjectComboModalEnabled} collegeEnabled={!collegeComboModalEnabled} setSelectedCollege={setCollege} setSelectedSubject={setSubject}/>
                     <PaperInput
                         label="Title"
                         mode="outlined"
@@ -362,6 +396,18 @@ export default function NoticeboardShow() {
                         onChangeText={text => setDescription(text)}
                         style={styles.input} />
                 </PaperProvider>
+
+                <View style={{flex:1, flexDirection:'row', width:110, alignItems:'center', justifyContent:'flex-start'}}>
+                    <PaperProvider>
+                        <Checkbox
+                            status={checkedMail ? 'checked' : 'unchecked'}
+                            onPress={() => {
+                                setCheckedMail(!checkedMail);
+                            }}
+                            />
+                    </PaperProvider>
+                    <Text>Send email?</Text>
+                </View>
 
                 <View style={styles.buttonRow}>
                     {Platform.OS === 'web' ? (
