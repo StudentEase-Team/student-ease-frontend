@@ -13,6 +13,8 @@ import { NoticeboardItem } from '../../model/NoticeboardItem';
 import { NoticeboardItemCategory } from '../../model/NoticeboardItemCategory';
 import { API_BASE_URL } from '@env';
 import Toast from 'react-native-toast-message';
+import CustomDropdown from '../../component/form/custom-dropdown';
+import CollegeSubjectDropdowns from '../../component/form/college-subject';
 
 type AnnouncementType =
   | 'UNIVERSITY_ANNOUNCEMENT'
@@ -33,6 +35,7 @@ type FilterType =
   | 'OTHER';
 
 export default function NoticeboardShow() {
+
     const [date, setDate] = useState(dayjs());
     const [modalVisibleDate, setModalVisibleDate] = useState(false);
     const [collegeFilterEnabled, setCollegeFilterEnabled] = useState(true);
@@ -232,21 +235,8 @@ export default function NoticeboardShow() {
                             </Pressable>
                         ))}
                         
-                        <View style={Platform.OS === 'web' ? styles.inputRow : styles.inputColumn}>
-                                <PaperInput
-                                    label="College"
-                                    mode="outlined"
-                                    onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearchCollege(e)}
-                                    disabled={!collegeFilterEnabled}
-                                    style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                                </PaperInput>
-                                <PaperInput
-                                    label="Subject"
-                                    mode="outlined"
-                                    onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearchSubject(e)}
-                                    disabled={!subjectFilterEnabled}
-                                    style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                                </PaperInput>
+                        <View style={styles.inputColumn}>
+                                <CollegeSubjectDropdowns filterableData={[]} onChangeAny={() => {}}/>
                         </View>
                     </View>
                 </View>
@@ -355,19 +345,7 @@ export default function NoticeboardShow() {
                     ))}
                 </View>
                 <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <PaperInput
-                        label="College"
-                        mode="outlined"
-                        value={college}
-                        onChangeText={text => setCollege(text)}
-                        style={styles.input} />
-
-                    <PaperInput
-                        label="Subject"
-                        mode="outlined"
-                        value={subject}
-                        onChangeText={text => setSubject(text)}
-                        style={styles.input} />
+                    <CollegeSubjectDropdowns/>
 
                     <PaperInput
                         label="Title"
@@ -798,7 +776,7 @@ const styles = StyleSheet.create({
 
     inputRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         width: "100%"
     },
 
