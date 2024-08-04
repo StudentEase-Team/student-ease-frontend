@@ -38,7 +38,7 @@ const FAQ: React.FC = () => {
         text1: 'Asked succesfully!',
       });
       setModalVisible(false);
-      items?.push(newQuestion);
+      //items?.push(newQuestion);
       itemsBak?.push(newQuestion);
     }
   };

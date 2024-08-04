@@ -89,6 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const request: LoginRequest = {
       email: email,
       password: password,
+      platform: Platform.OS === 'web'? 'web':'mobile'
     };
 
     try {
