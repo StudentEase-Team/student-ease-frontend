@@ -108,7 +108,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: `Wrong email or password!`,
+        text1: `${error}`,
       });
       return null;
     }

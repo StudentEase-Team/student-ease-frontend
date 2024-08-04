@@ -48,7 +48,6 @@ const Map = () => {
     <GestureHandlerRootView style={styles.container}>
     <PinchGestureHandler onGestureEvent={onPinchGestureEvent}>
       <PanGestureHandler onGestureEvent={onPanGestureEvent}>
-
             <Canvas>
               <CameraSetup />
               <ambientLight intensity={0.5} />
@@ -57,7 +56,6 @@ const Map = () => {
             </Canvas>
           </PanGestureHandler>
         </PinchGestureHandler>
-
     </GestureHandlerRootView>
   );
   else{
