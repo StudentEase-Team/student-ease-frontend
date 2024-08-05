@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Text } from '@rneui/themed';
 import { StyleSheet, ScrollView, View, Platform, Pressable, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 import { Provider as PaperProvider, TextInput as PaperInput, Button, Card, Title, Modal, IconButton, Paragraph, TextInput, Checkbox } from 'react-native-paper';;
@@ -137,27 +137,6 @@ export default function NoticeboardShow() {
         setSelectedFilterType(value);
     };
 
-    const handleSearchCollege = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-        const searchValue = e.nativeEvent.text;
-        setCollegeSearchParam(searchValue)
-        if (searchValue === '') {
-            if(subjectSearchParam === '')
-                setItems(itemsBak);
-        } else if(searchValue !== null) {
-          setItems(itemsBak?.filter(i => i.collegeName.toLowerCase().includes(searchValue.toLowerCase())));
-        }
-      };
-
-      const handleSearchSubject = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-        const searchValue = e.nativeEvent.text;
-        setSubjectSearchParam(searchValue)
-        if (searchValue === '') {
-            if(collegeSearchParam === '')
-                setItems(itemsBak);
-        } else if(searchValue !== null) {
-          setItems(itemsBak?.filter(i => i.subjectName.toLowerCase().includes(searchValue.toLowerCase())));
-        }
-      };
 
     const sumbitAnnouncement = async () => {
         const config = {
@@ -174,7 +153,8 @@ export default function NoticeboardShow() {
                 collegeName: college,
                 subjectId: subjectId,
                 collegeId: collegeId,
-                shouldNotify: checkedMail
+                shouldNotify: checkedMail,
+                creatorName: ''
             }
             const response : AxiosResponse = await axios.post(`${API_BASE_URL}/noticeboard/item`, newNoticeboardItem, config)
             if(response.status == 201) {
@@ -184,7 +164,7 @@ export default function NoticeboardShow() {
                 });
                 setModalVisibleNewItem(false);
                 //items?.push(newNoticeboardItem);
-                //itemsBak?.push(newNoticeboardItem);
+                itemsBak?.push(newNoticeboardItem);
             }
         }
     }
@@ -238,6 +218,26 @@ export default function NoticeboardShow() {
           fetchNoticeboardItems();
       }, []));
 
+    useEffect(() => {
+        if(collegeSearchParam === 'any' && subjectSearchParam === 'any')
+            setItems(itemsBak);
+        else if(collegeSearchParam === 'any')
+            setItems(itemsBak?.filter(i => i.subjectName.toLocaleLowerCase().includes(subjectSearchParam.toLocaleLowerCase())))
+        else if(subjectSearchParam === 'any')
+            setItems(itemsBak?.filter(i => i.collegeName.toLocaleLowerCase().includes(collegeSearchParam.toLocaleLowerCase())))
+        else
+            setItems(itemsBak?.filter(i => i.subjectName.toLocaleLowerCase().includes(subjectSearchParam.toLocaleLowerCase())&& i.collegeName.toLocaleLowerCase().includes(collegeSearchParam.toLocaleLowerCase())))
+        
+        
+    },[collegeSearchParam, subjectSearchParam])
+
+    const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
     return (
         <>
        
@@ -265,13 +265,16 @@ export default function NoticeboardShow() {
                         ))}
                         
                         <View style={styles.inputColumn}>
-                                <CollegeSubjectDropdowns subjectEnabled={false} collegeEnabled={false} filterableData={[]} setSelectedCollege={function (value: React.SetStateAction<string>): void {
-                                    } } setSelectedSubject={function (value: React.SetStateAction<string>): void {
-                                    } } setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
-                                        throw new Error('Function not implemented.');
-                                    } } setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
-                                        throw new Error('Function not implemented.');
-                                    } }/>
+                                <CollegeSubjectDropdowns subjectEnabled={false} collegeEnabled={false} filterableData={[]}
+                                anyEnabled={true} 
+                                setSelectedCollege={ setCollegeSearchParam} 
+                                setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
+                                       
+                                    } } 
+                                setSelectedSubject={ setSubjectSearchParam }
+                                setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
+ 
+                                    } } />
                         </View>
                     </View>
                 </View>
@@ -300,42 +303,132 @@ export default function NoticeboardShow() {
             </View>
         </PaperProvider>
 
-            <View style={Platform.OS ==='web'? styles.contentGrid : styles.contentGridMobile}>
-                {items?.map((item, index) => (
-                    <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark) : (theme === 'light'? styles.qaContainerLightMobile:styles.qaContainerDarkMobile)}>
+        <View style={Platform.OS === 'web' ? styles.contentGrid : styles.contentGridMobile}>
+            {items?.map((item, index) => {
+                const date = new Date(item.updatedAt);
+                const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
+                return (
+                    <Card
+                        key={index}
+                        style={
+                            Platform.OS === 'web'
+                                ? theme === 'light'
+                                    ? styles.qaContainerLight
+                                    : styles.qaContainerDark
+                                : theme === 'light'
+                                ? styles.qaContainerLightMobile
+                                : styles.qaContainerDarkMobile
+                        }
+                    >
                         <Card.Content>
-                            <Title style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.title}</Title>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.message}</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Date: {item.updatedAt.toString()}</Paragraph>
-                            {item.subjectName !== ''?(
-                                <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>Subject: {item.subjectName}</Paragraph>
-                            )
-                            :('')}
-                           {item.collegeName !== ''?(
-                                <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.metaLight : styles.metaDark) : (theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile)}>College: {item.collegeName}</Paragraph>
-                            )
-                            :('')}
+                            <Title
+                                style={
+                                    Platform.OS === 'web'
+                                        ? theme === 'light'
+                                            ? styles.titleLight
+                                            : styles.titleDark
+                                        : theme === 'light'
+                                        ? styles.titleLightMobile
+                                        : styles.titleDarkMobile
+                                }
+                            >
+                                {item.title}
+                            </Title>
+                            <Paragraph
+                                style={
+                                    Platform.OS === 'web'
+                                        ? theme === 'light'
+                                            ? styles.descriptionLight
+                                            : styles.descriptionDark
+                                        : theme === 'light'
+                                        ? styles.descriptionLightMobile
+                                        : styles.descriptionDarkMobile
+                                }
+                            >
+                                {item.message}
+                            </Paragraph>
+                            <Paragraph
+                                style={
+                                    Platform.OS === 'web'
+                                        ? theme === 'light'
+                                            ? styles.metaLight
+                                            : styles.metaDark
+                                        : theme === 'light'
+                                        ? styles.metaLightMobile
+                                        : styles.metaDarkMobile
+                                }
+                            >
+                                Date: {formattedDate}
+                            </Paragraph>
+                            {item.creatorName !== '' && (
+                                <Paragraph
+                                    style={
+                                        Platform.OS === 'web'
+                                            ? theme === 'light'
+                                                ? styles.metaLight
+                                                : styles.metaDark
+                                            : theme === 'light'
+                                            ? styles.metaLightMobile
+                                            : styles.metaDarkMobile
+                                    }
+                                >
+                                    Creator: {item.creatorName}
+                                </Paragraph>
+                            )}
+                            {item.subjectName !== '' && (
+                                <Paragraph
+                                    style={
+                                        Platform.OS === 'web'
+                                            ? theme === 'light'
+                                                ? styles.metaLight
+                                                : styles.metaDark
+                                            : theme === 'light'
+                                            ? styles.metaLightMobile
+                                            : styles.metaDarkMobile
+                                    }
+                                >
+                                    Subject: {item.subjectName}
+                                </Paragraph>
+                            )}
+                            {item.collegeName !== '' && (
+                                <Paragraph
+                                    style={
+                                        Platform.OS === 'web'
+                                            ? theme === 'light'
+                                                ? styles.metaLight
+                                                : styles.metaDark
+                                            : theme === 'light'
+                                            ? styles.metaLightMobile
+                                            : styles.metaDarkMobile
+                                    }
+                                >
+                                    College: {item.collegeName}
+                                </Paragraph>
+                            )}
                         </Card.Content>
 
-                        {userState?.role !== 'STUDENT'? (
+                        {userState?.role !== 'STUDENT' && (
                             <Card.Actions>
-                            <IconButton
-                                icon="pencil"
-                                mode='outlined'
-                                size={25}
-                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                                onPress={() => console.log('Edit', index)} />
-                            <IconButton
-                                icon="delete"
-                                mode='outlined'
-                                size={25}
-                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                                onPress={() => deleteNoticeboardItem(item.id)} />
-                        </Card.Actions>
-                        ):('')}
+                                <IconButton
+                                    icon="pencil"
+                                    mode='outlined'
+                                    size={25}
+                                    iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
+                                    onPress={() => console.log('Edit', index)}
+                                />
+                                <IconButton
+                                    icon="delete"
+                                    mode='outlined'
+                                    size={25}
+                                    iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
+                                    onPress={() => deleteNoticeboardItem(item.id)}
+                                />
+                            </Card.Actions>
+                        )}
                     </Card>
-                ))}
-            </View>
+                );
+            })}
+        </View>
             
         </ScrollView>
 
@@ -380,7 +473,7 @@ export default function NoticeboardShow() {
                     ))}
                 </View>
                 <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <CollegeSubjectDropdowns filterableData={[]} setSelectedSubjectID={setSubjectID} setSelectedCollegeID={setCollegeID} subjectEnabled={!subjectComboModalEnabled} collegeEnabled={!collegeComboModalEnabled} setSelectedCollege={setCollege} setSelectedSubject={setSubject}/>
+                    <CollegeSubjectDropdowns anyEnabled={false} filterableData={[]} setSelectedSubjectID={setSubjectID} setSelectedCollegeID={setCollegeID} subjectEnabled={!subjectComboModalEnabled} collegeEnabled={!collegeComboModalEnabled} setSelectedCollege={setCollege} setSelectedSubject={setSubject}/>
                     <PaperInput
                         label="Title"
                         mode="outlined"

@@ -16,6 +16,7 @@ type CollegeSubjectDropdownsProps = {
     setSelectedCollegeID: React.Dispatch<React.SetStateAction<number>>,
     setSelectedSubject: React.Dispatch<React.SetStateAction<string>>,
     setSelectedSubjectID: React.Dispatch<React.SetStateAction<number>>,
+    anyEnabled: boolean
 };
 
 function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
@@ -67,12 +68,19 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
             props.setSelectedCollege(selectedCollege.value.name);
             props.setSelectedCollegeID(selectedCollege.value.id);
         }
+        else if(props.anyEnabled)
+        {
+            props.setSelectedCollege('any');
+        }
     };
 
     const handleSubjectChange = (selectedSubject: { label: any, value: Subject | 'any' }) => {
         if(selectedSubject.value !== 'any'){
             props.setSelectedSubject(selectedSubject.value.name);
             props.setSelectedSubjectID(selectedSubject.value.id);
+        }
+        else if(props.anyEnabled) {
+            props.setSelectedSubject('any');
         }
     }
 

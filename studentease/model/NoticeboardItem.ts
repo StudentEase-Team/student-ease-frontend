@@ -10,5 +10,6 @@ export interface NoticeboardItem {
     collegeName: string,
     subjectId: number,
     collegeId: number,
-    shouldNotify: boolean
+    shouldNotify: boolean,
+    creatorName: string
 }
