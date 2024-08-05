@@ -37,19 +37,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         if (storedUserState) {
           const userState: UserState = JSON.parse(storedUserState);
-          
-          const { createdAt, expiresIn } = userState.token;
-          const expirationDate = new Date(new Date(createdAt).getTime() + expiresIn);
-          const currentTime = new Date();
+          const isTokenValid = await checkTokenValidity(userState);
 
-          if (expirationDate < currentTime) {
+          if (isTokenValid) {
+            setUserState(userState);
+            setIsAuthenticated(true);
+          } else {
             await clearUserState();
             router.replace('/');
-            return;
           }
-
-          setUserState(userState);
-          setIsAuthenticated(true);
         }
       } catch (error) {
         console.log('Failed to load user state from storage', error);
@@ -58,6 +54,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     loadUserState();
   }, []);
+
+  const checkTokenValidity = async (userState: UserState) => {
+    try {
+      const { createdAt, expiresIn } = userState.token;
+      const expirationDate = new Date(new Date(createdAt).getTime() + expiresIn);
+      const currentTime = new Date();
+      return expirationDate > currentTime;
+    } catch (error) {
+      console.log('Failed to check token validity', error);
+      return false;
+    }
+  };
 
   const saveUserState = async (userState: UserState) => {
     try {

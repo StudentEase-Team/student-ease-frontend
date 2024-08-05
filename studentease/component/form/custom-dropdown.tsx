@@ -13,7 +13,6 @@ function CustomDropdown(props: DropdownProps<any>) {
     style={theme === 'light'? (!isFocus? styles.dropdownLight:styles.dropdownLightFocus):(!isFocus? styles.dropdownDark:styles.dropdownDarkFocus)}
     onFocus={() => {setIsFocus(true)}}
     onBlur={() => {setIsFocus(false)}}
-    search
     disable={props.disable}
     placeholderStyle={styles.placeholderStyle}
     itemTextStyle={theme === 'light'? styles.selectedTextStyleLight:styles.selectedTextStyleDark}
@@ -21,7 +20,9 @@ function CustomDropdown(props: DropdownProps<any>) {
     itemContainerStyle={theme === 'light'? styles.itemLight:styles.itemDark}
     selectedTextStyle={theme === 'light'? styles.selectedTextStyleLight:styles.selectedTextStyleDark}
     inputSearchStyle={theme === 'light'? styles.inputSearchStyleLight:styles.inputSearchStyleDark}
-    data={props.data} labelField={props.labelField} valueField={props.valueField} onChange={props.onChange}/>
+    data={props.data} labelField={props.labelField} valueField={props.valueField} onChange={props.onChange}
+    value={props.value}
+    />
     )
 }
 
