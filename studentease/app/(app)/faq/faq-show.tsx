@@ -117,6 +117,7 @@ const FAQ: React.FC = () => {
               <Card.Content>
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.question}</Text>
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
+                <View style={{height:10}}/>
               </Card.Content>
               {userState?.role !== "STUDENT"? (
               <Card.Actions>
@@ -135,6 +136,7 @@ const FAQ: React.FC = () => {
             </Card>
           ))}
         </View>
+        <View style={{height:50}}/>
       </ScrollView>
 
 

@@ -8,13 +8,22 @@ function CustomDropdown(props: DropdownProps<any>) {
     const [isFocus, setIsFocus] = useState(false);
     const { theme } = useTheme();
 
+    const combinedStyle = StyleSheet.flatten([
+        theme === 'light'
+            ? (isFocus ? styles.dropdownLightFocus : styles.dropdownLight)
+            : (isFocus ? styles.dropdownDarkFocus : styles.dropdownDark),
+        props.style
+    ]);
+
+
     return(
     <Dropdown 
-    style={theme === 'light'? (!isFocus? styles.dropdownLight:styles.dropdownLightFocus):(!isFocus? styles.dropdownDark:styles.dropdownDarkFocus)}
+    style={combinedStyle}
     onFocus={() => {setIsFocus(true)}}
     onBlur={() => {setIsFocus(false)}}
     disable={props.disable}
-    placeholderStyle={styles.placeholderStyle}
+    activeColor={theme === 'light' ? '#f2f2f2' : '#18191a'}
+    placeholderStyle={theme === 'light' ? styles.placeholderStyleLight : styles.placeholderStyleDark}
     itemTextStyle={theme === 'light'? styles.selectedTextStyleLight:styles.selectedTextStyleDark}
     containerStyle={theme === 'light'? styles.itemLight:styles.itemDark}
     itemContainerStyle={theme === 'light'? styles.itemLight:styles.itemDark}
@@ -41,7 +50,7 @@ const styles = StyleSheet.create({
             height: 45,
             borderColor: 'gray',
             borderWidth: 1,
-            borderRadius: 8,
+            borderRadius: 4,
             backgroundColor:'#f6f6f6',
             width:'100%',
         },        
@@ -50,7 +59,7 @@ const styles = StyleSheet.create({
             height: 45,
             borderColor: '#4dabf7',
             borderWidth: 2,
-            borderRadius: 8,
+            borderRadius: 5,
             backgroundColor:'#f6f6f6',
             width:'100%',
         },
@@ -59,7 +68,7 @@ const styles = StyleSheet.create({
             height: 45,
             borderColor: 'white',
             borderWidth: 0.1,
-            borderRadius: 8,
+            borderRadius: 5,
             backgroundColor:'#121212',
             width:'100%',
         }, 
@@ -84,8 +93,16 @@ const styles = StyleSheet.create({
             paddingHorizontal: 8,
             fontSize: 14,
         },
-        placeholderStyle: {
+
+        placeholderStyleLight: {
             fontSize: 16,
+            color: 'black',
+            padding: 10
+        },
+        placeholderStyleDark: {
+            fontSize: 16,
+            color: 'white',
+            padding: 10
         },
         selectedTextStyleLight: {
             color:'black',

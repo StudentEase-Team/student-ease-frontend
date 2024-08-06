@@ -19,7 +19,7 @@ type CollegeSubjectDropdownsProps = {
     anyEnabled: boolean
 };
 
-function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
+function CollegeSubjectDropdownsRow(props: CollegeSubjectDropdownsProps) {
     let filterableDataBak = props.filterableData;
     const { userState } = useAuth();
     const initialCollegeData = [{ label: 'Any', value: 'any' }];
@@ -85,13 +85,13 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
     }
 
     return (
-        <>
+        <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: "100%"}}>
                 <CustomDropdown 
                     search
                     data={collegeData} 
                     labelField='label' 
                     valueField='value' 
-                    style={{marginBottom: 15, marginTop: 10}}
+                    style={{width:'49%'}}
                     disable={props.collegeEnabled}
                     onChange={handleCollegeChange} 
                 />
@@ -99,11 +99,12 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
                     data={subjectData} 
                     labelField='label' 
                     valueField='value' 
+                    style={{width:'49%'}}
                     disable={props.subjectEnabled}
                     onChange={handleSubjectChange} 
                 />
-        </>
+        </View>
     );
 }
 
-export default CollegeSubjectDropdowns;
+export default CollegeSubjectDropdownsRow;

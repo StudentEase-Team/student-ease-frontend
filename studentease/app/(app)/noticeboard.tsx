@@ -15,6 +15,7 @@ import { API_BASE_URL } from '@env';
 import Toast from 'react-native-toast-message';
 import CustomDropdown from '../../component/form/custom-dropdown';
 import CollegeSubjectDropdowns from '../../component/form/college-subject';
+import CollegeSubjectDropdownsRow from '../../component/form/college-subject-row';
 
 type AnnouncementType =
   | 'UNIVERSITY_ANNOUNCEMENT'
@@ -246,8 +247,9 @@ export default function NoticeboardShow() {
             <View style={styles.filterAndSearchContainer}>
                 <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
                     <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Filter by parameters</Text>
-                        <View style={styles.container}>
-                            {filterOptions.map((option) => (
+                    <View style={styles.container}>
+                        {filterOptions.map((option) => (
+                        <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile}>
                             <Pressable
                                 key={option.value}
                                 style={[styles.pressable, selectedFilterType === option.value
@@ -262,20 +264,35 @@ export default function NoticeboardShow() {
                                     {option.label}
                                 </Text>
                             </Pressable>
+                        </View>
                         ))}
-                        
-                        <View style={styles.inputColumn}>
+                    
+                        {Platform.OS === 'web' ? (
+                            <CollegeSubjectDropdownsRow subjectEnabled={false} collegeEnabled={false} filterableData={[]}
+                            anyEnabled={true} 
+                            setSelectedCollege={ setCollegeSearchParam} 
+                            setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
+                                
+                                } } 
+                            setSelectedSubject={ setSubjectSearchParam }
+                            setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
+
+                                } } />
+                        ) : (
+                            <View style={styles.inputColumn}>
                                 <CollegeSubjectDropdowns subjectEnabled={false} collegeEnabled={false} filterableData={[]}
                                 anyEnabled={true} 
                                 setSelectedCollege={ setCollegeSearchParam} 
                                 setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
-                                       
+                                    
                                     } } 
                                 setSelectedSubject={ setSubjectSearchParam }
                                 setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
- 
+
                                     } } />
                         </View>
+                        )}
+                    
                     </View>
                 </View>
 
@@ -405,6 +422,7 @@ export default function NoticeboardShow() {
                                     College: {item.collegeName}
                                 </Paragraph>
                             )}
+                            <View style={{height: 10}}></View>
                         </Card.Content>
 
                         {userState?.role !== 'STUDENT' && (
@@ -429,7 +447,7 @@ export default function NoticeboardShow() {
                 );
             })}
         </View>
-            
+        <View style={{height:50}}/>
         </ScrollView>
 
         <Modal style={Platform.OS ==='web'? styles.dateModal : styles.dateModalMobile } visible={modalVisibleDate} onDismiss={() => { setModalVisibleDate(false); } }>
@@ -510,7 +528,6 @@ export default function NoticeboardShow() {
                     )}
                     <Button mode='contained-tonal' onPress={() => setModalVisibleNewItem(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
                 </View>
-
             </ScrollView>
         </Modal>
 
@@ -542,7 +559,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
-        margin: 5,
+        margin: 2,
     },
 
     text: {
@@ -663,7 +680,16 @@ const styles = StyleSheet.create({
     radioButtons: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        alignSelf: 'center'
+        alignItems: 'center',
+        alignSelf: 'center',
+        marginBottom: 20,
+    },
+
+    radioButtonsMobile: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        alignSelf: 'center',
     },
 
     filterGrid: {
