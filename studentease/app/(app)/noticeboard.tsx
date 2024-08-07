@@ -103,25 +103,6 @@ export default function NoticeboardShow() {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        marginBottom: 20,
-    },
-
-    pressable: {
-        borderRadius: 20,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        margin: 2,
-    },
-
-    text: {
-        fontSize: 14,
-        fontWeight: 'bold',
-    },
-
     containerLight: {
         flex: 1,
         padding: 20,
@@ -131,99 +112,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: '#18191A'
-    },
-
-    comboBox: {
-        width: 250,
-        height: 48,
-    },
-
-    contentGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
-        marginTop: 20
-    },
-
-    contentGridMobile: {
-        flexDirection: 'column',
-        flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
-        marginTop: 10
-    },
-
-    notification: {
-        borderRadius: 20,
-        padding: 10,
-        margin: 5,
-        width: '30%',
-    },
-
-    titleNewItem: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 30,
-        marginTop: 10,
-        alignSelf: 'center',
-    },
-
-    form: {
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
-        width: '50%',
-        alignItems: 'center',
-        alignSelf: 'center',
-      },
-
-    input: {
-        marginBottom: 10,
-    },
-
-    inputRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        width: "100%"
-    },
-
-    inputColumn: {
-        flexDirection: 'column',
-        width: '100%',
-    },
-
-    categoryContainer: {
-        marginBottom: 10,
-    },
-
-    submitButton: {
-        marginTop: 30,
-        marginBottom: 20
-    },
-
-    createNoticeboardNotificationButton: {
-        position: 'absolute',
-        bottom: '5%',
-        right: '5%',
-        height: 65,
-        justifyContent: 'center',
-        borderRadius: 50,
-    },
-
-    buttonRow: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        marginBottom: 10,
-        marginTop: 20
-    },
-
-    button: {
-        width: '49%'
     },
 
     addNoticeboardItemButtonLight: {
@@ -262,44 +150,5 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         backgroundColor: '#9775fa',
-    },
-
-    inputLight: {
-        marginTop: 10,
-        color: '#242526',
-        width: '49%',
-        height: 45
-    },
-
-    inputLightMobile: {
-        marginTop: 10,
-        color: '#242526',
-        width: '100%',
-        alignSelf: 'center',
-        height: 45,
-    },
-    
-    inputDark: {
-        marginTop: 10,
-        color: 'white',
-        width: '49%',
-        height: 45
-    },
-
-    inputDarkMobile: {
-        marginTop: 10,
-        color: 'white',
-        width: '100%',
-        alignSelf: 'center',
-        height: 45,
-        fontSize: 14
-    },
-
-    radioButtonLight: {
-        color: '#4dabf7'
-    },
-
-    radioButtonDark: {
-        color: '#9775fa'
     },
 });

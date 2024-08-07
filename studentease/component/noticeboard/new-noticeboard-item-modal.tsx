@@ -95,7 +95,6 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
                     text1: 'Succesfully created!',
                 });
                 props.setNewNoticeboardItemModalVisible(false);
-                //items?.push(newNoticeboardItem);
                 props.items?.push(newNoticeboardItem);
             }
         }

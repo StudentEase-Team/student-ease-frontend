@@ -1,9 +1,8 @@
-import { Redirect, Stack } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { useAuth } from '../../context/AuthContext';
 import React from 'react';
-import {Text} from 'react-native-paper'
 import { useTheme } from '../../context/ThemeContext';
 
 export default function AppLayout() {
@@ -29,6 +28,14 @@ export default function AppLayout() {
                     drawerActiveTintColor: theme === 'light' ? '#000' : '#FFF',
                     drawerInactiveTintColor: theme === 'light' ? '#888' : '#BBB',
                   }}>
+
+                <Drawer.Screen
+                  name="homepage"
+                  options={{
+                    drawerLabel: 'Homepage',
+                    title: 'Homepage',
+                  }}
+                />
 
                 <Drawer.Screen
                   name="noticeboard"

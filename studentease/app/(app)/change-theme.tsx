@@ -9,7 +9,7 @@ const changeTheme: React.FC = () => {
     useFocusEffect(
         React.useCallback(() => {
             toggleTheme();
-            router.back();
+            router.push('/homepage');
         }, [])
     );
     return null;

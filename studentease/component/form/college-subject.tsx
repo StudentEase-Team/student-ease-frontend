@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Platform, View, Text } from "react-native";
+import React, { useEffect, useState } from "react";
 import CustomDropdown from "./custom-dropdown";
 import { useAuth } from "../../context/AuthContext";
 import axios, { AxiosResponse } from "axios";

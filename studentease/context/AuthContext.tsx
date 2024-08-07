@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsAuthenticated(true);
         setUserState(userState);
         await saveUserState(userState);
-        router.replace('/noticeboard');
+        router.replace('/homepage');
         return userState;
       }
     } catch (error) {

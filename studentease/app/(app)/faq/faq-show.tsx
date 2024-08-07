@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text } from '@rneui/themed';
-import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton, Snackbar } from 'react-native-paper';
+import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton } from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { FAQItem } from '../../../model/FAQItem';
@@ -9,7 +9,6 @@ import axios, { AxiosResponse } from 'axios';
 import { useTheme } from '../../../context/ThemeContext';
 import { themeLight, themeDark } from '../../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
-import zIndex from '@mui/material/styles/zIndex';
 import { useFocusEffect } from 'expo-router';
 
 const FAQ: React.FC = () => {
@@ -38,7 +37,6 @@ const FAQ: React.FC = () => {
         text1: 'Asked succesfully!',
       });
       setModalVisible(false);
-      //items?.push(newQuestion);
       itemsBak?.push(newQuestion);
     }
   };

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Text } from '@rneui/themed';
-import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton} from 'react-native-paper';
+import { TextInput as PaperInput, Button, Card, Modal, IconButton} from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { Icon } from 'react-native-elements';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
 import { FAQItem } from '../../../model/FAQItem';
