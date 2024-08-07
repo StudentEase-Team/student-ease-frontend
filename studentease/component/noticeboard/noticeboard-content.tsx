@@ -10,7 +10,6 @@ import { NoticeboardItem } from "../../model/NoticeboardItem";
 
 type NoticeboardContentProps = {
     items: NoticeboardItem[] | undefined,
-    
     fetchNoticeboardItems : () => {}
 }
 

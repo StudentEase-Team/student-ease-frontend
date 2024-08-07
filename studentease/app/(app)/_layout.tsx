@@ -82,7 +82,6 @@ export default function AppLayout() {
                 />
                 )}
 
-
               {userState?.role === 'STUDENT' ? (
                 <Drawer.Screen
                     name="average-grade"
@@ -101,6 +100,23 @@ export default function AppLayout() {
                 />
                 )}
 
+              {userState?.role === 'ADMIN' ? (
+                <Drawer.Screen
+                    name="user-creation"
+                    options={{
+                    drawerLabel: 'Create user',
+                    title: 'Create user',
+                    }}
+                />
+                ) : (
+                <Drawer.Screen
+                    name="user-creation"
+                    options={{
+                    drawerLabel: '',
+                    drawerItemStyle: { display: 'none' }
+                    }}
+                />
+                )}
 
                 <Drawer.Screen
                   name="map"
