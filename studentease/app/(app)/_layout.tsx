@@ -82,6 +82,26 @@ export default function AppLayout() {
                 />
                 )}
 
+
+              {userState?.role === 'STUDENT' ? (
+                <Drawer.Screen
+                    name="average-grade"
+                    options={{
+                    drawerLabel: 'Calculate grades',
+                    title: 'Grades',
+                    }}
+                />
+                ) : (
+                <Drawer.Screen
+                    name="average-grade"
+                    options={{
+                    drawerLabel: '',
+                    drawerItemStyle: { display: 'none' }
+                    }}
+                />
+                )}
+
+
                 <Drawer.Screen
                   name="map"
                   options={{
