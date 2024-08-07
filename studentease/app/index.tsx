@@ -51,9 +51,6 @@ const Login: React.FC = () => {
             <ThemeProvider>
             <Button onPress={attemptLogin} mode="contained" style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
             </ThemeProvider>
-            <TouchableOpacity >
-              <Text style={theme === 'light' ? styles.signupTextLight : styles.signupTextDark}>You don't have an account? Click here to register.</Text>
-            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </PaperProvider>
