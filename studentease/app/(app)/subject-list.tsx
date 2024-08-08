@@ -25,11 +25,12 @@ const getColorForSubject = (title: string, theme: string) => {
 };
 
 const subjects = [
-    { title: 'Programiranje', professor: 'Dr. Marko Janković', assistants: 'Ana Petrović, Ivana Kovačević', faculty: 'FTN' },
-    { title: 'Ustavno pravo', professor: 'Prof. Jovana Milinković', assistants: 'Milena Ilić', faculty: 'Pravni' },
-    { title: 'Hemija', professor: 'Dr. Nikola Stojanović', assistants: 'Marija Savić', faculty: 'PMF' },
-    { title: 'Agroekonomija', professor: 'Prof. Ljubica Ćosić', assistants: 'Milan Novaković', faculty: 'Poljoprivredni' },
-    { title: 'Ekonomija', professor: 'Dr. Stefan Jovanović', assistants: 'Nina Marković', faculty: 'Ekonomski' },
+    { title: 'Programiranje', professor: 'Dr. Marko Janković', college: 'FTN' },
+    { title: 'Ustavno pravo', professor: 'Prof. Jovana Milinković', college: 'Pravni' },
+    { title: 'Hemija', professor: 'Dr. Nikola Stojanović', college: 'PMF' },
+    { title: 'Agroekonomija', professor: 'Prof. Ljubica Ćosić', college: 'Poljoprivredni' },
+    { title: 'Ekonomija', professor: 'Dr. Stefan Jovanović', college: 'Ekonomski' },
+    { title: 'Osnovi elektrotehnike', professor: 'Dr. Marko Petrović', college: 'FTN' },
 ];
 
 const SubjectPage = () => {
@@ -38,7 +39,7 @@ const SubjectPage = () => {
     return (
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
             <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
-            <Text style={theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark}>Filter by parameters</Text>
+                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Filter by parameters</Text>
                 {Platform.OS === 'web'? (
                     <CollegeSubjectDropdownsRow filterableData={[]} collegeEnabled={false} subjectEnabled={false} setSelectedCollege={function (value: React.SetStateAction<string>): void {
                         throw new Error('Function not implemented.');
@@ -72,7 +73,7 @@ const SubjectPage = () => {
                         <Card.Content>
                             <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{subject.title}</Text>
                             <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>Professor: {subject.professor}</Text>
-                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>College: {subject.assistants}</Text>
+                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>College: {subject.college}</Text>
                         </Card.Content>
                     </Card>
                 </TouchableOpacity>
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 3,
         padding: 20,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
 
     containerFilterLightMobile: {
@@ -164,10 +165,40 @@ const styles = StyleSheet.create({
         padding: 20,
     },
 
+    titleFilterLight: {
+        fontWeight: 'bold',
+        fontSize: 24,
+        marginBottom: 30,
+        color: 'black',
+        marginLeft: 9,
+    },
+
+    titleFilterLightMobile: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        marginBottom: 10,
+        color: 'black'
+    },
+
+    titleFilterDark: {
+        fontWeight: 'bold',
+        fontSize: 24,
+        marginBottom: 30,
+        color: 'white',
+        marginLeft: 9,
+    },
+
+    titleFilterDarkMobile: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        marginBottom: 10,
+        color: 'white'
+    },
+
     contentGrid: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
+        justifyContent:'space-evenly',
         flexWrap:'wrap',
         marginTop: 20,
         width: '90%',
@@ -186,7 +217,7 @@ const styles = StyleSheet.create({
     },
 
     cardContent: {
-        width: '30%'
+        width: '28%'
     },
 
     cardContentMobile: {
@@ -199,41 +230,27 @@ const styles = StyleSheet.create({
         padding: 16,
     },
 
-    titleFilterLight: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: 'black',
-    },
-
-    titleFilterDark: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: 'white',
-    },
-
     titleLight: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
         color: 'white',
     },
     
     titleDark: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
         color: 'white',
     },
     
     infoLight: {
-        fontSize: 16,
+        fontSize: 18,
         color: 'white',
     },
 
     infoDark: {
-        fontSize: 16,
+        fontSize: 18,
         color: 'white',
     },
 });
