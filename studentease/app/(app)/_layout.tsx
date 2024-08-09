@@ -36,7 +36,7 @@ export default function AppLayout() {
                     drawerLabel: 'Home',
                     title: 'Home',
                     drawerIcon: () => (
-                      <IconButton icon='home' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='home' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                   }}
                 />
@@ -47,25 +47,25 @@ export default function AppLayout() {
                     drawerLabel: 'Noticeboard',
                     title: 'Noticeboard',
                     drawerIcon: () => (
-                      <IconButton icon='view-dashboard' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='view-dashboard' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                   }}
                 />
 
                 {userState?.role === 'ADMIN' ? (
                 <Drawer.Screen
-                    name="college_list"
+                    name="college-list"
                     options={{
                     drawerLabel: 'College list',
                     title: 'Colleges',
                     drawerIcon: () => (
-                      <IconButton icon='school' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='school' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                     }}
                 />
                 ) : (
                 <Drawer.Screen
-                    name="college_list"
+                    name="college-list"
                     options={{
                     drawerLabel: '',
                     drawerItemStyle: { display: 'none' }
@@ -79,7 +79,7 @@ export default function AppLayout() {
                     drawerLabel: 'Show FAQ',
                     title: 'FAQ',
                     drawerIcon: () => (
-                      <IconButton icon='frequently-asked-questions' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='frequently-asked-questions' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                   }}
                 />
@@ -91,7 +91,7 @@ export default function AppLayout() {
                     drawerLabel: 'Answer FAQ',
                     title: 'Answer FAQ',
                     drawerIcon: () => (
-                      <IconButton icon='forum' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='forum' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                     }}
                 />
@@ -112,7 +112,7 @@ export default function AppLayout() {
                     drawerLabel: 'Calculate grades',
                     title: 'Grades',
                     drawerIcon: () => (
-                      <IconButton icon='calculator-variant' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='calculator-variant' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                     }}
                 />
@@ -133,7 +133,7 @@ export default function AppLayout() {
                     drawerLabel: 'Create user',
                     title: 'Create user',
                     drawerIcon: () => (
-                      <IconButton icon='account-plus' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='account-plus' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                     }}
                 />
@@ -153,7 +153,7 @@ export default function AppLayout() {
                     drawerLabel: 'Show maps of buildings',
                     title: 'Maps',
                     drawerIcon: () => (
-                      <IconButton icon='office-building-marker' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='office-building-marker' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                   }}
                 />
@@ -164,7 +164,7 @@ export default function AppLayout() {
                     drawerLabel: 'Subject list',
                     title: 'Subject list',
                     drawerIcon: () => (
-                      <IconButton icon='view-list' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='view-list' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                   }}
                 />
@@ -175,7 +175,7 @@ export default function AppLayout() {
                     drawerLabel: 'Repository',
                     title: 'Repository',
                     drawerIcon: () => (
-                      <IconButton icon='database' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='database' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                   }}
                 />
@@ -185,7 +185,7 @@ export default function AppLayout() {
                     options={{
                     drawerLabel: 'Change theme',
                     drawerIcon: () => (
-                      <IconButton icon={theme === 'light'? 'white-balance-sunny' : 'moon-waning-crescent'} iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon={theme === 'light'? 'white-balance-sunny' : 'moon-waning-crescent'} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                     }}
                 />
@@ -195,7 +195,7 @@ export default function AppLayout() {
                     options={{
                     drawerLabel: 'Logout',
                     drawerIcon: () => (
-                      <IconButton icon='logout' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}></IconButton>
+                      <IconButton icon='logout' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                     )
                     }}
                 />

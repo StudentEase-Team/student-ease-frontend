@@ -96,15 +96,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#18191a',
     },
 
-    container: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        marginBottom: 20,
-    },
-
     containerFilterLight: {
-        flex: 1,
         flexDirection: 'column',
         marginBottom: 20,
         backgroundColor: 'white',
@@ -135,7 +127,6 @@ const styles = StyleSheet.create({
     },
 
     containerFilterDark: {
-        flex: 1,
         flexDirection: 'column',
         marginBottom: 20,
         backgroundColor: '#242526',

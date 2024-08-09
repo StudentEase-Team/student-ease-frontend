@@ -6,12 +6,28 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../context/ThemeContext';
 import { useRouter } from 'expo-router';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useAuth } from '../../context/AuthContext';
 
 const HomePage = () => {
     const router = useRouter();
     const {theme} = useTheme();
+    const { isAuthenticated, userState } = useAuth();
+
+    const adminCards = [
+        { title: 'Show Noticeboard', route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
+        { title: 'College list', route: '/college-list', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
+        { title: 'Subject list', route: '/subject-list', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
+        { title: 'Create an user', route: '/user-creation', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
+        { title: 'Answer FAQ', route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
+    ];
+
+    const professorCards = [
+        { title: 'Show Noticeboard', route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
+        { title: 'Repository', route: 'Repository', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
+        { title: 'Answer FAQ', route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
+    ];
     
-    const cards = [
+    const studentCards = [
         { title: 'Show Noticeboard', route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
         { title: 'Show FAQ', route: 'faq/faq-show', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
         { title: 'Calculate your grades', route: 'average-grade', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
@@ -19,12 +35,23 @@ const HomePage = () => {
         { title: 'See your calendar', route: 'See Calendar', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
     ];
 
+    let cardsToShow: { title: string; route: string; lightColors: string[]; darkColors: string[]; }[] = [];
+
+
+    if (userState?.role === 'ADMIN') {
+        cardsToShow = adminCards;
+    } else if (userState?.role === 'PROFESSOR') {
+        cardsToShow = professorCards;
+    } else if (userState?.role === 'STUDENT') {
+        cardsToShow = studentCards;
+    }
+
     return (
         <ScrollView style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerLight : styles.containerDark) : (theme === 'light' ? styles.containerLightMobile : styles.containerDarkMobile)}>
-            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.welcomeTextLight : styles.welcomeTextDark) : (theme === 'light' ? styles.welcomeTextLightMobile : styles.welcomeTextDarkMobile)}>Welcome back, Ana!</Text>
+            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.welcomeTextLight : styles.welcomeTextDark) : (theme === 'light' ? styles.welcomeTextLightMobile : styles.welcomeTextDarkMobile)}>Welcome back!</Text>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.quoteTextLight : styles.quoteTextDark) : (theme === 'light' ? styles.quoteTextLightMobile : styles.quoteTextDarkMobile)}>“Education is the most powerful weapon which you can use to change the world.” – Nelson Mandela</Text>
             <View style={Platform.OS === 'web' ? styles.cardContainer : styles.cardContainerMobile}>
-                {cards.map((card, index) => (
+                {cardsToShow.map((card, index) => (
                     <TouchableOpacity activeOpacity={0.7} key={index} onPress={ () => {router.push(card.route)}}>
                         <LinearGradient key={index} colors={theme === 'light' ? card.lightColors : card.darkColors} style={Platform.OS === 'web' ? styles.gradient : styles.gradientMobile}>
                             <View style={styles.cardContent}>

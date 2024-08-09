@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
 
     textContainer: {
         flexDirection: 'column',
-        width: '80%'
+        width: '100%'
     },
 
     titleLight: {
@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'white',
         marginBottom: 4,
+        width: '100%'
     },
 
     descriptionDarkMobile: {
