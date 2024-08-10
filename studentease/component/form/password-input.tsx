@@ -1,4 +1,5 @@
 import { useState } from "react";
+import React from 'react';
 import { useTheme } from "../../context/ThemeContext";
 import { TextInput } from "react-native-paper";
 
@@ -30,7 +31,7 @@ export function PasswordInput(props : PasswordProps) {
             mode="outlined"
             value={text}
             theme={{
-                roundness: 30, 
+                roundness: 5, 
               }}
             style={theme === 'light' ? { color: 'black' } : { color: 'white' }}
             right={<TextInput.Icon icon={selectedIcon} 

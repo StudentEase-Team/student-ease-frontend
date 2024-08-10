@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput, Button, PaperProvider, Text, ThemeProvider } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../context/AuthContext';
@@ -17,7 +17,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if(userState !== null)
-      router.replace("/noticeboard")
+      router.replace("/homepage")
   }, [userState]);
 
   function attemptLogin() {
@@ -43,7 +43,7 @@ const Login: React.FC = () => {
               label="University email"
               style={theme === 'light' ? styles.inputLight : styles.inputDark}
               theme={{
-                roundness: 30, 
+                roundness: 5, 
               }}
               onChangeText={setEmail}
             />
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
 
   loginButtonLight: {
     backgroundColor: '#4dabf7',
-    marginTop: 20,
+    marginTop: 30,
     borderRadius: 50,
     height: 50,
     justifyContent: 'center',
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
 
   loginButtonDark: {
     backgroundColor: '#9775fa',
-    marginTop: 20,
+    marginTop: 30,
     borderRadius: 50,
     height: 50,
     justifyContent: 'center',

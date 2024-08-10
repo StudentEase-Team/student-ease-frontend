@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Text } from '@rneui/themed';
-import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton } from 'react-native-paper';
+import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton, Searchbar } from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { FAQItem } from '../../../model/FAQItem';
@@ -102,12 +102,9 @@ const FAQ: React.FC = () => {
   return (
     <>
       <ScrollView style={theme === 'light'? styles.pageLightContainer : styles.pageDarkContainer}>
-        <View style={(Platform.OS === 'web')? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
-          <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleSearchLight : styles.titleSearchDark) : (theme === 'light' ? styles.titleSearchLightMobile : styles.titleSearchDarkMobile)}>Search FAQ here</Text>
           <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
-          <PaperInput placeholder='Search here...' mode='outlined' label="Search here..." style={styles.searchBar} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
+            <Searchbar placeholder='Search here...' style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
           </PaperProvider>
-        </View>
 
         <View style={Platform.OS === 'web'? styles.faqContainer:styles.faqContainerMobile} >
           {items?.map((item, index) => (
@@ -172,89 +169,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#18191A'
-  },
-
-  containerFilterLight: {
-    marginBottom: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    width: '70%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-    alignSelf: 'center',
-  },
-
-  containerFilterLightMobile: {
-    marginBottom: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-  },
-
-  containerFilterDark: {
-    marginBottom: 20,
-    backgroundColor: '#242526',
-    borderRadius: 20,
-    width: '70%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-    alignSelf: 'center'
-  },
-
-  containerFilterDarkMobile: {
-    flex: 1,
-    marginBottom: 20,
-    backgroundColor: '#242526',
-    width: '100%',
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-  },
-
-  titleSearchLight: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    color: 'black',
-    marginBottom: 10,
-  },
-
-  titleSearchLightMobile: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: 'black',
-    marginBottom: 10,
-  },
-
-  titleSearchDark: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    color:'white',
-    marginBottom: 10,
-  },
-
-  titleSearchDarkMobile: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color:'white',
-    marginBottom: 10,
   },
 
   modalContainerLight: {
@@ -325,10 +239,18 @@ const styles = StyleSheet.create({
 
   searchBar: {
     marginTop: 10,
-    width: '100%',
-    color: '#242526',
+    marginBottom: 50,
+    width: '40%',
     alignSelf: 'center',
-    height: 45
+    borderRadius: 10,
+    height: 60
+  },
+
+  searchBarMobile: {
+    marginTop: 10,
+    marginBottom: 10,
+    alignSelf: 'center',
+    borderRadius: 10,
   },
 
   qaContainerLight: {

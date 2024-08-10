@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, ScrollView, View, Platform } from 'react-native';
-import { Text, Card, IconButton, Paragraph, TextInput, PaperProvider } from 'react-native-paper';
+import { Text, Card, IconButton, Paragraph, TextInput, PaperProvider, Searchbar } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
 import { themeDark, themeLight } from '../../context/PaperTheme';
 
@@ -17,25 +17,16 @@ const MaterialPage = () => {
 
     return (
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
-            <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerSearchLight : styles.containerSearchDark) : (theme === 'light' ? styles.containerSearchLightMobile : styles.containerSearchDarkMobile)}>
-                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Search</Text>
-                <View style={styles.searchSortGrid}>
-                    <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <TextInput
-                        label="Search..."
-                        mode="outlined"
-                        style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                    </TextInput>
-                    </PaperProvider>
-                </View>
-            </View>
+            <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                <Searchbar value='' placeholder="Search" style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile}></Searchbar>
+            </PaperProvider>
 
             <View style={Platform.OS === 'web' ? styles.containerContent : styles.containerContentMobile}>
                 {materials.map((material, index) => (
                     <Card key={index} style={[Platform.OS === 'web' ? styles.card : styles.cardMobile, { backgroundColor: theme === 'light' ? material.lightColor : material.darkColor }]}>
                         <Card.Content style={styles.cardContent}>
                             <IconButton icon={material.icon} size={Platform.OS === 'web' ? 60 : 30} style={Platform.OS === 'web' ? styles.icon : styles.iconMobile} iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}/>
-                            <View style={styles.textContainer}>
+                            <View style={Platform.OS === 'web' ? styles.textContainer : styles.textContainerMobile}>
                                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{material.type}</Text>
                                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{material.description}</Text>
                                 <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.detailsLight : styles.detailsDark) : (theme === 'light' ? styles.detailsLightMobile : styles.detailsDarkMobile)}>{material.details}</Paragraph>
@@ -44,7 +35,7 @@ const MaterialPage = () => {
                     </Card>
                 ))}
             </View>
-            <View style={{height: 10}}></View>
+            <View style={{height: 20}}></View>
         </ScrollView>
     );
 };
@@ -61,130 +52,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#18191a',
     },
 
-    containerSearchLight: {
-        flex: 1,
-        flexDirection: 'column',
-        marginBottom: 40,
-        backgroundColor: 'white',
-        width: '70%',
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
-        alignSelf: 'center',
-    },
-
-    containerSearchLightMobile: {
-        flex: 1,
-        flexDirection: 'column',
-        marginBottom: 20,
-        backgroundColor: 'white',
-        width: '100%',
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
-    },
-
-    containerSearchDark: {
-        flex: 1,
-        flexDirection: 'column',
-        marginBottom: 40,
-        backgroundColor: '#242526',
-        width: '70%',
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
-        alignSelf: 'center',
-    },
-
-    containerSearchDarkMobile: {
-        flex: 1,
-        flexDirection: 'column',
-        marginBottom: 20,
-        backgroundColor: '#242526',
-        width: '100%',
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
-    },
-
-    titleFilterLight: {
-        fontWeight: 'bold',
-        fontSize: 24,
-        marginBottom: 10,
-        color: 'black'
-    },
-
-    titleFilterLightMobile: {
-        fontWeight: 'bold',
-        fontSize: 20,
-        marginBottom: 10,
-        color: 'black'
-    },
-
-    titleFilterDark: {
-        fontWeight: 'bold',
-        fontSize: 24,
-        marginBottom: 10,
-        color: 'white'
-    },
-
-    titleFilterDarkMobile: {
-        fontWeight: 'bold',
-        fontSize: 20,
-        marginBottom: 10,
-        color: 'white'
-    },
-
-    searchSortGrid: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-evenly',
-        marginBottom: 20,
-    },
-
-    inputLight: {
+    searchBar: {
         marginTop: 10,
-        color: '#242526',
-        height: 45
-    },
-
-    inputLightMobile: {
-        marginTop: 10,
-        color: '#242526',
-        width: '100%',
+        marginBottom: 50,
+        width: '40%',
         alignSelf: 'center',
-        height: 45,
+        borderRadius: 10,
+        height: 60
     },
     
-    inputDark: {
+    searchBarMobile: {
         marginTop: 10,
-        color: 'white',
-        height: 45
-    },
-
-    inputDarkMobile: {
-        marginTop: 10,
-        color: 'white',
-        width: '100%',
+        marginBottom: 30,
         alignSelf: 'center',
-        height: 45,
-        fontSize: 14
+        borderRadius: 10,
     },
 
     containerContent: {
@@ -239,6 +120,11 @@ const styles = StyleSheet.create({
     textContainer: {
         flexDirection: 'column',
         width: '100%'
+    },
+
+    textContainerMobile: {
+        flexDirection: 'column',
+        width: '80%'
     },
 
     titleLight: {
@@ -297,11 +183,13 @@ const styles = StyleSheet.create({
     detailsLight: {
         fontSize: 16,
         color: 'black',
+        flexWrap: 'wrap'
     },
 
     detailsLightMobile: {
         fontSize: 14,
         color: 'black',
+        flexWrap: 'wrap',
     },
 
     detailsDark: {

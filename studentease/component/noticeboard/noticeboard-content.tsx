@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Card, Title, Paragraph, IconButton } from "react-native-paper";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
@@ -7,10 +7,11 @@ import { API_BASE_URL } from '@env';
 import axios, { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
 import { NoticeboardItem } from "../../model/NoticeboardItem";
+import StackGrid from 'react-stack-grid';
 
 type NoticeboardContentProps = {
     items: NoticeboardItem[] | undefined,
-    fetchNoticeboardItems : () => {}
+    fetchNoticeboardItems: () => void
 }
 
 function NoticeboardContent(props: NoticeboardContentProps) {
@@ -20,24 +21,24 @@ function NoticeboardContent(props: NoticeboardContentProps) {
 
     async function deleteNoticeboardItem(id: number) {
         if (!userState?.token.accessToken) return;
-    
+
         const config = {
-          headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+            headers: { Authorization: `Bearer ${userState.token.accessToken}` }
         };
         try {
-          const response: AxiosResponse = await axios.delete(`${API_BASE_URL}/noticeboard/item/${id}`, config);
-          if (response.status === 200) {
-            props.fetchNoticeboardItems();
-            Toast.show({
-              type: 'success',
-              text1: 'Succesfully deleted!',
-            });
-          }
+            const response: AxiosResponse = await axios.delete(`${API_BASE_URL}/noticeboard/item/${id}`, config);
+            if (response.status === 200) {
+                props.fetchNoticeboardItems();
+                Toast.show({
+                    type: 'success',
+                    text1: 'Succesfully deleted!',
+                });
+            }
         } catch (error) {
-          Toast.show({
-            type: 'error',
-            text1: 'Failed to delete question. Can delete only if you answered it.',
-          });
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to delete question. Can delete only if you answered it.',
+            });
         }
     };
 
@@ -48,128 +49,69 @@ function NoticeboardContent(props: NoticeboardContentProps) {
         return `${day}/${month}/${year}`;
     };
 
+    if(Platform.OS === 'web')
     return (
-        <View style={Platform.OS === 'web' ? styles.contentGrid : styles.contentGridMobile}>
+        <StackGrid
+            columnWidth={'30%'}
+            gutter={15}
+            style={styles.contentGrid}
+        >
+            {props.items?.map((item, index) => {
+                const date = new Date(item.updatedAt);
+                const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
+                return (
+                    <Card key={index} style={theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark}>
+                        <Card.Content>
+                            <Title style={theme === 'light' ? styles.titleLight : styles.titleDark }> {item.title} </Title>
+                            <Paragraph style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}> {item.message} </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}> Date: {formattedDate} </Paragraph>
+                            {item.creatorName !== '' && (
+                                <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark} > Creator: {item.creatorName} </Paragraph>
+                            )}
+                            {item.subjectName !== '' && (
+                                <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark} > Subject: {item.subjectName} </Paragraph>
+                            )}
+                            {item.collegeName !== '' && (<Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}> College: {item.collegeName} </Paragraph>
+                            )}
+                            <View style={{ height: 10 }}></View>
+                        </Card.Content>
+
+                        {userState?.role !== 'STUDENT' && (
+                            <Card.Actions>
+                                <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteNoticeboardItem(item.id)}/>
+                            </Card.Actions>
+                        )}
+                    </Card>
+                );
+            })}
+        </StackGrid>
+    );
+    else return (
+        <View style={styles.contentGridMobile}>
         {props.items?.map((item, index) => {
             const date = new Date(item.updatedAt);
             const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
             return (
-                <Card
-                    key={index}
-                    style={
-                        Platform.OS === 'web'
-                            ? theme === 'light'
-                                ? styles.qaContainerLight
-                                : styles.qaContainerDark
-                            : theme === 'light'
-                            ? styles.qaContainerLightMobile
-                            : styles.qaContainerDarkMobile
-                    }
-                >
+                <Card key={index} style={theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile}>
                     <Card.Content>
-                        <Title
-                            style={
-                                Platform.OS === 'web'
-                                    ? theme === 'light'
-                                        ? styles.titleLight
-                                        : styles.titleDark
-                                    : theme === 'light'
-                                    ? styles.titleLightMobile
-                                    : styles.titleDarkMobile
-                            }
-                        >
-                            {item.title}
-                        </Title>
-                        <Paragraph
-                            style={
-                                Platform.OS === 'web'
-                                    ? theme === 'light'
-                                        ? styles.descriptionLight
-                                        : styles.descriptionDark
-                                    : theme === 'light'
-                                    ? styles.descriptionLightMobile
-                                    : styles.descriptionDarkMobile
-                            }
-                        >
-                            {item.message}
-                        </Paragraph>
-                        <Paragraph
-                            style={
-                                Platform.OS === 'web'
-                                    ? theme === 'light'
-                                        ? styles.metaLight
-                                        : styles.metaDark
-                                    : theme === 'light'
-                                    ? styles.metaLightMobile
-                                    : styles.metaDarkMobile
-                            }
-                        >
-                            Date: {formattedDate}
-                        </Paragraph>
+                        <Title style={theme === 'light'? styles.titleLightMobile : styles.titleDarkMobile}> {item.title} </Title>
+                        <Paragraph style={theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile}> {item.message} </Paragraph>
+                        <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile} > Date: {formattedDate} </Paragraph>
                         {item.creatorName !== '' && (
-                            <Paragraph
-                                style={
-                                    Platform.OS === 'web'
-                                        ? theme === 'light'
-                                            ? styles.metaLight
-                                            : styles.metaDark
-                                        : theme === 'light'
-                                        ? styles.metaLightMobile
-                                        : styles.metaDarkMobile
-                                }
-                            >
-                                Creator: {item.creatorName}
-                            </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> Creator: {item.creatorName} </Paragraph>
                         )}
                         {item.subjectName !== '' && (
-                            <Paragraph
-                                style={
-                                    Platform.OS === 'web'
-                                        ? theme === 'light'
-                                            ? styles.metaLight
-                                            : styles.metaDark
-                                        : theme === 'light'
-                                        ? styles.metaLightMobile
-                                        : styles.metaDarkMobile
-                                }
-                            >
-                                Subject: {item.subjectName}
-                            </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> Subject: {item.subjectName} </Paragraph>
                         )}
                         {item.collegeName !== '' && (
-                            <Paragraph
-                                style={
-                                    Platform.OS === 'web'
-                                        ? theme === 'light'
-                                            ? styles.metaLight
-                                            : styles.metaDark
-                                        : theme === 'light'
-                                        ? styles.metaLightMobile
-                                        : styles.metaDarkMobile
-                                }
-                            >
-                                College: {item.collegeName}
-                            </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> College: {item.collegeName} </Paragraph>
                         )}
                         <View style={{height: 10}}></View>
                     </Card.Content>
 
                     {userState?.role !== 'STUDENT' && (
                         <Card.Actions>
-                            <IconButton
-                                icon="pencil"
-                                mode='outlined'
-                                size={25}
-                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                                onPress={() => console.log('Edit', index)}
-                            />
-                            <IconButton
-                                icon="delete"
-                                mode='outlined'
-                                size={25}
-                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                                onPress={() => deleteNoticeboardItem(item.id)}
-                            />
+                            <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteNoticeboardItem(item.id)}/>
                         </Card.Actions>
                     )}
                 </Card>
@@ -181,40 +123,32 @@ function NoticeboardContent(props: NoticeboardContentProps) {
 
 const styles = StyleSheet.create({
     qaContainerLight: {
-        width: '30%',
-        marginTop: 15,
         backgroundColor: 'white',
+        margin: 10
     },
 
     qaContainerLightMobile: {
-        width: '100%',
-        marginTop: 15,
         backgroundColor: 'white',
+        margin: 10
     },
 
     qaContainerDark: {
-        width: '30%',
-        marginTop: 15,
         backgroundColor: '#242526',
+        margin: 10
     },
 
     qaContainerDarkMobile: {
-        width: '100%',
-        marginTop: 15,
         backgroundColor: '#242526',
+        margin: 10
     },
 
     contentGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
-        marginTop: 20
+        marginTop: 20,
+        width: '80%',
+        alignSelf:'center',
     },
 
     contentGridMobile: {
-        flexDirection: 'column',
-        flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
         marginTop: 10
     },
 
@@ -285,7 +219,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white'
     },
-
-})
+});
 
 export default NoticeboardContent;

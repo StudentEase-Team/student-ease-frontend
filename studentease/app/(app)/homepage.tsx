@@ -50,10 +50,10 @@ const HomePage = () => {
         <ScrollView style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerLight : styles.containerDark) : (theme === 'light' ? styles.containerLightMobile : styles.containerDarkMobile)}>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.welcomeTextLight : styles.welcomeTextDark) : (theme === 'light' ? styles.welcomeTextLightMobile : styles.welcomeTextDarkMobile)}>Welcome back!</Text>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.quoteTextLight : styles.quoteTextDark) : (theme === 'light' ? styles.quoteTextLightMobile : styles.quoteTextDarkMobile)}>“Education is the most powerful weapon which you can use to change the world.” – Nelson Mandela</Text>
-            <View style={Platform.OS === 'web' ? styles.cardContainer : styles.cardContainerMobile}>
+            <View style={userState?.role === 'PROFESSOR' ? (Platform.OS === 'web' ? styles.cardContainerProfessor : styles.cardContainerMobileProfessor) : (Platform.OS === 'web' ? styles.cardContainer : styles.cardContainerMobile)}>
                 {cardsToShow.map((card, index) => (
                     <TouchableOpacity activeOpacity={0.7} key={index} onPress={ () => {router.push(card.route)}}>
-                        <LinearGradient key={index} colors={theme === 'light' ? card.lightColors : card.darkColors} style={Platform.OS === 'web' ? styles.gradient : styles.gradientMobile}>
+                        <LinearGradient key={index} colors={theme === 'light' ? card.lightColors : card.darkColors} style={userState?.role === 'PROFESSOR' ? (Platform.OS === 'web' ? styles.gradient : styles.gradientMobileProfessor) : (Platform.OS === 'web' ? styles.gradient : styles.gradientMobile)}>
                             <View style={styles.cardContent}>
                                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.cardTitleLight : styles.cardTitleDark) : (theme === 'light' ? styles.cardTitleLightMobile : styles.cardTitleDarkMobile)}>{card.title}</Text>
                             </View>
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontStyle: 'italic',
         textAlign: 'left',
-        marginBottom: 60,
+        marginBottom: 40,
         color: 'black',
     },
 
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontStyle: 'italic',
         textAlign: 'left',
-        marginBottom: 60,
+        marginBottom: 40,
         color: 'white',
     },
 
@@ -162,11 +162,21 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 
+    cardContainerProfessor: {
+        flexDirection: 'column',
+        alignSelf: 'center',
+    },
+
     cardContainerMobile: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        width: '90%',
+        width: '100%',
+        alignSelf: 'center',
+    },
+
+    cardContainerMobileProfessor: {
+        flexDirection: 'column',
         alignSelf: 'center',
     },
 
@@ -183,6 +193,15 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 16,
         width: 160,
+        height: 170,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    gradientMobileProfessor: {
+        borderRadius: 20,
+        marginBottom: 16,
+        width: 300,
         height: 170,
         justifyContent: 'center',
         alignItems: 'center',
