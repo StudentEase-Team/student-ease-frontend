@@ -65,11 +65,18 @@ export default function NoticeboardShow() {
         
     },[collegeSearchParam, subjectSearchParam])
 
+    useEffect(() => {
+            const formattedDate = date.format('DD/MM/YYYY');
+            setItems(
+                items?.filter(item => dayjs(item.updatedAt).format('DD/MM/YYYY') === formattedDate)
+            );
+    },[date]);
+
     return (
         <>
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
 
-        <NoticeboardSearchFilter items={items} setItems={setItemsBak} 
+        <NoticeboardSearchFilter items={itemsBak} setItems={setItems} 
             collegeSearchParam={collegeSearchParam} 
             setCollegeSearchParam={setCollegeSearchParam} 
             subjectSearchParam={subjectSearchParam} 

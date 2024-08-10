@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Platform, Pressable, StyleSheet } from "react-native";
 import { PaperProvider, TextInput as PaperInput, Text } from "react-native-paper";
 import { themeLight, themeDark } from "../../context/PaperTheme";
@@ -22,7 +22,6 @@ type NoticeboardSearchFilterProps = {
 }
 
 function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
-
     const filterOptions: { value: NoticeboardFilterType; label: string }[] = [
         { value: 'ALL', label: 'All' },
         { value: 'UNIVERSITY', label: 'University' },
@@ -35,36 +34,62 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
     const [collegeFilterEnabled, setCollegeFilterEnabled] = useState(true);
     const [subjectFilterEnabled, setSubjectFilterEnabled] = useState(true);
     const [selectedFilterType, setSelectedFilterType] = useState<NoticeboardFilterType | null>('ALL');
+    const [filtered, setFiltered] = useState<NoticeboardItem[] | undefined>();
+    const [searchParam, setSearchParam] = useState('');
     
     const handlePressFilterOptions = (value: NoticeboardFilterType) => {
         if(value === 'UNIVERSITY') {
             setCollegeFilterEnabled(false);
             setSubjectFilterEnabled(false);
+            setFiltered(props.items?.filter(i => i.category === "UNIVERSITY_ANNOUNCEMENT" || i.category === "UNIVERSITY_GUEST_ANNOUNCEMENT"));
             props.setItems(props.items?.filter(i => i.category === "UNIVERSITY_ANNOUNCEMENT" || i.category === "UNIVERSITY_GUEST_ANNOUNCEMENT"))
-        }        
+}        
         else if(value === 'ALL') {
             setCollegeFilterEnabled(true);
             setSubjectFilterEnabled(true);
+            setFiltered(props.items);
             props.setItems(props.items);
         }
         else if(value === 'OTHER') {
             setCollegeFilterEnabled(false);
             setSubjectFilterEnabled(false);
+            setFiltered(props.items?.filter(i => i.category === "INTERNSHIP_ANNOUNCEMENT" || i.category === "ACTIVITIES_ANNOUNCEMENT"));
             props.setItems(props.items?.filter(i => i.category === "INTERNSHIP_ANNOUNCEMENT" || i.category === "ACTIVITIES_ANNOUNCEMENT"))
-        }
+            }
         else if(value === 'COLLEGE') {
             setCollegeFilterEnabled(true);
             setSubjectFilterEnabled(false);
+            setFiltered(props.items?.filter(i => i.category === "COLLEGE_ANNOUNCEMENT" || i.category === "COLLEGE_GUEST_ANNOUNCEMENT"));
             props.setItems(props.items?.filter(i => i.category === "COLLEGE_ANNOUNCEMENT" || i.category === "COLLEGE_GUEST_ANNOUNCEMENT"))
-        
+
         }
         else if(value === 'SUBJECT') {
             setCollegeFilterEnabled(true);
             setSubjectFilterEnabled(true);
+            setFiltered(props.items?.filter(i => i.category === "SUBJECT_ANNOUNCEMENT" || i.category === "SUBJECT_EXAM_RESULT_ANNOUNCEMENT" || i.category === "SUBJECT_EXAM_DATE_ANNOUNCEMENT"));
             props.setItems(props.items?.filter(i => i.category === "SUBJECT_ANNOUNCEMENT" || i.category === "SUBJECT_EXAM_RESULT_ANNOUNCEMENT" || i.category === "SUBJECT_EXAM_DATE_ANNOUNCEMENT"))
         }
         setSelectedFilterType(value);
     };
+
+    const handleSearch = () => {
+        if (searchParam.trim() === '') {
+            props.setItems(filtered);
+            return;
+        }
+
+        const filteredItems2 = filtered?.filter(item =>
+            item.title.toLowerCase().includes(searchParam.toLowerCase()) ||
+            item.message.toLowerCase().includes(searchParam.toLowerCase()) ||
+            item.creatorName.toLowerCase().includes(searchParam.toLowerCase())
+        );
+
+        props.setItems(filteredItems2);
+    };
+
+    useEffect(() => {
+        handleSearch();
+    }, [searchParam]);
 
     return (
         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
@@ -91,32 +116,6 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
                     </View>
                     ))}
                 
-                    {Platform.OS === 'web' ? (
-                        <CollegeSubjectDropdownsRow subjectEnabled={false} collegeEnabled={false} filterableData={[]}
-                        anyEnabled={true} 
-                        setSelectedCollege={ props.setCollegeSearchParam } 
-                        setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
-                            
-                            } } 
-                        setSelectedSubject={ props.setSubjectSearchParam }
-                        setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
-
-                            } } />
-                    ) : (
-                        <View style={styles.inputColumn}>
-                            <CollegeSubjectDropdowns subjectEnabled={false} collegeEnabled={false} filterableData={[]}
-                            anyEnabled={true} 
-                            setSelectedCollege={ props.setCollegeSearchParam } 
-                            setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
-                                
-                                } } 
-                            setSelectedSubject={ props.setSubjectSearchParam }
-                            setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
-
-                                } } />
-                    </View>
-                    )}
-                
                 </View>
             </View>
 
@@ -127,17 +126,10 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
                         <PaperInput
                             label="Search..."
                             mode="outlined"
+                            onChangeText={text => setSearchParam(text)}
+                            value={searchParam}
                             style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
                         </PaperInput>
-                        <PaperInput
-                            label="Date"
-                            mode="outlined"
-                            value={props.date.toDate().toLocaleDateString()}
-                            style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
-                            right={<PaperInput.Icon icon='calendar-outline'
-                                color={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                                onPress={() => { props.setDateModalVisible(true); } }/>} 
-                                />
                     </View>
                 </View>
             </View>
