@@ -1,23 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, ScrollView, View, Platform, Linking } from 'react-native';
-import { Text, Card, IconButton, Paragraph, TextInput, PaperProvider, Searchbar } from 'react-native-paper';
+import { Text, Card, IconButton, Paragraph, PaperProvider, Searchbar } from 'react-native-paper';
 import { useTheme } from '../../../context/ThemeContext';
 import { themeDark, themeLight } from '../../../context/PaperTheme';
-import { useFocusEffect, useGlobalSearchParams, useLocalSearchParams, useRouter} from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter} from 'expo-router';
 import axios, { AxiosResponse } from 'axios';
 import { API_BASE_URL } from '@env';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../../../context/AuthContext';
 import { Material } from '../../../model/Material';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
-/*const materials = [
-    { type: 'Video materijal', description: 'Predavanje o algoritmima', details: 'Ovo je video materijal koji pokriva osnove algoritama i njihovu implementaciju u različitim programskim jezicima.', icon: 'video',         lightColor: '#80cbc4', darkColor: '#546e7a' },
-    { type: 'Prezentacija', description: 'Prezentacija za seminar', details: 'Prezentacija koja obuhvata ključne tačke i rezultate seminara o pravnim aspektima poslovanja.',                         icon: 'presentation',  lightColor: '#ffcc80', darkColor: '#bd9424' },
-    { type: 'Dokument', description: 'Skripta za pripremu ispita', details: 'Detaljna skripta koja sadrži sve neophodne informacije za uspešnu pripremu ispita iz hemije.',                           icon: 'file-document', lightColor: '#b39ddb', darkColor: '#5e35b1' },
-    { type: 'Program', description: 'Kod za vežbe iz programiranja', details: 'Kod primeri i zadaci za vežbe iz programiranja u jeziku Python.',                                                      icon: 'code-tags',     lightColor: '#ffab91', darkColor: '#6d4c41' },
-    { type: 'Ostalo', description: 'Razni dodatni materijali', details: 'Razni dodatni materijali koji pomažu u boljem razumevanju gradiva.',                                                         icon: 'folder',        lightColor: '#ffccbc', darkColor: '#424242' },
-];*/
 
 const MaterialPage = () => {
     const { theme } = useTheme();
@@ -28,29 +19,31 @@ const MaterialPage = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const { userState } = useAuth();
 
-    useEffect(() => {
-        const fetchMaterials = async () => {
-            if (!userState?.token.accessToken || !id) return;
-        
-            const config = {
-                headers: { Authorization: `Bearer ${userState.token.accessToken}` }
-            };
-            try {
-                const response: AxiosResponse = await axios.get(`${API_BASE_URL}/materials/${id}`, config);
-                if (response.status === 200) {
-                    setMaterials(response.data);
-                    setFilteredMaterials(response.data);
+    useFocusEffect(
+        useCallback(() => {
+            const fetchMaterials = async () => {
+                if (!userState?.token.accessToken || !id) return;
+    
+                const config = {
+                    headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+                };
+                try {
+                    const response: AxiosResponse = await axios.get(`${API_BASE_URL}/materials/${id}`, config);
+                    if (response.status === 200) {
+                        setMaterials(response.data);
+                        setFilteredMaterials(response.data);
+                    }
+                } catch (error) {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Failed to fetch materials',
+                    });
                 }
-            } catch (error) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Failed to fetch materials',
-                });
-            }
-        };
-        
-        fetchMaterials();
-    }, [id, userState?.token.accessToken]);
+            };
+    
+            fetchMaterials();
+        }, [id, userState?.token.accessToken])
+    );
     
     function generateIcon(type: string) : string {
         switch(type){
@@ -100,19 +93,17 @@ const MaterialPage = () => {
 
     return (
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
-            <TouchableOpacity onPress={() => {
+            <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                <View style={Platform.OS === 'web' ? styles.searchBox : styles.searchBoxMobile}>
+                    <IconButton style={Platform.OS === 'web' ? {marginLeft: 0, position: 'absolute', zIndex: 1} : {marginRight:'auto'}} icon='chevron-left' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} size={35} onPress={() => {
                     setMaterials([]);
                     setFilteredMaterials([]);
-                    router.push('/subject-list')
-                }}>
-                <Text>Go back to subjects</Text>
-            </TouchableOpacity>
-            
-            <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                <Searchbar  
-                    value={searchQuery}
-                    placeholder="Search"
-                    onChangeText={handleSearchChange} style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile}></Searchbar>
+                    router.push('/subject-list')}}/> 
+                    <Searchbar  
+                        value={searchQuery}
+                        placeholder="Search"
+                        onChangeText={handleSearchChange} style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile}></Searchbar>
+                </View>
             </PaperProvider>
 
             <View style={Platform.OS === 'web' ? styles.containerContent : styles.containerContentMobile}>
@@ -146,20 +137,36 @@ const styles = StyleSheet.create({
         backgroundColor: '#18191a',
     },
 
-    searchBar: {
-        marginTop: 10,
+    searchBox: {
+        flex:1, 
+        flexDirection: 'row',
+        width: '70%',
+        alignSelf: 'center',
         marginBottom: 50,
-        width: '40%',
-        alignSelf: 'center',
-        borderRadius: 10,
-        height: 60
+        marginTop: 10
     },
-    
+
+    searchBoxMobile: {
+        flex:1, 
+        flexDirection: 'column',
+        width: '100%',
+        marginBottom: 50,
+        alignItems: 'center',
+    },
+
+    searchBar: {
+        width: '57%',
+        borderRadius: 10,
+        height: 60,
+        margin: 'auto'
+    },
+
     searchBarMobile: {
-        marginTop: 10,
-        marginBottom: 30,
+        width: '100%',
         alignSelf: 'center',
         borderRadius: 10,
+        height: 45,
+        marginLeft: 'auto'
     },
 
     containerContent: {

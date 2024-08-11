@@ -2,8 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Platform } from 'react-native';
 import { Text, Card, Searchbar, PaperProvider } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
-import CollegeSubjectDropdownsRow from '../../component/form/college-subject-row';
-import CollegeSubjectDropdowns from '../../component/form/college-subject';
 import { useAuth } from '../../context/AuthContext';
 import { themeDark, themeLight } from '../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
@@ -16,20 +14,41 @@ import { College } from '../../model/College';
 
 const colors = {
     light: [
-        ['#AB47BC', '#42A5F5', '#E57373'], // Prvi red
-        ['#F06292', '#004D40', '#AB47BC']  // Drugi red
-    ],
+        ['#8E24AA', '#1976D2', '#D32F2F'],
+        ['#E91E63', '#00796B', '#8E24AA'],
+        ['#5C6BC0', '#66BB6A', '#FFA726'], 
+        ['#00897B', '#7B1FA2', '#FF7043'],
+        ['#7E57C2', '#F4511E', '#9CCC65'],
+        ['#3949AB', '#EF5350', '#42A5F5'],
+        ['#FB8C00', '#6D4C41', '#26A69A'],
+        ['#FF7043', '#7E57C2', '#26C6DA'],
+        ['#9CCC65', '#FF5722', '#66BB6A'],
+        ['#26C6DA', '#EF5350', '#5C6BC0'],
+        ['#FFA726', '#EC407A', '#66BB6A']
+    ],    
+    
     dark: [
-        ['#6A1B9A', '#1E88E5', '#D32F2F'], // Prvi red
-        ['#C2185B', '#00796B', '#6A1B9A']  // Drugi red
-    ],
+        ['#8E24AA', '#2196F3', '#E57373'],
+        ['#EC407A', '#00897B', '#8E24AA'],
+        ['#3949AB', '#2E7D32', '#FBC02D'],  
+        ['#00796B', '#8E24AA', '#F57C00'],
+        ['#673AB7', '#FF5722', '#689F38'],
+        ['#303F9F', '#D32F2F', '#3949AB'],
+        ['#E64A19', '#5D4037', '#00796B'],
+        ['#F57C00', '#673AB7', '#26A69A'],
+        ['#689F38', '#FF5722', '#2E7D32'],
+        ['#26A69A', '#D32F2F', '#303F9F'],
+        ['#FBC02D', '#EC407A', '#2E7D32']
+    ]
 };
 
 const getColorForSubject = (index: number, theme: string) => {
     const themeColors = colors[theme];
-    const rowIndex = Math.floor(index / 3) % 2; // 0 for first row, 1 for second row
-    const colorIndex = index % 3;
-    return themeColors[rowIndex][colorIndex];
+    const colorGroupIndex = Math.floor(index / 10) % themeColors.length;
+    const colorIndex = index % 10;
+    const rowIndex = Math.floor(colorIndex / 3);
+    const colorPosition = colorIndex % 3;
+    return themeColors[colorGroupIndex * 2 + rowIndex][colorPosition];
 };
 
 const SubjectPage = () => {
@@ -47,42 +66,55 @@ const SubjectPage = () => {
         if (!userState?.token.accessToken) return;
     
         const config = {
-          headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+            headers: { Authorization: `Bearer ${userState.token.accessToken}` }
         };
         try {
-          const response: AxiosResponse = await axios.get(`${API_BASE_URL}/college`, config);
-          if (response.status === 200) {
-            setColleges(response.data);
-            const updatedCollegeData = [...response.data.map(c => ({ label: c.abbreviation, value: c.id }))];
-            setCollegeDropdownData(updatedCollegeData);
-          }
+            const response: AxiosResponse = await axios.get(`${API_BASE_URL}/college`, config);
+            if (response.status === 200) {
+                const allColleges = response.data;
+                setColleges(allColleges);
+    
+                const allSubjects = allColleges.reduce((acc: Subject[], college: College) => {
+                    return [...acc, ...college.subjects];
+                }, []);
+    
+                setSubjects(allSubjects);
+                setOriginalSubjects(allSubjects);
+    
+                const updatedCollegeData = [{ label: 'Any', value: 'any' }, ...allColleges.map(c => ({ label: c.abbreviation, value: c.id }))];
+                setCollegeDropdownData(updatedCollegeData);
+            }
         } catch (error) {
-          Toast.show({
-            type: 'error',
-            text1: 'Failed to noticeboard items',
-          });
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to fetch colleges',
+            });
         }
-      }, []);
-
+    }, []);
+    
     useFocusEffect(
         React.useCallback(() => {
-          fetchColleges();
-      }, []));
+            fetchColleges();
+        }, [])
+    );
 
-      function handleCollegeChange(selectedCollege: { label: any, value: number }) {
-            if (colleges !== undefined) {
-                const selectedCollegeData = colleges.find(college => college.id === selectedCollege.value);
+    function handleCollegeChange(selectedCollege: { label: any, value: any }) {
+        const collegeId = typeof selectedCollege.value === 'string' ? parseInt(selectedCollege.value, 10) : selectedCollege.value;
+    
+        if (colleges !== undefined) {
+            if (collegeId === 'any') {
+                setSubjects(originalSubjects);
+            } else {
+                const selectedCollegeData = colleges.find(college => college.id === collegeId);
                 if (selectedCollegeData) {
                     setSubjects(selectedCollegeData.subjects);
-                    setOriginalSubjects(selectedCollegeData.subjects);
                 } else {
                     setSubjects([]);
-                    setOriginalSubjects([]);
                 }
             }
-        }    
-
-
+        }
+    }
+    
     const handleSearchChange = (query: string) => {
         setSearchQuery(query);
 
@@ -100,58 +132,51 @@ const SubjectPage = () => {
 
     return (
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
-            <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
-                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Filter by parameters</Text>
-                {Platform.OS === 'web'? (
-                    <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
-                        <CustomDropdown style={{width:'48%'}}
-                        data={collegeDropdownData} 
-                        labelField={'label'} 
-                        valueField={'value'} 
-                        onChange={handleCollegeChange}></CustomDropdown>
-                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                            <Searchbar 
-                            style={{width:'100%'}}
-                            value={searchQuery}
-                            onChangeText={handleSearchChange}
-                            ></Searchbar>
-                        </PaperProvider>
-                    </View>
-                ):(
-                    <View style={styles.inputColumn}>
-                        <CustomDropdown style={{width:'48%'}}
-                        data={[]} 
-                        labelField={''} 
-                        valueField={''} 
-                        onChange={handleCollegeChange}></CustomDropdown>
-
-                    <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                        <Searchbar 
-                        style={{width:'100%'}}
-                        onChangeText={handleSearchChange}
-                        value={searchQuery}></Searchbar>
-                    </PaperProvider>
-                    </View>
-                )}
+        {Platform.OS === 'web' ? (
+            <View>
+                <CustomDropdown style={{width: '40%'}}
+                    data={collegeDropdownData}
+                    labelField={'label'}
+                    valueField={'value'}
+                    placeholder='Select a college'
+                    onChange={handleCollegeChange}
+                />
+                <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                    <Searchbar style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchQuery} onChangeText={handleSearchChange}/>
+                </PaperProvider>
             </View>
-
-            <View style={Platform.OS === 'web' ? styles.contentGrid : styles.contentGridMobile}>
-                {subjects.map((subject, index) => (
-                    <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
-                        onPress={() => {router.navigate(`/repository/${subject.id}`)}}
-                    >
-                        <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
-                            <Card.Content>
-                                <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{subject.name}</Text>
-                                <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>Professor: {subject.professorName}</Text>
-                                <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>College: {subject.collegeName}</Text>
-                            </Card.Content>
-                        </Card>
-                    </TouchableOpacity>
-                ))}
+        ) : (
+            <View style={styles.inputColumn}>
+                <CustomDropdown style={{ width: '100%', height: 50, borderRadius: 5, marginBottom: 10,}}
+                    data={collegeDropdownData}
+                    labelField={'label'}
+                    valueField={'value'}
+                    placeholder='Select a college'
+                    onChange={handleCollegeChange}
+                />
+                <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                    <Searchbar style={{ width: '100%', marginBottom: 20 }} onChangeText={handleSearchChange} value={searchQuery}/>
+                </PaperProvider>
             </View>
-            <View style={{height: 50}}></View>
-        </ScrollView>
+        )}
+
+        <View style={Platform.OS === 'web' ? styles.contentGrid : styles.contentGridMobile}>
+            {subjects.map((subject, index) => (
+                <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
+                    onPress={() => { router.navigate(`/repository/${subject.id}`) }}
+                >
+                    <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
+                        <Card.Content>
+                            <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{subject.name}</Text>
+                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>Professor: {subject.professorName}</Text>
+                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>College: {subject.collegeName}</Text>
+                        </Card.Content>
+                    </Card>
+                </TouchableOpacity>
+            ))}
+        </View>
+        <View style={{ height: 50 }}></View>
+    </ScrollView>
     );
 };
 
@@ -167,94 +192,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#18191a',
     },
 
-    containerFilterLight: {
-        flexDirection: 'column',
+    searchBar: {
+        marginTop: 10,
         marginBottom: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        width: '70%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
+        width: '40%',
         alignSelf: 'center',
+        borderRadius: 10,
+        height: 60,
     },
-
-    containerFilterLightMobile: {
-        flex: 1,
-        flexDirection: 'column',
+    
+    searchBarMobile: {
+        marginTop: 10,
         marginBottom: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        width: '100%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
-    },
-
-    containerFilterDark: {
-        flexDirection: 'column',
-        marginBottom: 20,
-        backgroundColor: '#242526',
-        borderRadius: 20,
-        width: '70%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
-        alignSelf: 'center'
-    },
-
-    containerFilterDarkMobile: {
-        flex: 1,
-        flexDirection: 'column',
-        marginBottom: 20,
-        backgroundColor: '#242526',
-        borderRadius: 20,
-        width: '100%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        elevation: 3,
-        padding: 20,
-    },
-
-    titleFilterLight: {
-        fontWeight: 'bold',
-        fontSize: 24,
-        marginBottom: 30,
-        color: 'black',
-        marginLeft: 9,
-    },
-
-    titleFilterLightMobile: {
-        fontWeight: 'bold',
-        fontSize: 20,
-        marginBottom: 10,
-        color: 'black'
-    },
-
-    titleFilterDark: {
-        fontWeight: 'bold',
-        fontSize: 24,
-        marginBottom: 30,
-        color: 'white',
-        marginLeft: 9,
-    },
-
-    titleFilterDarkMobile: {
-        fontWeight: 'bold',
-        fontSize: 20,
-        marginBottom: 10,
-        color: 'white'
+        alignSelf: 'center',
+        borderRadius: 10,
     },
 
     contentGrid: {
@@ -262,7 +213,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         flexWrap: 'wrap',
-        marginTop: 20,
+        marginTop: 40,
         width: '90%',
         alignSelf: 'center'
     },

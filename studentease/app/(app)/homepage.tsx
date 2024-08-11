@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        width: '50%',
+        width: '45%',
         alignSelf: 'center',
     },
 
