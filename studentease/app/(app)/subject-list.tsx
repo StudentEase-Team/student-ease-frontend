@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Platform } from 'react-native';
-import { Text, Card } from 'react-native-paper';
+import { Text, Card, Searchbar, PaperProvider } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
 import CollegeSubjectDropdownsRow from '../../component/form/college-subject-row';
 import CollegeSubjectDropdowns from '../../component/form/college-subject';
+import { useAuth } from '../../context/AuthContext';
+import { themeDark, themeLight } from '../../context/PaperTheme';
+import { API_BASE_URL } from '@env';
+import axios, { AxiosResponse } from 'axios';
+import { Subject } from '../../model/Subject';
+import Toast from 'react-native-toast-message';
+import { useFocusEffect, useRouter } from 'expo-router';
+import CustomDropdown from '../../component/form/custom-dropdown';
+import { College } from '../../model/College';
 
 const colors = {
     light: [
@@ -16,15 +25,6 @@ const colors = {
     ],
 };
 
-const subjects = [
-    { title: 'Programiranje', professor: 'Dr. Marko Janković', college: 'FTN' },
-    { title: 'Ustavno pravo', professor: 'Prof. Jovana Milinković', college: 'Pravni' },
-    { title: 'Hemija', professor: 'Dr. Nikola Stojanović', college: 'PMF' },
-    { title: 'Agroekonomija', professor: 'Prof. Ljubica Ćosić', college: 'Poljoprivredni' },
-    { title: 'Ekonomija', professor: 'Dr. Stefan Jovanović', college: 'Ekonomski' },
-    { title: 'Osnovi elektrotehnike', professor: 'Dr. Marko Petrović', college: 'FTN' },
-];
-
 const getColorForSubject = (index: number, theme: string) => {
     const themeColors = colors[theme];
     const rowIndex = Math.floor(index / 3) % 2; // 0 for first row, 1 for second row
@@ -33,45 +33,118 @@ const getColorForSubject = (index: number, theme: string) => {
 };
 
 const SubjectPage = () => {
+    const initialCollegeData = [{ label: 'Any', value: 'any' }];
     const { theme } = useTheme();
+    const { userState } = useAuth();
+    const [colleges, setColleges] = useState<College[]>();
+    const [collegeDropdownData, setCollegeDropdownData] = useState<{ label: any, value: any }[]>(initialCollegeData);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [originalSubjects, setOriginalSubjects] = useState<Subject[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const router = useRouter();
+
+    const fetchColleges = useCallback(async () => {
+        if (!userState?.token.accessToken) return;
+    
+        const config = {
+          headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+        };
+        try {
+          const response: AxiosResponse = await axios.get(`${API_BASE_URL}/college`, config);
+          if (response.status === 200) {
+            setColleges(response.data);
+            const updatedCollegeData = [...response.data.map(c => ({ label: c.abbreviation, value: c.id }))];
+            setCollegeDropdownData(updatedCollegeData);
+          }
+        } catch (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to noticeboard items',
+          });
+        }
+      }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+          fetchColleges();
+      }, []));
+
+      function handleCollegeChange(selectedCollege: { label: any, value: number }) {
+            if (colleges !== undefined) {
+                const selectedCollegeData = colleges.find(college => college.id === selectedCollege.value);
+                if (selectedCollegeData) {
+                    setSubjects(selectedCollegeData.subjects);
+                    setOriginalSubjects(selectedCollegeData.subjects);
+                } else {
+                    setSubjects([]);
+                    setOriginalSubjects([]);
+                }
+            }
+        }    
+
+
+    const handleSearchChange = (query: string) => {
+        setSearchQuery(query);
+
+        if (query === '') {
+            setSubjects(originalSubjects);
+        } else {
+            const filteredSubjects = originalSubjects.filter(subject =>
+                subject.name.toLowerCase().includes(query.toLowerCase()) ||
+                subject.professorName.toLowerCase().includes(query.toLowerCase()) ||
+                subject.collegeName.toLowerCase().includes(query.toLowerCase())
+            );
+            setSubjects(filteredSubjects);
+        }
+    };
 
     return (
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
             <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Filter by parameters</Text>
                 {Platform.OS === 'web'? (
-                    <CollegeSubjectDropdownsRow filterableData={[]} collegeEnabled={false} subjectEnabled={false} setSelectedCollege={function (value: React.SetStateAction<string>): void {
-                        throw new Error('Function not implemented.');
-                    } } setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
-                        throw new Error('Function not implemented.');
-                    } } setSelectedSubject={function (value: React.SetStateAction<string>): void {
-                        throw new Error('Function not implemented.');
-                    } } setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
-                        throw new Error('Function not implemented.');
-                    } } anyEnabled={false}/>
+                    <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
+                        <CustomDropdown style={{width:'48%'}}
+                        data={collegeDropdownData} 
+                        labelField={'label'} 
+                        valueField={'value'} 
+                        onChange={handleCollegeChange}></CustomDropdown>
+                        <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                            <Searchbar 
+                            style={{width:'100%'}}
+                            value={searchQuery}
+                            onChangeText={handleSearchChange}
+                            ></Searchbar>
+                        </PaperProvider>
+                    </View>
                 ):(
                     <View style={styles.inputColumn}>
-                        <CollegeSubjectDropdowns filterableData={[]} collegeEnabled={false} subjectEnabled={false} setSelectedCollege={function (value: React.SetStateAction<string>): void {
-                                throw new Error('Function not implemented.');
-                            } } setSelectedCollegeID={function (value: React.SetStateAction<number>): void {
-                                throw new Error('Function not implemented.');
-                            } } setSelectedSubject={function (value: React.SetStateAction<string>): void {
-                                throw new Error('Function not implemented.');
-                            } } setSelectedSubjectID={function (value: React.SetStateAction<number>): void {
-                                throw new Error('Function not implemented.');
-                            } } anyEnabled={false}/>
+                        <CustomDropdown style={{width:'48%'}}
+                        data={[]} 
+                        labelField={''} 
+                        valueField={''} 
+                        onChange={handleCollegeChange}></CustomDropdown>
+
+                    <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                        <Searchbar 
+                        style={{width:'100%'}}
+                        onChangeText={handleSearchChange}
+                        value={searchQuery}></Searchbar>
+                    </PaperProvider>
                     </View>
                 )}
             </View>
 
             <View style={Platform.OS === 'web' ? styles.contentGrid : styles.contentGridMobile}>
                 {subjects.map((subject, index) => (
-                    <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}>
-                        <Card style={[styles.card, { backgroundColor: getColorForSubject(index, theme) }]}>
+                    <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
+                        onPress={() => {router.navigate(`/repository/${subject.id}`)}}
+                    >
+                        <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
                             <Card.Content>
-                                <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{subject.title}</Text>
-                                <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>Professor: {subject.professor}</Text>
-                                <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>College: {subject.college}</Text>
+                                <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{subject.name}</Text>
+                                <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>Professor: {subject.professorName}</Text>
+                                <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>College: {subject.collegeName}</Text>
                             </Card.Content>
                         </Card>
                     </TouchableOpacity>

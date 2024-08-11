@@ -170,9 +170,10 @@ export default function AppLayout() {
                 />
 
                 <Drawer.Screen
-                  name="repository"
+                  name="repository/[id]"
                   options={{
                     drawerLabel: 'Repository',
+                    drawerItemStyle: { display: 'none' },
                     title: 'Repository',
                     drawerIcon: () => (
                       <IconButton icon='database' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
