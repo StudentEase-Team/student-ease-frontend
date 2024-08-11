@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
 
     placeholderStyleLight: {
         fontSize: 16,
-        color: 'black',
+        color: '#707070',
         padding: 10,
     },
 

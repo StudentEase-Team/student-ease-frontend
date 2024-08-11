@@ -140,19 +140,20 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
                 value={description}
                 onChangeText={text => setDescription(text)}
                 style={styles.input} />
+            <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'flex-start'}}>
+                <Checkbox
+                        status={checkedMail ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                            setCheckedMail(!checkedMail);
+                        }}
+                        />
+                <Text>Send email?</Text>
+            </View>
         </PaperProvider>
 
-        <View style={{flex:1, flexDirection:'row', width:110, alignItems:'center', justifyContent:'flex-start'}}>
-            <PaperProvider>
-                <Checkbox
-                    status={checkedMail ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                        setCheckedMail(!checkedMail);
-                    }}
-                    />
-            </PaperProvider>
-            <Text>Send email?</Text>
-        </View>
+        
+                
+        
 
         <View style={styles.buttonRow}>
             {Platform.OS === 'web' ? (

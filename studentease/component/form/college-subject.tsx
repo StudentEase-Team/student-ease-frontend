@@ -90,14 +90,18 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
                     data={collegeData} 
                     labelField='label' 
                     valueField='value' 
-                    style={{marginBottom: 15, marginTop: 10}}
+                    style={{marginBottom: 15, marginTop: 10, padding: 4, backgroundColor:"#f6f6f6", borderWidth: 0.1, borderColor:'#707070', shadowOpacity: 0, shadowOffset: { width: 0, height: 0 }, borderRadius: 5}}
+                    placeholder="Select a college"
                     disable={props.collegeEnabled}
                     onChange={handleCollegeChange} 
+                    
                 />
                 <CustomDropdown 
                     data={subjectData} 
                     labelField='label' 
                     valueField='value' 
+                    placeholder="Select a subject"
+                    style={{marginBottom: 10, padding: 4, backgroundColor:"#f6f6f6", borderWidth: 0.1, borderColor:'#707070', shadowOpacity: 0, shadowOffset: { width: 0, height: 0 }, borderRadius: 5}}
                     disable={props.subjectEnabled}
                     onChange={handleSubjectChange} 
                 />

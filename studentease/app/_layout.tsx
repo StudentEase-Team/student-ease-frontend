@@ -1,6 +1,6 @@
 import React from 'react';
 import { AuthProvider } from '../context/AuthContext';
-import { ThemeProvider, useTheme } from '../context/ThemeContext';
+import { ThemeProvider } from '../context/ThemeContext';
 import { Slot } from 'expo-router';
 
 export default function layout() {
