@@ -60,7 +60,7 @@ function AverageGrade() {
 
     const handleYearChange = (value: FilterType) => {
         if(value === 'ALL') {
-            setYear('ALL');
+            setYear('all');
         }
         else if(value === '1') {
             setYear('1');
@@ -101,7 +101,7 @@ function AverageGrade() {
                     <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleFilterLight : styles.titleFilterDark) : (theme === 'light' ? styles.titleFilterLightMobile : styles.titleFilterDarkMobile)}>Select a year</Text>
                     <View style={styles.container}>
                         {filterOptions.map((option) => (
-                        <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile}>
+                        <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile} key={option.value}>
                             <Pressable
                                 key={option.value}
                                 style={[styles.pressable, selectedFilterType === option.value
@@ -118,7 +118,6 @@ function AverageGrade() {
                             </Pressable>
                         </View>
                         ))}
-                    
                     </View>
                 </View>
 
@@ -142,7 +141,7 @@ function AverageGrade() {
                     const date = new Date(subject.date);
                     const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
                     return (
-                        <DataTable.Row key={subject.subjectName}>
+                        <DataTable.Row key={subject.id}>
                             <DataTable.Cell textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.subjectWidth}>{subject.subjectName}</DataTable.Cell>
                             <DataTable.Cell textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.gradeWidth}>
                                 {subject.grade === -1 ? (
