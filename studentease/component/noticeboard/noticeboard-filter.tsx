@@ -100,7 +100,7 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
             <View style={styles.container}>
                 <Searchbar
-                    placeholder="Search..."
+                    placeholder="Search here..."
                     onChangeText={text => setSearchParam(text)}
                     value={searchParam}
                     style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile}
@@ -110,10 +110,10 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
                         <View key={index}>
                             <Pressable
                                 style={[
-                                    styles.pressable,
+                                    theme === 'light' ? styles.pressableLight : styles.pressableDark,
                                     selectedFilterType === option.value
                                         ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
-                                        : { borderColor: 'grey', borderWidth: 0.5 },
+                                        : { borderColor: 'grey'},
                                 ]}
                                 onPress={() => handlePressFilterOptions(option.value)}
                             >
@@ -142,11 +142,20 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
-    pressable: {
+    pressableLight: {
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
         margin: 2,
+        backgroundColor: 'white'
+    },
+
+    pressableDark: {
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        margin: 2,
+        backgroundColor: '#242526'
     },
 
     text: {

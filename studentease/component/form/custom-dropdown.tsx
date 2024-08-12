@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 
     placeholderStyleDark: {
         fontSize: 16,
-        color: 'white',
+        color: '#929292',
         padding: 10,
     },
 
@@ -133,9 +133,12 @@ const styles = StyleSheet.create({
 
     itemLight: {
         backgroundColor: 'white',
+        borderRadius: 5,
     },
     
     itemDark: {
-        backgroundColor: '#121212',
+        backgroundColor: '#272727',
+        borderColor: '#272727',
+        borderRadius: 5,
     },
 });

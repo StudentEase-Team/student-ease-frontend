@@ -341,25 +341,25 @@ const styles = StyleSheet.create({
 
   descriptionLight: {
     fontSize: 18,
-    marginVertical: 5,
+    marginTop: 20,
     color: 'black'
   },
 
   descriptionLightMobile: {
     fontSize: 16,
-    marginVertical: 5,
+    marginTop: 20,
     color: 'black'
   },
 
   descriptionDark: {
     fontSize: 18,
-    marginVertical: 5,
+    marginTop: 20,
     color: 'white'
   },
 
   descriptionDarkMobile: {
     fontSize: 16,
-    marginVertical: 5,
+    marginTop: 20,
     color: 'white'
   },
 

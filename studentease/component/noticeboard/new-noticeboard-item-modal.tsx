@@ -151,10 +151,6 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
             </View>
         </PaperProvider>
 
-        
-                
-        
-
         <View style={styles.buttonRow}>
             {Platform.OS === 'web' ? (
                 <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit announcement </Button>
