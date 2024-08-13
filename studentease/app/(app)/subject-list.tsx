@@ -142,7 +142,7 @@ const SubjectPage = () => {
                     onChange={handleCollegeChange}
                 />
                 <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <Searchbar style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchQuery} onChangeText={handleSearchChange}/>
+                    <Searchbar placeholder='Search here...' style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchQuery} onChangeText={handleSearchChange}/>
                 </PaperProvider>
             </View>
         ) : (
@@ -167,9 +167,9 @@ const SubjectPage = () => {
                 >
                     <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
                         <Card.Content>
-                            <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{subject.name}</Text>
-                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>Professor: {subject.professorName}</Text>
-                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>College: {subject.collegeName}</Text>
+                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{subject.name}</Text>
+                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>Professor: {subject.professorName}</Text>
+                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>College: {subject.collegeName}</Text>
                         </Card.Content>
                     </Card>
                 </TouchableOpacity>
@@ -240,20 +240,34 @@ const styles = StyleSheet.create({
     card: {
         borderRadius: 20,
         marginBottom: 16,
-        padding: 16,
+        padding: 10,
     },
 
     titleLight: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: 'white',
+    },
+
+    titleLightMobile: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 8,
+        marginBottom: 10,
         color: 'white',
     },
     
     titleDark: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: 'white',
+    },
+
+    titleDarkMobile: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 8,
+        marginBottom: 10,
         color: 'white',
     },
     
@@ -262,8 +276,18 @@ const styles = StyleSheet.create({
         color: 'white',
     },
 
+    infoLightMobile: {
+        fontSize: 16,
+        color: 'white',
+    },
+
     infoDark: {
         fontSize: 18,
+        color: 'white',
+    },
+
+    infoDarkMobile: {
+        fontSize: 16,
         color: 'white',
     },
 });

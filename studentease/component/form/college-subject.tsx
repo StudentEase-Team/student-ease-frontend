@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import CustomDropdown from "./custom-dropdown";
+import { StyleSheet } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import axios, { AxiosResponse } from "axios";
 import { API_BASE_URL } from '@env';
 import Toast from "react-native-toast-message";
 import { College } from "../../model/College";
 import { Subject } from "../../model/Subject";
+import { useTheme } from "../../context/ThemeContext";
 
 type CollegeSubjectDropdownsProps = {
     filterableData: any[],
@@ -26,6 +28,7 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
 
     const [collegeData, setCollegeData] = useState<{ label: any, value: any }[]>(initialCollegeData);
     const [subjectData, setSubjectData] = useState<{ label: any, value: any }[]>(initialSubjectData);
+    const { theme } = useTheme();
 
     useEffect(() => {
         const fetchColleges = async () => {
@@ -85,28 +88,55 @@ function CollegeSubjectDropdowns(props: CollegeSubjectDropdownsProps) {
 
     return (
         <>
-                <CustomDropdown 
-                    search
-                    data={collegeData} 
-                    labelField='label' 
-                    valueField='value' 
-                    style={{marginBottom: 15, marginTop: 10, padding: 4, backgroundColor:"#f6f6f6", borderWidth: 0.1, borderColor:'#707070', shadowOpacity: 0, shadowOffset: { width: 0, height: 0 }, borderRadius: 5}}
-                    placeholder="Select a college"
-                    disable={props.collegeEnabled}
-                    onChange={handleCollegeChange} 
-                    
-                />
-                <CustomDropdown 
-                    data={subjectData} 
-                    labelField='label' 
-                    valueField='value' 
-                    placeholder="Select a subject"
-                    style={{marginBottom: 10, padding: 4, backgroundColor:"#f6f6f6", borderWidth: 0.1, borderColor:'#707070', shadowOpacity: 0, shadowOffset: { width: 0, height: 0 }, borderRadius: 5}}
-                    disable={props.subjectEnabled}
-                    onChange={handleSubjectChange} 
-                />
+            <CustomDropdown 
+                search
+                data={collegeData} 
+                labelField='label' 
+                valueField='value'  
+                style={theme === 'light'? styles.comboLight:styles.comboDark}
+                placeholder="Select a college"
+                disable={props.collegeEnabled}
+                onChange={handleCollegeChange} 
+                
+            />
+            <CustomDropdown 
+                data={subjectData} 
+                labelField='label' 
+                valueField='value' 
+                placeholder="Select a subject"
+                style={theme === 'light'? styles.comboLight:styles.comboDark}
+                disable={props.subjectEnabled}
+                onChange={handleSubjectChange} 
+            />
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    comboLight : {
+        backgroundColor: '#f6f6f6',
+        marginBottom: 10, 
+        padding: 4, 
+        borderWidth: 1, 
+        borderColor:'#707070', 
+        shadowColor: 'white',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        borderRadius: 5,
+    },
+    comboDark : {
+        backgroundColor: '#121212',
+        marginBottom: 10, 
+        padding: 4, 
+        borderWidth: 1, 
+        borderColor:'#707070', 
+        shadowColor: '#18191a',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        borderRadius: 5
+    }
+})
 
 export default CollegeSubjectDropdowns;

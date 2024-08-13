@@ -20,6 +20,8 @@ export default function NoticeboardShow() {
     const {theme} = useTheme();
     const [date, setDate] = useState(dayjs());
     const [dateModalVisible, setDateModalVisible] = useState(false);
+    const [isFloatingButtonVisible, setIsFloatingButtonVisible] = useState(true);
+
 
     const [collegeSearchParam, setCollegeSearchParam] = useState('');
     const [subjectSearchParam, setSubjectSearchParam] = useState('');
@@ -72,6 +74,15 @@ export default function NoticeboardShow() {
             );
     },[date]);
 
+    useEffect(() => {
+        if (newNoticeboardItemModalVisible || dateModalVisible) {
+            setIsFloatingButtonVisible(false);
+        } else {
+            setIsFloatingButtonVisible(true);
+        }
+    }, [newNoticeboardItemModalVisible, dateModalVisible]);
+    
+
     return (
         <>
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
@@ -93,7 +104,7 @@ export default function NoticeboardShow() {
         <NoticeboardDateModal dateModalVisible={dateModalVisible} setDateModalVisible={setDateModalVisible} date={date} setDate={setDate} />
         <NewNoticeboardItemModal newNoticeboardItemModalVisible={newNoticeboardItemModalVisible} setNewNoticeboardItemModalVisible={setNewNoticeboardItemModalVisible} items={itemsBak} />
 
-        {userState?.role !== 'STUDENT'? (
+        {userState?.role !== 'STUDENT' && isFloatingButtonVisible ?(
                     Platform.OS === 'web'? (
                         <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setNewNoticeboardItemModalVisible(true)}>
                         Create noticeboard notification
