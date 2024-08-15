@@ -108,7 +108,7 @@ function UserCreation() {
 
                 <Card.Content style={{flex:1, alignItems:'center', justifyContent:'center',flexDirection:'column', width:'100%'}}>
                         
-                        <CustomDropdown style={Platform.OS === 'web'? {width:'80%'}:{width:'100%'}} data={[{label:'Professor', value:'PROFESSOR'}, {label:'Student', value:'STUDENT'}]} 
+                        <CustomDropdown style={Platform.OS === 'web'? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark):(theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} data={[{label:'Professor', value:'PROFESSOR'}, {label:'Student', value:'STUDENT'}]} 
                         labelField={'label'} 
                         valueField={'value'} 
                         onChange={ handleUserRoleChange }
@@ -116,7 +116,7 @@ function UserCreation() {
                         />
 
 
-                        <CustomDropdown style={Platform.OS === 'web'? {width:'80%', marginTop: 15}:{width:'100%', marginTop: 15}} data={collegeData} 
+                        <CustomDropdown style={Platform.OS === 'web'? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark):(theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} data={collegeData} 
                         labelField={'label'} 
                         valueField={'value'} 
                         onChange={ handleCollegeChange }
@@ -237,34 +237,96 @@ const styles = StyleSheet.create({
     },
 
     inputLight: {
-        marginTop: 10,
+        marginBottom: 5,
         color: '#242526',
         width: '80%',
         height: 45
     },
 
     inputLightMobile: {
-        marginTop: 10,
+        marginBottom: 5,
         color: '#242526',
         width: '100%',
         alignSelf: 'center',
-        height: 45,
+        height: 50,
     },
     
     inputDark: {
-        marginTop: 10,
+        marginBottom: 5,
         color: 'white',
         width: '80%',
         height: 45
     },
 
     inputDarkMobile: {
-        marginTop: 10,
+        marginBottom: 5,
         color: 'white',
         width: '100%',
         alignSelf: 'center',
-        height: 45,
+        height: 50,
         fontSize: 14
+    },
+
+    dropdownLight: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        width:'80%', 
+        marginTop: 5,
+        backgroundColor: '#f6f6f6',
+        marginBottom: 5,
+        padding: 4, 
+        borderWidth: 1, 
+        borderColor:'#707070', 
+        borderRadius: 5,
+        height: 50
+    },
+
+    dropdownLightMobile: {
+        backgroundColor: '#f6f6f6',
+        marginBottom: 5,
+        marginTop: 5, 
+        padding: 4, 
+        borderWidth: 1, 
+        borderColor:'#707070', 
+        shadowColor: 'white',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        borderRadius: 5,
+        height: 50
+    },
+
+    dropdownDark: {
+        backgroundColor: '#121212',
+        marginBottom: 5,
+        marginTop: 5, 
+        padding: 4, 
+        borderWidth: 1, 
+        borderColor:'#707070', 
+        shadowColor: '#18191a',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        borderRadius: 5,
+        height: 50,
+        width:'100%', 
+    },
+
+    dropdownDarkMobile: {
+        backgroundColor: '#121212',
+        marginBottom: 5,
+        marginTop: 5, 
+        padding: 4, 
+        borderWidth: 1, 
+        borderColor:'#707070', 
+        shadowColor: '#18191a',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        borderRadius: 5,
+        height: 50
     },
 
     buttonRow: {

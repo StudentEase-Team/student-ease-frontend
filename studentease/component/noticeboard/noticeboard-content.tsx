@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
 
     qaContainerLightMobile: {
         backgroundColor: 'white',
-        margin: 10
+        marginBottom: 10
     },
 
     qaContainerDark: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
 
     qaContainerDarkMobile: {
         backgroundColor: '#242526',
-        margin: 10
+        marginBottom: 10
     },
 
     contentGrid: {

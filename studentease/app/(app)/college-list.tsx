@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Dimensions, Platform, ScrollView } from 'react-native';
-import { Card, Title, Paragraph, IconButton, TextInput as PaperInput, Text, PaperProvider, Button, Modal } from 'react-native-paper';
+import { Card, Title, Paragraph, IconButton, TextInput as PaperInput, Text, PaperProvider, Button, Modal, Searchbar } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
 import { themeDark, themeLight } from '../../context/PaperTheme';
 import { useAuth } from '../../context/AuthContext';
@@ -15,14 +15,15 @@ const FacultyList: React.FC = () => {
   return (
     <>
     <ScrollView style={[theme === 'light' ? styles.pageLightContainer : styles.pageDarkContainer]}>
-    <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-      <View style={Platform.OS ==='web'? (theme === 'light' ? styles.containerFilterLight : styles.containerFilterDark) : (theme === 'light' ? styles.containerFilterLightMobile : styles.containerFilterDarkMobile)}>
-        <Text style={Platform.OS ==='web'? (theme === 'light' ? styles.titleSearchLight : styles.titleSearchDark) : (theme === 'light' ? styles.titleSearchLightMobile : styles.titleSearchDarkMobile)}>Search FAQ here</Text>
-        <PaperInput theme={{
-                roundness: 7, 
-              }} placeholder='Search here...' mode='outlined' label="Search here..." style={styles.searchBar} />
-      </View>
-      </PaperProvider>
+      <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+            <View style={Platform.OS === 'web' ? styles.container : styles.containerMobile}>
+                <Searchbar
+                    placeholder="Search here..."
+                    value='Search here'
+                    style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile}
+                />
+            </View>
+        </PaperProvider>
 
       <View style={Platform.OS ==='web'? styles.contentGrid : styles.contentGridMobile}>
                 {Array.from({ length: 10 }).map((_, index) => (
@@ -38,21 +39,21 @@ const FacultyList: React.FC = () => {
                         <Card.Actions>
                             <IconButton
                                 icon="pencil"
-                                mode='outlined'
+                                mode={theme === 'light' ? 'contained' : 'outlined'}
                                 size={25}
-                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
+                                iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}
                                 onPress={() => console.log('Edit', index)} />
                             <IconButton
                                 icon="delete"
-                                mode='outlined'
+                                mode={theme === 'light' ? 'contained' : 'outlined'}
                                 size={25}
-                                iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
+                                iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}
                                 onPress={() => console.log('Delete', index)} />
                         </Card.Actions>
                     </Card>
                 ))}
             </View>
-            
+            <View style={{height:40}}></View>
       </ScrollView>
 
       <Modal visible={modalVisible} contentContainerStyle={Platform.OS ==='web'? (theme === 'light' ? styles.modalFormCreateCollegeLight : styles.modalFormCreateCollegeDark) : (theme === 'light' ? styles.modalFormCreateCollegeLightMobile : styles.modalFormCreateCollegeDarkMobile)} onDismiss={() => { setModalVisible(false) }}>
@@ -153,6 +154,35 @@ const styles = StyleSheet.create({
     padding: 20
   },
 
+  container: {
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+
+  containerMobile: {
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      marginBottom: 10
+  },
+
+  searchBar: {
+    marginTop: 10,
+    marginBottom: 20,
+    width: '40%',
+    alignSelf: 'center',
+    borderRadius: 10,
+    height: 60,
+  },
+
+  searchBarMobile: {
+      marginBottom: 20,
+      alignSelf: 'center',
+      borderRadius: 10,
+  },
+
   contentGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -164,7 +194,6 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       flexWrap: 'wrap',
       justifyContent: 'space-evenly',
-      marginTop: 10
   },
 
   metaLight: {
@@ -185,100 +214,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  searchBar: {
-    marginTop: 10,
-    width: '100%',
-    height: 45
-  },
-
-  containerFilterLight: {
-    flex: 1,
-    flexDirection: 'column',
-    marginBottom: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    width: '70%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-    alignSelf: 'center'
-  },
-
-  containerFilterLightMobile: {
-    flex: 1,
-    flexDirection: 'column',
-    marginBottom: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-  },
-
-  containerFilterDark: {
-    flex: 1,
-    flexDirection: 'column',
-    marginBottom: 20,
-    backgroundColor: '#242526',
-    borderRadius: 20,
-    width: '70%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-    alignSelf: 'center'
-  },
-
-  containerFilterDarkMobile: {
-    flex: 1,
-    flexDirection: 'column',
-    marginBottom: 20,
-    backgroundColor: '#242526',
-    borderRadius: 20,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 3,
-    padding: 20,
-  },
-
-  titleSearchLight: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    marginBottom: 10,
-  },
-
-  titleSearchLightMobile: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 10,
-  },
-
-  titleSearchDark: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    marginTop: 10,
-    color: 'white'
-  },
-
-  titleSearchDarkMobile: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 10,
-    color: 'white'
-  },
-
   qaContainerLight: {
     marginTop: 15,
     width: '30%',
@@ -293,7 +228,7 @@ const styles = StyleSheet.create({
 
   qaContainerLightMobile: {
     width: '100%',
-    marginTop: 15,
+    marginBottom: 10,
     backgroundColor: 'white',
   },
 

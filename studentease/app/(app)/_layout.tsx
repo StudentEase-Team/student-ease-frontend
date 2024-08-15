@@ -170,6 +170,17 @@ export default function AppLayout() {
                 />
 
                 <Drawer.Screen
+                  name="calendar"
+                  options={{
+                    drawerLabel: 'Calendar',
+                    title: 'Calendar',
+                    drawerIcon: () => (
+                      <IconButton icon='calendar-month' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
+                    )
+                  }}
+                />
+
+                <Drawer.Screen
                   name="repository/[id]"
                   options={{
                     drawerLabel: 'Repository',
@@ -190,7 +201,7 @@ export default function AppLayout() {
                     )
                     }}
                 />
-
+                
                 <Drawer.Screen
                     name="logout"
                     options={{

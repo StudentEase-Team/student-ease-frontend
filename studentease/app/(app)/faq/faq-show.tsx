@@ -116,13 +116,7 @@ const FAQ: React.FC = () => {
               </Card.Content>
               {userState?.role !== "STUDENT"? (
               <Card.Actions>
-                <IconButton
-                    icon="delete"
-                    mode='outlined'
-                    size={25}
-                    iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'}
-                    onPress={() => deleteFAQ(item.id)}
-                    />
+                <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteFAQ(item.id)}/>
               </Card.Actions>
               ):(
                 ''
@@ -247,7 +241,6 @@ const styles = StyleSheet.create({
   },
 
   searchBarMobile: {
-    marginTop: 10,
     marginBottom: 10,
     alignSelf: 'center',
     borderRadius: 10,
@@ -262,7 +255,7 @@ const styles = StyleSheet.create({
 
   qaContainerLightMobile: {
     width: '100%',
-    marginTop: 15,
+    marginTop: 10,
     backgroundColor: 'white',
   },
 
@@ -286,7 +279,7 @@ const styles = StyleSheet.create({
   },
 
   titleLightMobile: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'black'  
   },
@@ -298,7 +291,7 @@ const styles = StyleSheet.create({
   },
 
   titleDarkMobile: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'white'
   },

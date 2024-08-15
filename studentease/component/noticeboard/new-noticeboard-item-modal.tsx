@@ -108,9 +108,9 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
             {options.map((option) => (
                 <Pressable
                 key={option.value}
-                style={[styles.pressable, selectedValue === option.value
+                style={[theme === 'light' ? styles.pressableLight : styles.pressableDark, selectedValue === option.value
                     ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
-                    : { borderColor: 'grey', borderWidth: 1 },]}
+                    : { borderColor: 'grey', borderWidth: 0.5 },]}
                 onPress={() => handlePress(option.value)}
                 >
                 <Text
@@ -131,7 +131,7 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
                 mode="outlined"
                 value={title}
                 onChangeText={text => setTitle(text)}
-                style={styles.input} />
+                style={styles.inputTitle} />
             <PaperInput
                 label="Description"
                 mode="outlined"
@@ -139,15 +139,16 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
                 numberOfLines={4}
                 value={description}
                 onChangeText={text => setDescription(text)}
-                style={styles.input} />
-            <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'flex-start'}}>
+                style={styles.inputDescription} />
+            <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'flex-start', marginTop: 20, marginBottom: 10}}>
                 <Checkbox
+                        color={theme === 'light' ? '#4dabf7' : '#9775fa'}
                         status={checkedMail ? 'checked' : 'unchecked'}
                         onPress={() => {
                             setCheckedMail(!checkedMail);
                         }}
                         />
-                <Text>Send email?</Text>
+                <Text style={{fontSize:16}}>Send email?</Text>
             </View>
         </PaperProvider>
 
@@ -166,8 +167,14 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
 
 
 const styles = StyleSheet.create({
-    input: {
-        marginBottom: 10,
+    inputTitle: {
+        marginTop: -5,
+        marginBottom: 5,
+        height: 50
+    },
+
+    inputDescription: {
+        marginBottom: 5,
     },
 
     modalFormCreateNoticeboardItemLight: {
@@ -289,11 +296,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    pressable: {
+    pressableLight: {
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
         margin: 2,
+        backgroundColor: 'white'
+    },
+
+    pressableDark: {
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        margin: 2,
+        backgroundColor: '#242526'
     },
 
     text: {

@@ -95,7 +95,7 @@ const MaterialPage = () => {
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
             <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
                 <View style={Platform.OS === 'web' ? styles.searchBox : styles.searchBoxMobile}>
-                    <IconButton style={Platform.OS === 'web' ? {marginLeft: 0, position: 'absolute', zIndex: 1} : {marginRight:'auto'}} icon='chevron-left' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} size={35} onPress={() => {
+                    <IconButton style={Platform.OS === 'web' ? {marginLeft: 0, position: 'absolute', zIndex: 1} : {flex: 0.2, marginLeft: -5, marginRight: 20}} icon='chevron-left' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} size={35} onPress={() => {
                     setMaterials([]);
                     setFilteredMaterials([]);
                     router.push('/subject-list')}}/> 
@@ -120,7 +120,7 @@ const MaterialPage = () => {
                     </Card>
                 ))}
             </View>
-            <View style={{height: 20}}></View>
+            <View style={{height: 30}}></View>
         </ScrollView>
     );
 };
@@ -147,10 +147,9 @@ const styles = StyleSheet.create({
     },
 
     searchBoxMobile: {
-        flex:1, 
-        flexDirection: 'column',
+        flexDirection: 'row',
         width: '100%',
-        marginBottom: 50,
+        marginBottom: 20,
         alignItems: 'center',
     },
 
@@ -162,6 +161,7 @@ const styles = StyleSheet.create({
     },
 
     searchBarMobile: {
+        flex: 2,
         width: '100%',
         alignSelf: 'center',
         borderRadius: 10,
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     },
 
     cardMobile: {
-        borderRadius: 10,
-        marginBottom: 16,
+        borderRadius: 15,
+        marginBottom: 10,
         flexDirection: 'row',
         alignItems: 'center',
         shadowColor: '#000',

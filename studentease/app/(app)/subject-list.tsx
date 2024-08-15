@@ -147,7 +147,7 @@ const SubjectPage = () => {
             </View>
         ) : (
             <View style={styles.inputColumn}>
-                <CustomDropdown style={{ width: '100%', height: 50, borderRadius: 5, marginBottom: 10,}}
+                <CustomDropdown style={{ width: '100%', height: 50, padding: 5, borderRadius: 5, marginBottom: 10,}}
                     data={collegeDropdownData}
                     labelField={'label'}
                     valueField={'value'}
@@ -163,8 +163,7 @@ const SubjectPage = () => {
         <View style={Platform.OS === 'web' ? styles.contentGrid : styles.contentGridMobile}>
             {subjects.map((subject, index) => (
                 <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
-                    onPress={() => { router.navigate(`/repository/${subject.id}`) }}
-                >
+                    onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
                     <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
                         <Card.Content>
                             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{subject.name}</Text>
@@ -238,8 +237,8 @@ const styles = StyleSheet.create({
     },
 
     card: {
-        borderRadius: 20,
-        marginBottom: 16,
+        borderRadius: 15,
+        marginBottom: 10,
         padding: 10,
     },
 

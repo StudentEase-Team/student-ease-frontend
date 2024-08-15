@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        marginBottom: 20,
+        marginBottom: 10,
     },
 
     pressableLight: {
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     },
 
     text: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
     },
 
@@ -275,17 +275,25 @@ const styles = StyleSheet.create({
     },
 
     dropdownLight: {
-        backgroundColor: 'white',
-        width: '70%'
+        backgroundColor: '#f0f0f0',
+        width: '70%',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.2,
+        shadowRadius: 0,
     },
 
     dropdownLightMobile: {
-        backgroundColor: 'white',
+        backgroundColor: '#f0f0f0',
         borderRadius: 5,
         padding: 5,
         fontSize: 16,
         height: 50,
-        width: 75
+        width: 75,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.2,
+        shadowRadius: 0,
     },
 
     dropdownDark: {
@@ -343,27 +351,27 @@ const styles = StyleSheet.create({
 
     qaContainerLight: {
         width: '80%',
-        marginTop: 15,
+        marginTop: 20,
         backgroundColor: 'white',
         alignSelf: 'center'
     },
 
     qaContainerLightMobile: {
         width: '100%',
-        marginTop: 15,
+        marginTop: 10,
         backgroundColor: 'white',
     },
 
     qaContainerDark: {
         width: '80%',
-        marginTop: 15,
+        marginTop: 20,
         backgroundColor: '#242526',
         alignSelf: 'center'
     },
 
     qaContainerDarkMobile: {
         width: '100%',
-        marginTop: 15,
+        marginTop: 10,
         backgroundColor: '#242526',
     },
 });

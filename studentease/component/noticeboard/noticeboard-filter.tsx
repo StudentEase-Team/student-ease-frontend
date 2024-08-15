@@ -98,7 +98,7 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
 
     return (
         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-            <View style={styles.container}>
+            <View style={Platform.OS === 'web' ? styles.container : styles.containerMobile}>
                 <Searchbar
                     placeholder="Search here..."
                     onChangeText={text => setSearchParam(text)}
@@ -142,6 +142,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
+    containerMobile: {
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginBottom: 10
+    },
+
     pressableLight: {
         borderRadius: 20,
         paddingVertical: 10,
@@ -178,7 +185,6 @@ const styles = StyleSheet.create({
     },
     
     searchBarMobile: {
-        marginTop: 10,
         marginBottom: 20,
         alignSelf: 'center',
         borderRadius: 10,

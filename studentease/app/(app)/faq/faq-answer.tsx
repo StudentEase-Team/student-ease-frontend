@@ -80,7 +80,7 @@ const FAQ : React.FC = () => {
                                     <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
                                 </Card.Content>
                                 <Card.Actions>
-                                    <IconButton icon="forum" mode='outlined' iconColor={theme === 'light' ? 'rgb(73, 69, 79)' : 'white'} onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
+                                    <IconButton icon="forum" mode={theme === 'light' ? 'contained' : 'outlined'} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
                                 </Card.Actions>
                             </Card>
                         ))
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
-        marginTop: 20
+        marginTop: 10
     },
 
     searchBar: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     },
 
     titleLightMobile: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
     },
 
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     },
 
     titleDarkMobile: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         color: 'white'
     },

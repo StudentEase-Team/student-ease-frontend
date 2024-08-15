@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, Pressable, Platform, Text, ScrollView } from 'react-native';
 import { Calendar, Mode } from 'react-native-big-calendar';
 import { useTheme } from '../../context/ThemeContext';
-import { themeDark, themeLight } from '../../context/PaperTheme';
-import { IconButton } from 'react-native-paper';
+import { Calendar as CalendarMobile, Agenda} from 'react-native-calendars';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 
 type Event = {
   title: string;
@@ -18,6 +18,23 @@ const CalendarWidget = () => {
   const [calendarType, setCalendarType] = useState('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dayEvents, setDayEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(false); // Added state for loading
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+
+    setIsLoading(true); // Set loading state to true when theme changes
+
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer); // Clean up timer on unmount
+  }, [theme]);
+
+  useEffect(() => {}, [theme, selectedCalendarType, selectedDate]); 
+
+
   const [events, setEvents] = useState<Event[]>([
     {
       title: 'Predavanje - Matematika',
@@ -93,7 +110,7 @@ const CalendarWidget = () => {
     palette: {
       primary: {
         primary: '#4dabf7',
-        contrastText: '#4dabf7',
+        contrastText: 'white',
       },
       nowIndicator:'#4dabf7',
       gray: {
@@ -114,7 +131,7 @@ const CalendarWidget = () => {
     palette: {
       primary: {
         primary: '#9775fa',
-        contrastText: '#9775fa',
+        contrastText: 'white',
       },
       nowIndicator: '#9775fa',
       gray: {
@@ -165,83 +182,145 @@ const CalendarWidget = () => {
   const currentMonth = selectedDate.toLocaleString('default', { month: 'long' });
   const currentYear = selectedDate.getFullYear();
 
+  const [selectedDay, setSelectedDay] = useState('');
+  const [items, setItems] = useState({});
+
+
+  // Koristimo useMemo da memoizujemo vrednosti na osnovu teme
+  const renderItem = useMemo(() => (item) => (
+    <View style={[styles.item, { backgroundColor: theme === 'light' ? '#ffffff' : '#333333' }]}>
+      <Text style={theme === 'light' ? {color:'#333'} : {color: 'white'}}>{item.name}</Text>
+    </View>
+  ), [theme]);
+
+  const renderEmptyData = useMemo(() => () => (
+      <Text style={theme === 'light' ? styles.noEventsTextLight : styles.noEventsTextDark}>Nema događaja za ovaj dan</Text>
+
+  ), [theme]);
+
+
+
   return (
-    <View style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
+    <>
+    {Platform.OS === 'web' ? (
+      <View style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
         <View style={styles.container}>
             <View style={styles.monthTitleContainer}>
-                <Text style={theme === 'light' ? styles.currentMonthLight : styles.currentMonthDark}> {currentMonth} {currentYear}</Text>
+              <Text style={theme === 'light' ? styles.currentMonthLight : styles.currentMonthDark}> {currentMonth} {currentYear}</Text>
             </View>
             <View style={styles.buttons}>
-            <IconButton size={40} icon='chevron-left' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={navigateBackward}></IconButton>
-            {filterOptions.map((option) => (
-            <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile} key={option.value}>
-                <Pressable
-                key={option.value}
-                style={[
-                    theme === 'light' ? styles.pressableLight : styles.pressableDark,
-                    selectedCalendarType === option.value
-                    ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
-                    : { borderColor: 'grey' },
-                ]}
-                onPress={() => handleCalendarModeChange(option.value)}
-                >
-                <Text
+              <IconButton size={40} icon='chevron-left' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={navigateBackward}></IconButton>
+              {filterOptions.map((option) => (
+                <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile} key={option.value}>
+                  <Pressable
+                    key={option.value}
                     style={[
-                    Platform.OS === 'web' ? styles.text : styles.textMobile,
-                    { color: selectedCalendarType === option.value ? '#fff' : theme === 'light' ? '#4dabf7' : '#9775fa' },
+                      theme === 'light' ? styles.pressableLight : styles.pressableDark,
+                      selectedCalendarType === option.value
+                        ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
+                        : { borderColor: 'grey' },
                     ]}
-                >
-                    {option.label}
-                </Text>
-                </Pressable>
+                    onPress={() => handleCalendarModeChange(option.value)}
+                  >
+                    <Text
+                      style={[
+                        Platform.OS === 'web' ? styles.text : styles.textMobile,
+                        { color: selectedCalendarType === option.value ? '#fff' : theme === 'light' ? '#4dabf7' : '#9775fa' },
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
+                  </Pressable>
+                </View>
+              ))}
+              <IconButton style={{ justifyContent: 'flex-end' }} size={40} icon='chevron-right' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={navigateForward}></IconButton>
             </View>
-            ))}
-            <IconButton style={{justifyContent:'flex-end'}} size={40} icon='chevron-right' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={navigateForward}></IconButton>
-            </View>
-        </View>
-        <View style={styles.mainContainer}>
-            <View style={styles.calendarContainer}>
+          </View>
+          <View style={styles.mainContainer}>
+              <View style={styles.calendarContainer}>
                 <Calendar
-                    theme={theme === 'light' ? lightTheme : darkTheme}
-                    events={events}
-                    height={600}
-                    mode={selectedCalendarType}
-                    calendarCellTextStyle={calendarCellTextStyle}
-                    calendarCellStyle={calendarCellStyle}
-                    bodyContainerStyle={bodyContainerStyle}
-                    dayHeaderStyle={{backgroundColor:'transparent'}}
-                    weekDayHeaderHighlightColor={theme === 'light'? '#4dabf7':'#9775fa'}
-                    showWeekNumber={true}
-                    showTime={true}
-                    onPressCell={(date) => handleDatePress(date)}
-                    eventCellStyle={eventCellStyle}
-                    sortedMonthView={false}
-                    headerContentStyle={{ justifyContent: 'space-between' }}
-                    date={selectedDate}
-                />
-            </View>
+                  theme={theme === 'light' ? lightTheme : darkTheme}
+                  events={events}
+                  height={600}
+                  mode={selectedCalendarType}
+                  calendarCellTextStyle={calendarCellTextStyle}
+                  calendarCellStyle={calendarCellStyle}
+                  bodyContainerStyle={bodyContainerStyle}
+                  dayHeaderStyle={{ backgroundColor: 'transparent' }}
+                  weekDayHeaderHighlightColor={theme === 'light' ? '#4dabf7' : '#9775fa'}
+                  showWeekNumber={true}
+                  showTime={true}
+                  onPressCell={(date) => handleDatePress(date)}
+                  eventCellStyle={eventCellStyle}
+                  sortedMonthView={false}
+                  headerContentStyle={{ justifyContent: 'space-between' }}
+                  date={selectedDate} />
+              </View>
 
-            <View style={theme === 'light' ? styles.agendaContainerLight : styles.agendaContainerDark}>
+              <View style={theme === 'light' ? styles.agendaContainerLight : styles.agendaContainerDark}>
                 <Text style={theme === 'light' ? styles.agendaTitleLight : styles.agendaTitleDark}>
-                    Obaveze za {selectedDate ? selectedDate.toDateString() : 'Izaberite datum'}
+                  Obaveze za {selectedDate ? selectedDate.toDateString() : 'Izaberite datum'}
                 </Text>
                 <ScrollView style={styles.agendaDetails}>
-                    {dayEvents.length > 0 ? (
+                  {dayEvents.length > 0 ? (
                     dayEvents.map((event, index) => (
-                        <View key={index} style={[styles.eventItem, { backgroundColor: categoryColors[event.category] }]}>
+                      <View key={index} style={[styles.eventItem, { backgroundColor: categoryColors[event.category] }]}>
                         <Text style={styles.eventTitleDark}>{event.title}</Text>
                         <Text style={styles.eventTimeDark}>
-                            {event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}
+                          {event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}
                         </Text>
-                        </View>
+                      </View>
                     ))
-                    ) : (
+                  ) : (
                     <Text style={theme === 'light' ? styles.noEventsTextLight : styles.noEventsTextDark}>Nema obaveza za ovaj dan.</Text>
-                    )}
+                  )}
                 </ScrollView>
+              </View>
             </View>
+        </View>  
+    ) : (
+        isLoading? (
+          <View style={theme === 'light' ? styles.spinnerContainerLight : styles.spinnerContainerDark}>
+          <ActivityIndicator size="large" color={theme === 'light' ? '#4dabf7' : '#9775fa' }/>
         </View>
-    </View>
+        ):(
+
+        <Agenda
+          theme={{
+            backgroundColor: theme === 'light' ? '#f2f2f2' : '#333',
+            calendarBackground: theme === 'light' ? '#f2f2f2' : '#242526',
+            textSectionTitleColor: theme === 'light' ? '#4dabf7' : '#9775fa',
+            selectedDayBackgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa',
+            selectedDayTextColor: '#ffffff',
+            todayTextColor: theme === 'light' ? '#00adf5' : '#ffffff',
+            dayTextColor: theme === 'light' ? '#2d4150' : '#ffffff',
+            textDayHeaderFontWeight: 'bold',
+            textMonthFontWeight:'bold',
+            textDisabledColor: theme === 'light' ? '#d3d3d3' : '#555555',
+            dotColor: theme === 'light' ? '#00adf5' : '#ffffff',
+            selectedDotColor: '#ffffff',
+            arrowColor: theme === 'light' ? '#4dabf7' : '#ffffff',
+            monthTextColor: theme === 'light' ? '#4dabf7' : '#9775fa',
+            agendaDayTextColor: theme === 'light' ? '#4dabf7' : '#9775fa',
+            agendaDayNumColor: theme === 'light' ? '#4dabf7' : '#9775fa',
+            agendaTodayColor: theme === 'light' ? '#4dabf7' : '#9775fa',
+            agendaKnobColor: theme === 'light' ? '#4dabf7' : '#9775fa',
+            contentStyle: theme === 'light' ? {backgroundColor: '#4dabf7'} : {backgroundColor: '#242526'},
+            reservationsBackgroundColor: theme === 'light' ? '#ffffff' : '#333',
+          }}
+          calendarStyle={theme === 'light' ? {backgroundColor: '#f2f2f2'} : {backgroundColor: '#242526'}}
+          style={theme === 'light' ? {backgroundColor: '#f2f2f2'} : {backgroundColor: '#242526'}}
+          contentContainerStyle={theme === 'light' ? {backgroundColor: 'white'} : {backgroundColor: '#242526'}}
+          items={items}
+          selected={selectedDay}
+          markingType='multi-dot'
+          renderItem={renderItem} 
+          renderEmptyData={renderEmptyData}
+        />
+        )
+      )}
+        
+    </>
   );
 };
 
@@ -251,7 +330,19 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
+  pageContainerLightMobile: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff'
+  },
+
   pageContainerDark: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#18191A',
+  },
+
+  pageContainerDarkMobile: {
     flex: 1,
     padding: 20,
     backgroundColor: '#18191A',
@@ -261,6 +352,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 20,
+  },
+
+  item: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginRight: 10,
+    marginTop: 17,
   },
 
   mainContainer: {
@@ -340,12 +438,16 @@ const styles = StyleSheet.create({
 
   noEventsTextLight: {
     fontSize: 18,
-    color: 'black',
+    color: '#333',
+    padding: 20, 
+    marginTop: 20,
   },
 
   noEventsTextDark: {
     fontSize: 18,
     color: 'white',
+    padding: 20, 
+    marginTop: 20,
   },
 
   buttons: {
@@ -383,6 +485,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     margin: 2,
     backgroundColor: '#242526',
+  },
+
+  spinnerContainerLight: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white'
+  },
+
+  spinnerContainerDark: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#242526'
   },
 
   text: {
