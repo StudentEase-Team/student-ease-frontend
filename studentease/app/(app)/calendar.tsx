@@ -1,9 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, Pressable, Platform, Text, ScrollView } from 'react-native';
 import { Calendar, Mode } from 'react-native-big-calendar';
 import { useTheme } from '../../context/ThemeContext';
 import { Calendar as CalendarMobile, Agenda} from 'react-native-calendars';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { useAuth } from '../../context/AuthContext';
+import axios, { AxiosResponse } from 'axios';
+import { API_BASE_URL } from '@env';
+import Toast from 'react-native-toast-message';
+import { useFocusEffect } from 'expo-router';
+import { UserRole } from '../../model/UserRole';
+import { Obligation } from '../../model/Obligation';
 
 type Event = {
   title: string;
@@ -18,24 +25,26 @@ const CalendarWidget = () => {
   const [calendarType, setCalendarType] = useState('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dayEvents, setDayEvents] = useState<Event[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // Added state for loading
+  const [isLoading, setIsLoading] = useState(false);
+  const {userState} = useAuth();
+  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
 
-    setIsLoading(true); // Set loading state to true when theme changes
+    setIsLoading(true);
 
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
 
-    return () => clearTimeout(timer); // Clean up timer on unmount
+    return () => clearTimeout(timer);
   }, [theme]);
 
   useEffect(() => {}, [theme, selectedCalendarType, selectedDate]); 
 
-
-  const [events, setEvents] = useState<Event[]>([
+/*
+[
     {
       title: 'Predavanje - Matematika',
       start: new Date(2024, 7, 16, 9, 0),
@@ -54,7 +63,62 @@ const CalendarWidget = () => {
       end: new Date(2024, 7, 16, 14, 30),
       category: 'Exam',
     },
-  ]);
+  ]
+*/
+
+
+const fetchObligations = useCallback(async () => {
+  if (!userState?.token.accessToken) return;
+
+  const config = {
+    headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+  };
+  try {
+    if(userState.role === UserRole.STUDENT) {
+      const response: AxiosResponse = await axios.get(`${API_BASE_URL}/obligations/student`, config);
+      if (response.status === 200) {
+        let result : Obligation[] = response.data;
+
+        const events: Event[] = result.map(obligation => ({
+          title: obligation.title,
+          start: new Date(obligation.startDate),
+          end: new Date(obligation.endDate),
+          category: obligation.category
+        }));
+
+        setEvents(events);
+      }
+    }
+    else if(userState.role === UserRole.PROFESSOR)
+    {
+      const response: AxiosResponse = await axios.get(`${API_BASE_URL}/obligations/professor`, config);
+      if (response.status === 200) {
+        let result : Obligation[] = response.data;
+
+        const events: Event[] = result.map(obligation => ({
+          title: obligation.title,
+          start: new Date(obligation.startDate),
+          end: new Date(obligation.endDate),
+          category: obligation.category
+        }));
+
+        setEvents(events);
+      }
+    }
+  } catch (error) {
+    Toast.show({
+      type: 'error',
+      text1: 'Failed to fetch obligations',
+    });
+  }
+}, []);
+
+useFocusEffect(
+  React.useCallback(() => {
+    fetchObligations();
+}, []));
+
+
 
   const filterOptions: { value: Mode; label: string }[] = [
     { label: 'Day', value: 'day' },
@@ -75,13 +139,21 @@ const CalendarWidget = () => {
     setSelectedCalendarType(value);
   };
 
-  const handleDatePress = (date) => {
-    setSelectedDate(date);
-    const filteredEvents = events.filter(
-      (event) => event.start.toDateString() === date.toDateString()
-    );
-    setDayEvents(filteredEvents);
-  };
+const handleDatePress = (date) => {
+  const selected = new Date(date);
+  setSelectedDate(selected);
+
+  const filteredEvents = events.filter((event) => {
+    const eventDate = new Date(event.start);
+
+    const formatDate = (d) => 
+      `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+
+    return formatDate(eventDate) === formatDate(selected);
+  });
+
+  setDayEvents(filteredEvents);
+};
 
   const eventCellStyle = (event: Event) => {
     const backgroundColor = categoryColors[event.category] || '#ccc';
