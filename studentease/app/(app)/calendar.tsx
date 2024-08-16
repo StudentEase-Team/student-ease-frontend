@@ -19,6 +19,24 @@ type Event = {
   category: string;
 };
 
+export interface Item {
+  title: string;
+  start: Date;
+  end: Date;
+  category: string;
+}
+
+type ItemsByDate = {
+  [date: string]: Item[];
+};
+
+
+export interface ItemColor {
+  marked: boolean,
+  selectedColor: string
+}
+
+
 const CalendarWidget = () => {
   const { theme } = useTheme();
   const [selectedCalendarType, setSelectedCalendarType] = useState<Mode | undefined>('month');
@@ -28,6 +46,23 @@ const CalendarWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const {userState} = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
+  const [selectedDay, setSelectedDay] = useState('');
+  const [items, setItems] = useState({});
+  const [itemsByDate, setItemsByDate] = useState({});
+  const [itemsColorByDate, setItemsColorByDate] = useState({});
+  const mapItemsToDateObject = (items: Item[]): ItemsByDate => {
+    return items.reduce((acc: ItemsByDate, item: Item) => {
+      const dateKey = item.start.toISOString().split('T')[0];
+  
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+  
+      acc[dateKey].push(item);
+      return acc;
+    }, {});
+  };
+  
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
@@ -43,28 +78,11 @@ const CalendarWidget = () => {
 
   useEffect(() => {}, [theme, selectedCalendarType, selectedDate]); 
 
-/*
-[
-    {
-      title: 'Predavanje - Matematika',
-      start: new Date(2024, 7, 16, 9, 0),
-      end: new Date(2024, 7, 16, 10, 30),
-      category: 'Lecture',
-    },
-    {
-      title: 'Vežbe - Fizička hemija',
-      start: new Date(2024, 7, 16, 11, 0),
-      end: new Date(2024, 7, 16, 12, 30),
-      category: 'Exercise',
-    },
-    {
-      title: 'Ispit - Informatika',
-      start: new Date(2024, 7, 16, 13, 0),
-      end: new Date(2024, 7, 16, 14, 30),
-      category: 'Exam',
-    },
-  ]
-*/
+  const categoryColors = {
+    Lecture: '#1e88e5',
+  Exercise: '#8e24aa',
+  Exam: '#00796b',
+  };
 
 
 const fetchObligations = useCallback(async () => {
@@ -86,6 +104,25 @@ const fetchObligations = useCallback(async () => {
           category: obligation.category
         }));
 
+        const items: Item[] = result.map(obligation => ({
+          title: obligation.title,
+          start: new Date(obligation.startDate),
+          end: new Date(obligation.endDate),
+          category: obligation.category,
+          marked: true,
+          selectedColor: categoryColors[obligation.category]
+        }));
+
+        const itemsColor: ItemColor[] = result.map(obligation => ({
+          marked: true,
+          selectedColor: categoryColors[obligation.category]
+        }));
+
+        setItemsColorByDate(itemsColor);
+        setItems(items); 
+        const itemsByDate = mapItemsToDateObject(items);
+
+        setItemsByDate(itemsByDate);
         setEvents(events);
       }
     }
@@ -99,8 +136,30 @@ const fetchObligations = useCallback(async () => {
           title: obligation.title,
           start: new Date(obligation.startDate),
           end: new Date(obligation.endDate),
-          category: obligation.category
+          category: obligation.category,
         }));
+
+        const items: Item[] = result.map(obligation => ({
+          title: obligation.title,
+          start: new Date(obligation.startDate),
+          end: new Date(obligation.endDate),
+          category: obligation.category,
+          marked: true,
+          selectedColor: categoryColors[obligation.category]
+        }));
+
+
+        const itemsColor: ItemColor[] = result.map(obligation => ({
+          marked: true,
+          selectedColor: categoryColors[obligation.category]
+        }));
+
+        setItemsColorByDate(itemsColor);
+
+        setItems(items);
+        const itemsByDate = mapItemsToDateObject(items);
+
+        setItemsByDate(itemsByDate);
 
         setEvents(events);
       }
@@ -128,11 +187,14 @@ useFocusEffect(
     { label: 'Schedule', value: 'schedule' },
   ];
 
-  const categoryColors = {
-    Lecture: '#4caf50',
-    Exercise: '#ff5722',
-    Exam: '#cc5511',
+
+
+  const formatTime = (date: Date): string => {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   };
+  
 
   const handleCalendarModeChange = (value: Mode) => {
     setCalendarType(value.charAt(0).toUpperCase() + value.slice(1));
@@ -254,23 +316,19 @@ const handleDatePress = (date) => {
   const currentMonth = selectedDate.toLocaleString('default', { month: 'long' });
   const currentYear = selectedDate.getFullYear();
 
-  const [selectedDay, setSelectedDay] = useState('');
-  const [items, setItems] = useState({});
-
-
-  // Koristimo useMemo da memoizujemo vrednosti na osnovu teme
   const renderItem = useMemo(() => (item) => (
-    <View style={[styles.item, { backgroundColor: theme === 'light' ? '#ffffff' : '#333333' }]}>
-      <Text style={theme === 'light' ? {color:'#333'} : {color: 'white'}}>{item.name}</Text>
+    <View style={[styles.item, {backgroundColor: categoryColors[item.category]}]}>
+      <Text style={theme === 'light' ? {color: 'white', fontSize: 16, fontWeight: 'bold',  marginBottom: 5} : {color: 'white', fontSize: 16, fontWeight: 'bold',  marginBottom: 5}}>{item.title}</Text>
+
+      <Text style={theme === 'light' ? {color: 'white', fontSize: 16} : {color: 'white', fontSize: 16}}>{formatTime(item.start) + " - " + formatTime(item.end)}</Text>
+      
+      <Text style={theme === 'light' ? {color: 'white', fontSize: 16} : {color: 'white', fontSize: 16}}>{item.category}</Text>
     </View>
   ), [theme]);
 
   const renderEmptyData = useMemo(() => () => (
       <Text style={theme === 'light' ? styles.noEventsTextLight : styles.noEventsTextDark}>Nema događaja za ovaj dan</Text>
-
   ), [theme]);
-
-
 
   return (
     <>
@@ -337,10 +395,9 @@ const handleDatePress = (date) => {
                   {dayEvents.length > 0 ? (
                     dayEvents.map((event, index) => (
                       <View key={index} style={[styles.eventItem, { backgroundColor: categoryColors[event.category] }]}>
-                        <Text style={styles.eventTitleDark}>{event.title}</Text>
-                        <Text style={styles.eventTimeDark}>
-                          {event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}
-                        </Text>
+                        <Text style={styles.eventTitle}>{event.title}</Text>
+                        <Text style={styles.eventDetails}>{event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}</Text>
+                        <Text style={styles.eventDetails}>{event.category}</Text>
                       </View>
                     ))
                   ) : (
@@ -369,7 +426,7 @@ const handleDatePress = (date) => {
             textDayHeaderFontWeight: 'bold',
             textMonthFontWeight:'bold',
             textDisabledColor: theme === 'light' ? '#d3d3d3' : '#555555',
-            dotColor: theme === 'light' ? '#00adf5' : '#ffffff',
+            dotColor: theme === 'light' ? '#00adf5' : '#9775fa',
             selectedDotColor: '#ffffff',
             arrowColor: theme === 'light' ? '#4dabf7' : '#ffffff',
             monthTextColor: theme === 'light' ? '#4dabf7' : '#9775fa',
@@ -383,11 +440,13 @@ const handleDatePress = (date) => {
           calendarStyle={theme === 'light' ? {backgroundColor: '#f2f2f2'} : {backgroundColor: '#242526'}}
           style={theme === 'light' ? {backgroundColor: '#f2f2f2'} : {backgroundColor: '#242526'}}
           contentContainerStyle={theme === 'light' ? {backgroundColor: 'white'} : {backgroundColor: '#242526'}}
-          items={items}
+          items={itemsByDate}
           selected={selectedDay}
-          markingType='multi-dot'
           renderItem={renderItem} 
           renderEmptyData={renderEmptyData}
+          showScrollIndicator={true}
+          showOnlySelectedDayItems={false}
+          markingType={'dot'}
         />
         )
       )}
@@ -428,9 +487,10 @@ const styles = StyleSheet.create({
 
   item: {
     backgroundColor: 'white',
-    padding: 20,
+    padding: 10,
     marginRight: 10,
-    marginTop: 17,
+    marginTop: 13,
+    borderRadius: 10
   },
 
   mainContainer: {
@@ -461,14 +521,14 @@ const styles = StyleSheet.create({
   },
 
   agendaTitleLight: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
     color: 'black',
   },
 
   agendaTitleDark: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
     color: 'white',
@@ -484,27 +544,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
-  eventTitleLight: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 10,
-  },
-
-  eventTitleDark: {
-    fontSize: 18,
+  eventTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 10,
   },
 
-  eventTimeLight: {
-    fontSize: 16,
-    color: '#555',
-  },
-
-  eventTimeDark: {
-    fontSize: 16,
+  eventDetails: {
+    fontSize: 18,
     color: 'white',
   },
 

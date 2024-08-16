@@ -31,7 +31,7 @@ const HomePage = () => {
         { title: 'Show Noticeboard', route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
         { title: 'Show FAQ', route: 'faq/faq-show', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
         { title: 'Calculate your grades', route: 'average-grade', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
-        { title: 'See your calendar', route: 'See Calendar', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2b5876', '#4e4376'] },
+        { title: 'See your calendar', route: 'calendar', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2b5876', '#4e4376'] },
     ];
 
     let cardsToShow: { title: string; route: string; lightColors: string[]; darkColors: string[]; }[] = [];
