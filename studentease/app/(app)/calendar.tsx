@@ -80,8 +80,8 @@ const CalendarWidget = () => {
 
   const categoryColors = {
     Lecture: '#1e88e5',
-  Exercise: '#8e24aa',
-  Exam: '#00796b',
+    Exercise: '#8e24aa',
+    Exam: '#00796b',
   };
 
 

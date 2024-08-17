@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { IconButton } from 'react-native-paper';
+import { Platform } from 'react-native';
 
 export default function AppLayout() {
   const { isAuthenticated, userState } = useAuth();
@@ -201,6 +202,27 @@ export default function AppLayout() {
                     )
                     }}
                 />
+
+                {Platform.OS !== 'ios' ? (
+                  <Drawer.Screen
+                  name="export-obligations"
+                  options={{
+                  drawerLabel: 'Export obligations',
+                  drawerIcon: () => (
+                    <IconButton icon='calendar-export' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
+                  )
+                  }}
+                  />
+                ) : (
+                  <Drawer.Screen
+                    name="export-obligations"
+                    options={{
+                    drawerLabel: '',
+                    drawerItemStyle: { display: 'none' }
+                    }}
+                />
+                ) }
+                
                 
                 <Drawer.Screen
                     name="logout"
