@@ -208,6 +208,7 @@ export default function AppLayout() {
                   name="export-obligations"
                   options={{
                   drawerLabel: 'Export obligations',
+                  title: 'Export obligations',
                   drawerIcon: () => (
                     <IconButton icon='calendar-export' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}></IconButton>
                   )

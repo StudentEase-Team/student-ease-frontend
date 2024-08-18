@@ -7,10 +7,13 @@ import * as Sharing from 'expo-sharing';
 import { API_BASE_URL } from '@env';
 import { UserRole } from '../../model/UserRole';
 import Toast from 'react-native-toast-message'; 
-import { Platform } from 'react-native';
+import { Platform, View, Text, StyleSheet } from 'react-native';
+import {Button} from 'react-native-paper'
+import { useTheme } from '../../context/ThemeContext';
 
-const exportObligationsICS: React.FC = () => {
+const ExportObligationsICS: React.FC = () => {
     const router = useRouter();
+    const { theme } = useTheme();
     const { userState } = useAuth();
 
     const download = async () => {
@@ -69,26 +72,99 @@ const exportObligationsICS: React.FC = () => {
                 visibilityTime: 4000, 
                 autoHide: true, 
             });
-            setTimeout(() => {
-                router.push('/homepage');
-            }, 4000);
 
         } catch (error) {
             console.error("Error sharing file:", error);
         }
     };
 
-    useFocusEffect(
-        React.useCallback(() => {
-            download();
-        }, [])
-    );
+    const handleDownload = () => {
+        download();
+    };
 
     return (
-        <>
+        <View style={theme === 'light' ? styles.containerLight : styles.containerDark}>
+            <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>Export your obligations</Text>
+            <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>
+                Take control of your time and responsibilities! 
+                Click the button below to download your obligations in .ics format, 
+                and seamlessly integrate them into your calendar. 
+                Stay organized and make every moment count!
+            </Text>
+                <Button mode='contained' onPress={handleDownload} style={theme === 'light' ? styles.downloadButtonLight : styles.downloadButtonDark}>Donwload .ics file</Button>
+
             <Toast />
-        </>
+        </View>
     );
 };
 
-export default exportObligationsICS;
+const styles = StyleSheet.create({
+    containerLight: {
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    containerDark: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#18191A',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    titleLight: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: '#333', 
+        textAlign: 'center',
+    },
+
+    titleDark: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: 'white', 
+        textAlign: 'center',
+    },
+
+    descriptionLight: {
+        fontSize: 18,
+        marginBottom: 40,
+        textAlign: 'center',
+        color: '#666',
+        width: '35%',
+        fontStyle: 'italic',
+        paddingHorizontal: 10,
+    },
+
+    descriptionDark: {
+        fontSize: 18,
+        marginBottom: 40,
+        textAlign: 'center',
+        color: '#dddddd',
+        width: '35%',
+        fontStyle: 'italic',
+        paddingHorizontal: 10,
+    },
+
+    downloadButtonLight: {
+        backgroundColor: '#4dabf7',
+        marginTop: 30,
+        borderRadius: 50,
+        height: 50,
+        justifyContent: 'center',
+    },
+    
+    downloadButtonDark: {
+        backgroundColor: '#9775fa',
+        marginTop: 30,
+        borderRadius: 50,
+        height: 50,
+        justifyContent: 'center',
+    },
+});
+
+export default ExportObligationsICS;
