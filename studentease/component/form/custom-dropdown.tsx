@@ -22,11 +22,11 @@ function CustomDropdown(props: DropdownProps<any>) {
             onBlur={() => setIsFocus(false)}
             disable={props.disable}
             activeColor={theme === 'light' ? '#f2f2f2' : '#18191a'}
-            placeholderStyle={theme === 'light' ? styles.placeholderStyleLight : styles.placeholderStyleDark}
+            placeholderStyle={[ props.placeholderStyle, theme === 'light' ? styles.placeholderStyleLight : styles.placeholderStyleDark]}
             itemTextStyle={theme === 'light' ? styles.selectedTextStyleLight : styles.selectedTextStyleDark}
             containerStyle={theme === 'light' ? styles.itemLight : styles.itemDark}
             itemContainerStyle={theme === 'light' ? styles.itemLight : styles.itemDark}
-            selectedTextStyle={theme === 'light' ? styles.selectedTextStyleLight : styles.selectedTextStyleDark}
+            selectedTextStyle={[ props.selectedTextStyle, theme === 'light' ? styles.selectedTextStyleLight : styles.selectedTextStyleDark]}
             inputSearchStyle={theme === 'light' ? styles.inputSearchStyleLight : styles.inputSearchStyleDark}
             data={props.data}
             labelField={props.labelField}

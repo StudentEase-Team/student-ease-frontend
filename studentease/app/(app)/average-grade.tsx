@@ -7,6 +7,7 @@ import { API_BASE_URL } from '@env';
 import { Card, DataTable, Text } from 'react-native-paper';
 import CustomDropdown from '../../component/form/custom-dropdown';
 import { useTheme } from '../../context/ThemeContext';
+import { useFocusEffect } from 'expo-router';
 
 type FilterType = 
   | 'ALL'
@@ -53,6 +54,14 @@ function AverageGrade() {
     useEffect(() => {
         getGrades();
     }, [year]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            setGrades({});
+            setSelectedFilterType('ALL');
+            return () => {};
+        }, [])
+    );
 
     const handleGradeChange = (subjectName: string, grade: number) => {
         setGrades(prevGrades => ({ ...prevGrades, [subjectName]: grade }));
@@ -125,7 +134,7 @@ function AverageGrade() {
                     const date = new Date(subject.date);
                     const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
                     return (
-                        <DataTable.Row key={subject.id}>
+                        <DataTable.Row key={subject.id} style={{ height:70}}>
                             <DataTable.Cell textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.subjectWidth}>
                                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>{subject.subjectName}</Text>
                             </DataTable.Cell>
@@ -139,6 +148,8 @@ function AverageGrade() {
                                         style={Platform.OS === 'web' ? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark) : (theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)}
                                         value={grades[subject.subjectName]}
                                         onChange={({ value }) => handleGradeChange(subject.subjectName, value)}
+                                        selectedTextStyle = {{fontSize: 18, textAlign: 'center'}}
+                                        placeholderStyle = {{fontSize: 18}}
                                     />
                                 ) : (
                                     <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>{subject.grade}</Text>
@@ -276,11 +287,12 @@ const styles = StyleSheet.create({
 
     dropdownLight: {
         backgroundColor: '#f0f0f0',
-        width: '70%',
+        width: '50%',
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.2,
         shadowRadius: 0,
+        height: 60
     },
 
     dropdownLightMobile: {
@@ -289,7 +301,7 @@ const styles = StyleSheet.create({
         padding: 5,
         fontSize: 16,
         height: 50,
-        width: 75,
+        width: 65,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.2,
@@ -298,7 +310,7 @@ const styles = StyleSheet.create({
 
     dropdownDark: {
         backgroundColor: "#18191a",
-        width: '70%'
+        width: '50%'
     },
 
     dropdownDarkMobile: {
@@ -320,7 +332,7 @@ const styles = StyleSheet.create({
     },
 
     dateWidth: {
-        flex:0.8,
+        flex:0.9,
         width: '30%',
         justifyContent: 'center'
     },
@@ -328,7 +340,7 @@ const styles = StyleSheet.create({
     textLight: {
         flexWrap:'wrap',
         fontSize: 18,
-        color: 'black'
+        color: 'black', 
     },
 
     textLightMobile: {

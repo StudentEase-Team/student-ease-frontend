@@ -134,15 +134,13 @@ const SubjectPage = () => {
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
         {Platform.OS === 'web' ? (
             <View>
-                <CustomDropdown style={{width: '40%'}}
-                    data={collegeDropdownData}
-                    labelField={'label'}
-                    valueField={'value'}
-                    placeholder='Select a college'
-                    onChange={handleCollegeChange}
-                />
-                <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <Searchbar placeholder='Search here...' style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchQuery} onChangeText={handleSearchChange}/>
+                <CustomDropdown style={{ width: '40%' }}
+                data={collegeDropdownData}
+                labelField={'label'}
+                valueField={'value'}
+                placeholder='Select a college'
+                onChange={handleCollegeChange} /><PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                    <Searchbar placeholder='Search here...' style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchQuery} onChangeText={handleSearchChange} />
                 </PaperProvider>
             </View>
         ) : (
@@ -155,7 +153,7 @@ const SubjectPage = () => {
                     onChange={handleCollegeChange}
                 />
                 <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <Searchbar style={{ width: '100%', marginBottom: 20 }} onChangeText={handleSearchChange} value={searchQuery}/>
+                    <Searchbar placeholder='Search here...' style={{ width: '100%', marginBottom: 20}} onChangeText={handleSearchChange} value={searchQuery}/>
                 </PaperProvider>
             </View>
         )}

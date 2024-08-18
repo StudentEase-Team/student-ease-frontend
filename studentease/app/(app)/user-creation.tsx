@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Platform, StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View, Text } from 'react-native'
 import { ScrollView, } from "react-native-gesture-handler";
 import { useTheme } from '../../context/ThemeContext';
 import  CustomDropdown  from '../../component/form/custom-dropdown'
@@ -107,6 +107,7 @@ function UserCreation() {
                 }>
 
                 <Card.Content style={{flex:1, alignItems:'center', justifyContent:'center',flexDirection:'column', width:'100%'}}>
+                        <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Create a new user</Text>
                         
                         <CustomDropdown style={Platform.OS === 'web'? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark):(theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} data={[{label:'Professor', value:'PROFESSOR'}, {label:'Student', value:'STUDENT'}]} 
                         labelField={'label'} 
@@ -114,7 +115,6 @@ function UserCreation() {
                         onChange={ handleUserRoleChange }
                         value={userRole}
                         />
-
 
                         <CustomDropdown style={Platform.OS === 'web'? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark):(theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} data={collegeData} 
                         labelField={'label'} 
@@ -205,23 +205,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#18191A'
     },
     qaContainerLight: {
-        width: '50%',
+        width: '40%',
         marginTop: 15,
         padding: 20,
         backgroundColor: 'white',
-        alignSelf:'center'
+        alignSelf:'center',
     },
 
     qaContainerLightMobile: {
         width: '100%',
         marginTop: 15,
-        padding: 20,
+        padding:10,
         backgroundColor: 'white',
         alignSelf:'center'
     },
 
     qaContainerDark: {
-        width: '50%',
+        width: '40%',
         marginTop: 15,
         padding: 20,
         backgroundColor: '#242526',
@@ -231,15 +231,42 @@ const styles = StyleSheet.create({
     qaContainerDarkMobile: {
         width: '100%',
         marginTop: 15,
-        padding: 20,
+        padding: 10,
         backgroundColor: '#242526',
         alignSelf:'center'
+    },
+
+    titleLight: {
+        fontSize: 24,
+        marginBottom: 30,
+        fontWeight: 'bold',
+    },
+
+    titleLightMobile: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'black',
+        marginBottom: 20
+    },
+
+    titleDark: {
+        fontSize: 24,
+        marginBottom: 30,
+        fontWeight: 'bold',
+        color: 'white'
+    },
+
+    titleDarkMobile: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white',
+        marginBottom: 20
     },
 
     inputLight: {
         marginBottom: 5,
         color: '#242526',
-        width: '80%',
+        width: '100%',
         height: 45
     },
 
@@ -254,7 +281,7 @@ const styles = StyleSheet.create({
     inputDark: {
         marginBottom: 5,
         color: 'white',
-        width: '80%',
+        width: '100%',
         height: 45
     },
 
@@ -272,7 +299,6 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0,
         shadowRadius: 0,
-        width:'80%', 
         marginTop: 5,
         backgroundColor: '#f6f6f6',
         marginBottom: 5,

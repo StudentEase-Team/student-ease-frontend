@@ -212,11 +212,13 @@ const styles = StyleSheet.create({
     titleLight: {
         fontSize: 24,
         fontWeight: 'bold',
+        color: 'black', 
     },
 
     titleLightMobile: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: 'white'
     },
 
     titleDark: {
