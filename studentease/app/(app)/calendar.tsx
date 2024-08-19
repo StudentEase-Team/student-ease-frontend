@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, Pressable, Platform, Text, ScrollView } from 'react-native';
 import { Calendar, Mode } from 'react-native-big-calendar';
 import { useTheme } from '../../context/ThemeContext';
@@ -11,6 +11,9 @@ import Toast from 'react-native-toast-message';
 import { useFocusEffect } from 'expo-router';
 import { UserRole } from '../../model/UserRole';
 import { Obligation } from '../../model/Obligation';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 type Event = {
   title: string;
@@ -50,6 +53,9 @@ const CalendarWidget = () => {
   const [items, setItems] = useState({});
   const [itemsByDate, setItemsByDate] = useState({});
   const [itemsColorByDate, setItemsColorByDate] = useState({});
+  const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
   const mapItemsToDateObject = (items: Item[]): ItemsByDate => {
     return items.reduce((acc: ItemsByDate, item: Item) => {
       const dateKey = item.start.toISOString().split('T')[0];
@@ -180,11 +186,11 @@ useFocusEffect(
 
 
   const filterOptions: { value: Mode; label: string }[] = [
-    { label: 'Day', value: 'day' },
-    { label: '3 days', value: '3days' },
-    { label: 'Week', value: 'week' },
-    { label: 'Month', value: 'month' },
-    { label: 'Schedule', value: 'schedule' },
+    { label: i18n.t('calendar_day'), value: 'day' },
+    { label: i18n.t('calendar_threeDays'), value: '3days' },
+    { label: i18n.t('calendar_week'), value: 'week' },
+    { label: i18n.t('calendar_month'), value: 'month' },
+    { label: i18n.t('calendar_schedule'), value: 'schedule' },
   ];
 
 
@@ -334,41 +340,58 @@ const handleDatePress = (date) => {
     <>
     {Platform.OS === 'web' ? (
       <View style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
-        <View style={styles.container}>
-            <View style={styles.monthTitleContainer}>
-              <Text style={theme === 'light' ? styles.currentMonthLight : styles.currentMonthDark}> {currentMonth} {currentYear}</Text>
-            </View>
-            <View style={styles.buttons}>
-              <IconButton size={40} icon='chevron-left' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={navigateBackward}></IconButton>
-              {filterOptions.map((option) => (
-                <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile} key={option.value}>
-                  <Pressable
-                    key={option.value}
-                    style={[
-                      theme === 'light' ? styles.pressableLight : styles.pressableDark,
-                      selectedCalendarType === option.value
-                        ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
-                        : { borderColor: 'grey' },
-                    ]}
-                    onPress={() => handleCalendarModeChange(option.value)}
-                  >
-                    <Text
-                      style={[
-                        Platform.OS === 'web' ? styles.text : styles.textMobile,
-                        { color: selectedCalendarType === option.value ? '#fff' : theme === 'light' ? '#4dabf7' : '#9775fa' },
-                      ]}
-                    >
-                      {option.label}
-                    </Text>
-                  </Pressable>
-                </View>
-              ))}
-              <IconButton style={{ justifyContent: 'flex-end' }} size={40} icon='chevron-right' iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={navigateForward}></IconButton>
-            </View>
+      <View style={styles.container}>
+          <View style={styles.monthTitleContainer}>
+              <Text style={theme === 'light' ? styles.currentMonthLight : styles.currentMonthDark}>
+                  {currentMonth} {currentYear}
+              </Text>
           </View>
-          <View style={styles.mainContainer}>
-              <View style={styles.calendarContainer}>
-                <Calendar
+          <View style={styles.buttons}>
+              <IconButton
+                  size={40}
+                  icon='chevron-left'
+                  iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}
+                  onPress={navigateBackward}
+              />
+              {filterOptions.map((option) => (
+                  <View
+                      style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile}
+                      key={option.value}
+                  >
+                      <Pressable
+                          style={[
+                              theme === 'light' ? styles.pressableLight : styles.pressableDark,
+                              selectedCalendarType === option.value
+                                  ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
+                                  : { borderColor: 'grey' },
+                          ]}
+                          onPress={() => handleCalendarModeChange(option.value)}
+                      >
+                          <Text
+                              style={[
+                                  Platform.OS === 'web' ? styles.text : styles.textMobile,
+                                  {
+                                      color: selectedCalendarType === option.value ? '#fff' : theme === 'light' ? '#4dabf7' : '#9775fa',
+                                  },
+                              ]}
+                          >
+                              {option.label}
+                          </Text>
+                      </Pressable>
+                  </View>
+              ))}
+              <IconButton
+                  style={{ justifyContent: 'flex-end' }}
+                  size={40}
+                  icon='chevron-right'
+                  iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'}
+                  onPress={navigateForward}
+              />
+          </View>
+      </View>
+      <View style={styles.mainContainer}>
+          <View style={styles.calendarContainer}>
+              <Calendar
                   theme={theme === 'light' ? lightTheme : darkTheme}
                   events={events}
                   height={600}
@@ -384,29 +407,35 @@ const handleDatePress = (date) => {
                   eventCellStyle={eventCellStyle}
                   sortedMonthView={false}
                   headerContentStyle={{ justifyContent: 'space-between' }}
-                  date={selectedDate} />
-              </View>
-
-              <View style={theme === 'light' ? styles.agendaContainerLight : styles.agendaContainerDark}>
-                <Text style={theme === 'light' ? styles.agendaTitleLight : styles.agendaTitleDark}>
-                  Obaveze za {selectedDate ? selectedDate.toDateString() : 'Izaberite datum'}
-                </Text>
-                <ScrollView style={styles.agendaDetails}>
+                  date={selectedDate}
+              />
+          </View>
+  
+          <View style={theme === 'light' ? styles.agendaContainerLight : styles.agendaContainerDark}>
+              <Text style={theme === 'light' ? styles.agendaTitleLight : styles.agendaTitleDark}>
+                  {i18n.t('calendar_obligationsFor')} {selectedDate ? selectedDate.toDateString() : i18n.t('calendar_selectDate')}
+              </Text>
+              <ScrollView style={styles.agendaDetails}>
                   {dayEvents.length > 0 ? (
-                    dayEvents.map((event, index) => (
-                      <View key={index} style={[styles.eventItem, { backgroundColor: categoryColors[event.category] }]}>
-                        <Text style={styles.eventTitle}>{event.title}</Text>
-                        <Text style={styles.eventDetails}>{event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}</Text>
-                        <Text style={styles.eventDetails}>{event.category}</Text>
-                      </View>
-                    ))
+                      dayEvents.map((event, index) => (
+                          <View key={index} style={[styles.eventItem, { backgroundColor: categoryColors[event.category] }]}>
+                              <Text style={styles.eventTitle}>{event.title}</Text>
+                              <Text style={styles.eventDetails}>
+                                  {event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}
+                              </Text>
+                              <Text style={styles.eventDetails}>{event.category}</Text>
+                          </View>
+                      ))
                   ) : (
-                    <Text style={theme === 'light' ? styles.noEventsTextLight : styles.noEventsTextDark}>Nema obaveza za ovaj dan.</Text>
+                      <Text style={theme === 'light' ? styles.noEventsTextLight : styles.noEventsTextDark}>
+                          {i18n.t('calendar_noEventsText')}
+                      </Text>
                   )}
-                </ScrollView>
-              </View>
-            </View>
-        </View>  
+              </ScrollView>
+          </View>
+      </View>
+  </View>
+   
     ) : (
         isLoading? (
           <View style={theme === 'light' ? styles.spinnerContainerLight : styles.spinnerContainerDark}>

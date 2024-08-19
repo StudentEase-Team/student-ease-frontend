@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Platform, StyleSheet, View, Text } from 'react-native'
 import { ScrollView, } from "react-native-gesture-handler";
 import { useTheme } from '../../context/ThemeContext';
@@ -12,6 +12,9 @@ import Toast from 'react-native-toast-message';
 import axios, { AxiosResponse } from 'axios';
 import { College } from '../../model/College';
 import { RegistrationRequest } from '../../model/RegistrationRequest';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 function UserCreation() {
     const { theme } = useTheme();
@@ -25,6 +28,9 @@ function UserCreation() {
     const [collegeName, setCollegeName] = useState<string>();
     const initialCollegeData = [{ label: 'Any', value: 'any' }];
     const [collegeData, setCollegeData] = useState<{ label: any, value: any }[]>(initialCollegeData);
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
 
     const router = useRouter();
     const config = {
@@ -107,84 +113,97 @@ function UserCreation() {
                 }>
 
                 <Card.Content style={{flex:1, alignItems:'center', justifyContent:'center',flexDirection:'column', width:'100%'}}>
-                        <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Create a new user</Text>
-                        
-                        <CustomDropdown style={Platform.OS === 'web'? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark):(theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} data={[{label:'Professor', value:'PROFESSOR'}, {label:'Student', value:'STUDENT'}]} 
+                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                        {i18n.t('userCreation_createUser')} 
+                    </Text>
+                    
+                    <CustomDropdown style={Platform.OS === 'web' ? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark) : (theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} 
+                        data={[{label: i18n.t('userCreation_roleProfessor'), value: 'PROFESSOR'}, {label: i18n.t('userCreation_roleStudent'), value: 'STUDENT'}]} 
                         labelField={'label'} 
                         valueField={'value'} 
-                        onChange={ handleUserRoleChange }
+                        onChange={handleUserRoleChange}
                         value={userRole}
-                        />
+                        placeholder={i18n.t('userCreation_roleLabel')}
+                    />
 
-                        <CustomDropdown style={Platform.OS === 'web'? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark):(theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} data={collegeData} 
+                    <CustomDropdown style={Platform.OS === 'web' ? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark) : (theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)} 
+                        data={collegeData} 
                         labelField={'label'} 
                         valueField={'value'} 
-                        onChange={ handleCollegeChange }
+                        onChange={handleCollegeChange}
                         value={collegeName}
-                        />
+                        placeholder={i18n.t('userCreation_collegeLabel')}
+                    />
 
-                        <PaperInput
-                                theme = {theme === 'light'? themeLight:themeDark}
-                                label="Email"
-                                mode="outlined"
-                                value={email}
-                                onChangeText={text => setEmail(text)}
-                                style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                        </PaperInput>
+                    <PaperInput
+                        theme={theme === 'light' ? themeLight : themeDark}
+                        label={i18n.t('userCreation_email')}
+                        mode="outlined"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
+                        style={Platform.OS === 'web' ? (theme === 'light' ? styles.inputLight : styles.inputDark) : (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
+                    />
 
-                        <PaperInput
-                                theme = {theme === 'light'? themeLight:themeDark}                        
-                                label="Password"
-                                mode="outlined"
-                                secureTextEntry={true}
-                                value={password}
-                                onChangeText={text => setPassword(text)}
-                                style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                        </PaperInput>
+                    <PaperInput
+                        theme={theme === 'light' ? themeLight : themeDark}                        
+                        label={i18n.t('userCreation_password')}
+                        mode="outlined"
+                        secureTextEntry={true}
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                        style={Platform.OS === 'web' ? (theme === 'light' ? styles.inputLight : styles.inputDark) : (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
+                    />
 
-                        <PaperInput
-                                theme = {theme === 'light'? themeLight:themeDark}
-                                label="Firstname"
-                                mode="outlined"
-                                value={firstName}
-                                onChangeText={text => setFirstName(text)}
-                                style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                        </PaperInput>
+                    <PaperInput
+                        theme={theme === 'light' ? themeLight : themeDark}
+                        label={i18n.t('userCreation_firstname')} 
+                        mode="outlined"
+                        value={firstName}
+                        onChangeText={text => setFirstName(text)}
+                        style={Platform.OS === 'web' ? (theme === 'light' ? styles.inputLight : styles.inputDark) : (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
+                    />
 
-                        <PaperInput
-                                theme = {theme === 'light'? themeLight:themeDark}
-                                label="Lastname"
-                                mode="outlined"
-                                value={lastName}
-                                onChangeText={text => setLastName(text)}
-                                style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                        </PaperInput>
+                    <PaperInput
+                        theme={theme === 'light' ? themeLight : themeDark}
+                        label={i18n.t('userCreation_lastname')} 
+                        mode="outlined"
+                        value={lastName}
+                        onChangeText={text => setLastName(text)}
+                        style={Platform.OS === 'web' ? (theme === 'light' ? styles.inputLight : styles.inputDark) : (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
+                    />
 
-                        <PaperInput
-                                theme = {theme === 'light'? themeLight:themeDark}
-                                label="Phone number"
-                                mode="outlined"
-                                value={phone}
-                                onChangeText={text => setPhone(text)}
-                                style={Platform.OS === 'web'? (theme === 'light' ? styles.inputLight : styles.inputDark): (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}>
-                        </PaperInput>
+                    <PaperInput
+                        theme={theme === 'light' ? themeLight : themeDark}
+                        label={i18n.t('userCreation_phoneNumber')}
+                        mode="outlined"
+                        value={phone}
+                        onChangeText={text => setPhone(text)}
+                        style={Platform.OS === 'web' ? (theme === 'light' ? styles.inputLight : styles.inputDark) : (theme === 'light' ? styles.inputLightMobile : styles.inputDarkMobile)}
+                    />
 
-                        <View style={styles.buttonRow}>
-                            {Platform.OS === 'web' ? (
-                                <Button mode='contained' onPress={() => createUser()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Register new user </Button>
-                            ) : (
-                                <Button mode='contained' onPress={() => createUser()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Register </Button>
-                            )}
-                            <Button mode='contained-tonal' onPress={() => {               
-                                setEmail('');
-                                setPassword('');
-                                setFirstName('');
-                                setLastName('');
-                                setPhone('');
-                                setCollegeName(undefined);
-                                setUserRole('');}} 
-                            style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
-                        </View>
+                    <View style={styles.buttonRow}>
+                        {Platform.OS === 'web' ? (
+                            <Button mode='contained' onPress={() => createUser()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}>
+                                {i18n.t('userCreation_registerNewUser')} 
+                            </Button>
+                        ) : (
+                            <Button mode='contained' onPress={() => createUser()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}>
+                                {i18n.t('userCreation_register')} 
+                            </Button>
+                        )}
+                        <Button mode='contained-tonal' onPress={() => {               
+                            setEmail('');
+                            setPassword('');
+                            setFirstName('');
+                            setLastName('');
+                            setPhone('');
+                            setCollegeName(undefined);
+                            setUserRole('');
+                        }} 
+                        style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}>
+                            {i18n.t('userCreation_cancel')} 
+                        </Button>
+                    </View>
                 </Card.Content>
 
             </Card>

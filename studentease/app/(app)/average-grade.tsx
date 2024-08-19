@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View, Platform, Pressable } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import SubjectGrade from '../../model/SubjectGrade';
@@ -8,6 +8,9 @@ import { Card, DataTable, Text } from 'react-native-paper';
 import CustomDropdown from '../../component/form/custom-dropdown';
 import { useTheme } from '../../context/ThemeContext';
 import { useFocusEffect } from 'expo-router';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 type FilterType = 
   | 'ALL'
@@ -27,13 +30,17 @@ function AverageGrade() {
     const [grades, setGrades] = useState<{ [key: string]: number }>({});
     const {theme} = useTheme();
     const [selectedFilterType, setSelectedFilterType] = useState<FilterType | null>('ALL');
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
 
     const filterOptions: { value: FilterType; label: string }[] = [
-        { label: 'Any', value: 'ALL' },
-        { label: 'First', value: '1' },
-        { label: 'Second', value: '2' },
-        { label: 'Third', value: '3' },
-        { label: 'Fourth', value: '4' }
+        { label: i18n.t('averageGrade_any'), value: 'ALL' },
+        { label: i18n.t('averageGrade_first'), value: '1' },
+        { label: i18n.t('averageGrade_second'), value: '2' },
+        { label: i18n.t('averageGrade_third'), value: '3' },
+        { label: i18n.t('averageGrade_fourth'), value: '4' }
+
     ];
 
     const getGrades = async () => {
@@ -117,55 +124,72 @@ function AverageGrade() {
             </View>
 
             <Card style={Platform.OS === 'web' ? theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark : theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile}>
-            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.headingLight : styles.headingDark) : (theme === 'light' ? styles.headingLightMobile : styles.headingDarkMobile)}>Subjects</Text>
-            <DataTable>
-                <DataTable.Header>
-                    <DataTable.Title textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.subjectWidth}>
-                        <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>Subject Name</Text>
-                    </DataTable.Title>
-                    <DataTable.Title textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.gradeWidth}>
-                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>Grade</Text>
-                    </DataTable.Title>
-                    <DataTable.Title textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.dateWidth}>
-                        <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>Date</Text>
-                    </DataTable.Title>
-                </DataTable.Header>
-                {combinedSubjects.map((subject) => {
-                    const date = new Date(subject.date);
-                    const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
-                    return (
-                        <DataTable.Row key={subject.id} style={{ height:70}}>
-                            <DataTable.Cell textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.subjectWidth}>
-                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>{subject.subjectName}</Text>
-                            </DataTable.Cell>
-                            <DataTable.Cell textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.gradeWidth}>
-                                {subject.grade === -1 ? (
-                                    <CustomDropdown
-                                        data={[6, 7, 8, 9, 10].map((grade) => ({ label: grade.toString(), value: grade }))}
-                                        labelField="label"
-                                        valueField="value"
-                                        placeholder={Platform.OS === 'web' ? 'Grade' : ''}
-                                        style={Platform.OS === 'web' ? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark) : (theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)}
-                                        value={grades[subject.subjectName]}
-                                        onChange={({ value }) => handleGradeChange(subject.subjectName, value)}
-                                        selectedTextStyle = {{fontSize: 18, textAlign: 'center'}}
-                                        placeholderStyle = {{fontSize: 18}}
-                                    />
-                                ) : (
-                                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>{subject.grade}</Text>
-                                )}
-                            </DataTable.Cell>
-                            <DataTable.Cell style={styles.dateWidth}>
-                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>{formattedDate}</Text>
-                            </DataTable.Cell>
-                        </DataTable.Row>
-                    );
-                })}
-            </DataTable>
-            {average !== null && (
-                <Text style={theme === 'light' ? styles.averageTextLight : styles.averageTextDark}>Average: {average.toFixed(2)}</Text>
-            )}
+                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.headingLight : styles.headingDark) : (theme === 'light' ? styles.headingLightMobile : styles.headingDarkMobile)}>
+                    {i18n.t('averageGrade_title')}
+                </Text>
+                <DataTable>
+                    <DataTable.Header>
+                        <DataTable.Title textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.subjectWidth}>
+                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>
+                                {i18n.t('averageGrade_subjectName')}
+                            </Text>
+                        </DataTable.Title>
+                        <DataTable.Title textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.gradeWidth}>
+                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>
+                                {i18n.t('averageGrade_grade')}
+                            </Text>
+                        </DataTable.Title>
+                        <DataTable.Title textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.dateWidth}>
+                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>
+                                {i18n.t('averageGrade_date')}
+                            </Text>
+                        </DataTable.Title>
+                    </DataTable.Header>
+                    {combinedSubjects.map((subject) => {
+                        const date = new Date(subject.date);
+                        const formattedDate = isNaN(date.getTime()) ? i18n.t('averageGrade_invalidDate') : formatDate(date);
+                        return (
+                            <DataTable.Row key={subject.id} style={{ height:70}}>
+                                <DataTable.Cell textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.subjectWidth}>
+                                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>
+                                        {subject.subjectName}
+                                    </Text>
+                                </DataTable.Cell>
+                                <DataTable.Cell textStyle={theme === 'light' ? {color:'black'} : {color:'white'}} style={styles.gradeWidth}>
+                                    {subject.grade === -1 ? (
+                                        <CustomDropdown
+                                            data={[6, 7, 8, 9, 10].map((grade) => ({ label: grade.toString(), value: grade }))}
+                                            labelField="label"
+                                            valueField="value"
+                                            placeholder={Platform.OS === 'web' ? i18n.t('averageGrade_grade') : ''}
+                                            style={Platform.OS === 'web' ? (theme === 'light' ? styles.dropdownLight : styles.dropdownDark) : (theme === 'light' ? styles.dropdownLightMobile : styles.dropdownDarkMobile)}
+                                            value={grades[subject.subjectName]}
+                                            onChange={({ value }) => handleGradeChange(subject.subjectName, value)}
+                                            selectedTextStyle={{fontSize: 18, textAlign: 'center'}}
+                                            placeholderStyle={{fontSize: 18}}
+                                        />
+                                    ) : (
+                                        <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>
+                                            {subject.grade}
+                                        </Text>
+                                    )}
+                                </DataTable.Cell>
+                                <DataTable.Cell style={styles.dateWidth}>
+                                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.textLight : styles.textDark) : (theme === 'light' ? styles.textLightMobile : styles.textDarkMobile)}>
+                                        {formattedDate}
+                                    </Text>
+                                </DataTable.Cell>
+                            </DataTable.Row>
+                        );
+                    })}
+                </DataTable>
+                {average !== null && (
+                    <Text style={theme === 'light' ? styles.averageTextLight : styles.averageTextDark}>
+                        {i18n.t('averageGrade_average')}{average.toFixed(2)}
+                    </Text>
+                )}
             </Card>
+
             <View style={{height:150}}/>
         </ScrollView>
     );

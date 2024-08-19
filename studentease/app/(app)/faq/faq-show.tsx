@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Text } from '@rneui/themed';
 import { TextInput as PaperInput, Button, Card, Modal, PaperProvider, IconButton, Searchbar } from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
@@ -10,6 +10,9 @@ import { useTheme } from '../../../context/ThemeContext';
 import { themeLight, themeDark } from '../../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
 import { useFocusEffect } from 'expo-router';
+import { I18n } from 'i18n-js';
+import { translations } from '../../../localization';
+import { LocaleContext } from '../../../context/LocaleContext';
 
 const FAQ: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -19,6 +22,9 @@ const FAQ: React.FC = () => {
   const [searchParam, setSearchParam] = useState('');
   const { userState } = useAuth();
   const { theme } = useTheme();
+  const i18n = new I18n(translations)
+  const { locale} = useContext(LocaleContext);
+  i18n.locale = locale
 
   const submitQuestion = async () => {
     const config = {
@@ -103,7 +109,7 @@ const FAQ: React.FC = () => {
     <>
       <ScrollView style={theme === 'light'? styles.pageLightContainer : styles.pageDarkContainer}>
           <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
-            <Searchbar placeholder='Search here...' style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
+            <Searchbar placeholder={i18n.t('searchPlaceholder')} style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
           </PaperProvider>
 
         <View style={Platform.OS === 'web'? styles.faqContainer:styles.faqContainerMobile} >
@@ -130,18 +136,34 @@ const FAQ: React.FC = () => {
 
 
         <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight: styles.modalContainerDark) : (theme === 'light'? styles.modalContainerLightMobile: styles.modalContainerDarkMobile)}>
-          <Text style={Platform.OS === 'web' ? (theme === 'light'? styles.titleModalLight : styles.titleModalDark) : theme === 'light'? styles.titleModalLightMobile : styles.titleModalDarkMobile}>Ask your question here:</Text>
-          <PaperInput theme={theme === 'light'? themeLight : themeDark} mode='outlined' multiline numberOfLines={4} style={styles.input} value={question} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => { setQuestion(e.nativeEvent.text); }}/>
+          <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleModalLight : styles.titleModalDark) : (theme === 'light' ? styles.titleModalLightMobile : styles.titleModalDarkMobile)}>
+              {i18n.t('faqNewItem_prompt')}
+          </Text>
+          <PaperInput 
+              theme={theme === 'light' ? themeLight : themeDark} 
+              mode='outlined' 
+              multiline 
+              numberOfLines={4} 
+              style={styles.input} 
+              value={question} 
+              onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => { 
+                  setQuestion(e.nativeEvent.text); 
+              }} 
+          />
           <View style={styles.buttonRow}>
-            <Button mode='contained' onPress={() => submitQuestion()} style={ theme === 'light' ? styles.createQuestionButtonLight : styles.createQuestionButtonDark}>Ask a question</Button>
-            <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={ theme === 'light' ? styles.cancelQuestionButtonLight : styles.cancelQuestionButtonDark}>Cancel</Button>
+              <Button mode='contained' onPress={() => submitQuestion()} style={theme === 'light' ? styles.createQuestionButtonLight : styles.createQuestionButtonDark}>
+                  {i18n.t('faqNewItem_ask')}
+              </Button>
+              <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={theme === 'light' ? styles.cancelQuestionButtonLight : styles.cancelQuestionButtonDark}>
+                  {i18n.t('faqNewItem_cancel')}
+              </Button>
           </View>
         </Modal>
 
             
         {Platform.OS === 'web' ? (
           <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
-          Ask a question
+          {i18n.t('faqNewItem_ask')}
           </Button>
         ) : (
           <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.askQuestionButtonLightMobile : styles.askQuestionButtonDarkMobile} onPress={() => setModalVisible(true)}>

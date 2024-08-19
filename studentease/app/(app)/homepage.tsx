@@ -1,38 +1,45 @@
-import React from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Platform, TouchableHighlight, TouchableHighlightBase } from 'react-native';
+import React, { useContext } from 'react';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Platform } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../context/ThemeContext';
 import { useRouter } from 'expo-router';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useAuth } from '../../context/AuthContext';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 const HomePage = () => {
     const router = useRouter();
     const {theme} = useTheme();
     const { isAuthenticated, userState } = useAuth();
 
-    const adminCards = [
-        { title: 'Show Noticeboard', route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
-        { title: 'College list', route: '/college-list', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
-        { title: 'Subject list', route: '/subject-list', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
-        { title: 'Create an user', route: '/user-creation', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
-        { title: 'Answer FAQ', route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
-    ];
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
 
+    const adminCards = [
+        { title: i18n.t('adminCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
+        { title: i18n.t('adminCards_collegeList'), route: '/college-list', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
+        { title: i18n.t('adminCards_subjectList'), route: '/subject-list', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
+        { title: i18n.t('adminCards_createUser'), route: '/user-creation', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
+        { title: i18n.t('adminCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
+    ];
+    
     const professorCards = [
-        { title: 'Show Noticeboard', route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
-        { title: 'Repository', route: 'Repository', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
-        { title: 'Answer FAQ', route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
+        { title: i18n.t('professorCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
+        { title: i18n.t('professorCards_repository'), route: 'Repository', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
+        { title: i18n.t('professorCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
+        { title: i18n.t('professorCards_seeCalendar'), route: 'calendar', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
     ];
     
     const studentCards = [
-        { title: 'Show Noticeboard', route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
-        { title: 'Show FAQ', route: 'faq/faq-show', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
-        { title: 'Calculate your grades', route: 'average-grade', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
-        { title: 'See your calendar', route: 'calendar', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2b5876', '#4e4376'] },
+        { title: i18n.t('studentCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
+        { title: i18n.t('studentCards_showFAQ'), route: 'faq/faq-show', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
+        { title: i18n.t('studentCards_calculateGrades'), route: 'average-grade', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
+        { title: i18n.t('studentCards_seeCalendar'), route: 'calendar', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2b5876', '#4e4376'] },
     ];
+    
 
     let cardsToShow: { title: string; route: string; lightColors: string[]; darkColors: string[]; }[] = [];
 
@@ -47,12 +54,12 @@ const HomePage = () => {
 
     return (
         <ScrollView style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerLight : styles.containerDark) : (theme === 'light' ? styles.containerLightMobile : styles.containerDarkMobile)}>
-            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.welcomeTextLight : styles.welcomeTextDark) : (theme === 'light' ? styles.welcomeTextLightMobile : styles.welcomeTextDarkMobile)}>Welcome back!</Text>
-            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.quoteTextLight : styles.quoteTextDark) : (theme === 'light' ? styles.quoteTextLightMobile : styles.quoteTextDarkMobile)}>“Education is the most powerful weapon which you can use to change the world.” – Nelson Mandela</Text>
-            <View style={userState?.role === 'PROFESSOR' ? (Platform.OS === 'web' ? styles.cardContainerProfessor : styles.cardContainerMobileProfessor) : (Platform.OS === 'web' ? styles.cardContainer : styles.cardContainerMobile)}>
+            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.welcomeTextLight : styles.welcomeTextDark) : (theme === 'light' ? styles.welcomeTextLightMobile : styles.welcomeTextDarkMobile)}>{i18n.t('welcomeBack')}</Text>
+            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.quoteTextLight : styles.quoteTextDark) : (theme === 'light' ? styles.quoteTextLightMobile : styles.quoteTextDarkMobile)}>{i18n.t('quoteText')}</Text>
+            <View style={Platform.OS === 'web' ? styles.cardContainer : styles.cardContainerMobile}>
                 {cardsToShow.map((card, index) => (
                     <TouchableOpacity activeOpacity={0.7} key={index} onPress={ () => {router.push(card.route)}}>
-                        <LinearGradient key={index} colors={theme === 'light' ? card.lightColors : card.darkColors} style={userState?.role === 'PROFESSOR' ? (Platform.OS === 'web' ? styles.gradient : styles.gradientMobileProfessor) : (Platform.OS === 'web' ? styles.gradient : styles.gradientMobile)}>
+                        <LinearGradient key={index} colors={theme === 'light' ? card.lightColors : card.darkColors} style={Platform.OS === 'web' ? styles.gradient : styles.gradientMobile}>
                             <View style={styles.cardContent}>
                                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.cardTitleLight : styles.cardTitleDark) : (theme === 'light' ? styles.cardTitleLightMobile : styles.cardTitleDarkMobile)}>{card.title}</Text>
                             </View>
@@ -161,11 +168,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 
-    cardContainerProfessor: {
-        flexDirection: 'column',
-        alignSelf: 'center',
-    },
-
     cardContainerMobile: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -173,11 +175,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
         marginTop: 40
-    },
-
-    cardContainerMobileProfessor: {
-        flexDirection: 'column',
-        alignSelf: 'center',
     },
 
     gradient: {
@@ -198,15 +195,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    gradientMobileProfessor: {
-        borderRadius: 20,
-        marginBottom: 16,
-        width: 300,
-        height: 170,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     cardContent: {
         flex: 1,
         justifyContent: 'center',
@@ -217,6 +205,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold',
+        textAlign: 'center'
     },
 
     cardTitleLightMobile: {
@@ -230,6 +219,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         fontWeight: 'bold',
+        textAlign: 'center'
     },
 
     cardTitleDarkMobile: {

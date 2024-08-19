@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Platform } from 'react-native';
 import { Text, Card, Searchbar, PaperProvider } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
@@ -6,11 +6,15 @@ import { useAuth } from '../../context/AuthContext';
 import { themeDark, themeLight } from '../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
 import axios, { AxiosResponse } from 'axios';
+import StackGrid from 'react-stack-grid';
 import { Subject } from '../../model/Subject';
 import Toast from 'react-native-toast-message';
 import { useFocusEffect, useRouter } from 'expo-router';
 import CustomDropdown from '../../component/form/custom-dropdown';
 import { College } from '../../model/College';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 const colors = {
     light: [
@@ -61,6 +65,9 @@ const SubjectPage = () => {
     const [originalSubjects, setOriginalSubjects] = useState<Subject[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const router = useRouter();
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
 
     const fetchColleges = useCallback(async () => {
         if (!userState?.token.accessToken) return;
@@ -130,50 +137,86 @@ const SubjectPage = () => {
         }
     };
 
+    if(Platform.OS === 'web')
     return (
         <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
-        {Platform.OS === 'web' ? (
             <View>
                 <CustomDropdown style={{ width: '40%' }}
-                data={collegeDropdownData}
-                labelField={'label'}
-                valueField={'value'}
-                placeholder='Select a college'
-                onChange={handleCollegeChange} /><PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <Searchbar placeholder='Search here...' style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchQuery} onChangeText={handleSearchChange} />
+                    data={collegeDropdownData}
+                    labelField={'label'}
+                    valueField={'value'}
+                    placeholder={i18n.t('subjectList_selectCollege')}
+                    onChange={handleCollegeChange} />
+                <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+                    <Searchbar placeholder={i18n.t('searchPlaceholder')} style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchQuery} onChangeText={handleSearchChange} />
                 </PaperProvider>
             </View>
-        ) : (
+
+            <StackGrid
+            columnWidth={'30%'}
+            gutter={15}
+            style={styles.contentGrid}
+            >
+                {subjects.map((subject, index) => (
+                    <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
+                        onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
+                        <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
+                            <Card.Content>
+                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                                    {subject.name}
+                                </Text>
+                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                                    {i18n.t('subjectList_professor') + subject.professorName}
+                                </Text>
+                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                                    {i18n.t('subjectList_college') + subject.collegeName}
+                                </Text>
+                            </Card.Content>
+                        </Card>
+                    </TouchableOpacity>
+                ))}
+            </StackGrid>
+            <View style={{ height: 50 }}></View>
+        </ScrollView>
+
+    );
+    else return (
+        <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
             <View style={styles.inputColumn}>
                 <CustomDropdown style={{ width: '100%', height: 50, padding: 5, borderRadius: 5, marginBottom: 10,}}
                     data={collegeDropdownData}
                     labelField={'label'}
                     valueField={'value'}
-                    placeholder='Select a college'
+                    placeholder={i18n.t('subjectList_selectCollege')}
                     onChange={handleCollegeChange}
                 />
                 <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-                    <Searchbar placeholder='Search here...' style={{ width: '100%', marginBottom: 20}} onChangeText={handleSearchChange} value={searchQuery}/>
+                    <Searchbar placeholder={i18n.t('searchPlaceholder')} style={{ width: '100%', marginBottom: 20}} onChangeText={handleSearchChange} value={searchQuery} />
                 </PaperProvider>
             </View>
-        )}
 
-        <View style={Platform.OS === 'web' ? styles.contentGrid : styles.contentGridMobile}>
-            {subjects.map((subject, index) => (
-                <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
-                    onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
-                    <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
-                        <Card.Content>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{subject.name}</Text>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>Professor: {subject.professorName}</Text>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>College: {subject.collegeName}</Text>
-                        </Card.Content>
-                    </Card>
-                </TouchableOpacity>
-            ))}
-        </View>
-        <View style={{ height: 50 }}></View>
-    </ScrollView>
+            <View style={styles.contentGridMobile}>
+                {subjects.map((subject, index) => (
+                    <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
+                        onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
+                        <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
+                            <Card.Content>
+                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                                    {subject.name}
+                                </Text>
+                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                                    {i18n.t('subjectList_professor') + subject.professorName}
+                                </Text>
+                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                                    {i18n.t('subjectList_college') + subject.collegeName}
+                                </Text>
+                            </Card.Content>
+                        </Card>
+                    </TouchableOpacity>
+                ))}
+            </View>
+            <View style={{ height: 50 }}></View>
+        </ScrollView>
     );
 };
 
@@ -206,13 +249,9 @@ const styles = StyleSheet.create({
     },
 
     contentGrid: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        flexWrap: 'wrap',
-        marginTop: 40,
-        width: '90%',
-        alignSelf: 'center'
+        marginTop: 20,
+        width: '80%',
+        alignSelf:'center',
     },
 
     contentGridMobile: {
@@ -227,7 +266,7 @@ const styles = StyleSheet.create({
     },
 
     cardContent: {
-        width: '28%'
+        margin: 5
     },
 
     cardContentMobile: {

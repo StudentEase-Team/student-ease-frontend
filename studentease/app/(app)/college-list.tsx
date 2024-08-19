@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Dimensions, Platform, ScrollView } from 'react-native';
 import { Card, Title, Paragraph, IconButton, TextInput as PaperInput, Text, PaperProvider, Button, Modal, Searchbar } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
 import { themeDark, themeLight } from '../../context/PaperTheme';
 import { useAuth } from '../../context/AuthContext';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 const cardMargin = 10;
 
@@ -12,14 +15,18 @@ const FacultyList: React.FC = () => {
   const { userState } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
 
+  const i18n = new I18n(translations)
+  const { locale} = useContext(LocaleContext);
+  i18n.locale = locale
+
   return (
     <>
     <ScrollView style={[theme === 'light' ? styles.pageLightContainer : styles.pageDarkContainer]}>
       <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
             <View style={Platform.OS === 'web' ? styles.container : styles.containerMobile}>
                 <Searchbar
-                    placeholder="Search here..."
-                    value='Search here'
+                    placeholder={i18n.t('searchPlaceholder')}
+                    value=''
                     style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile}
                 />
             </View>
@@ -29,12 +36,23 @@ const FacultyList: React.FC = () => {
                 {Array.from({ length: 10 }).map((_, index) => (
                     <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark) : (theme === 'light'? styles.qaContainerLightMobile:styles.qaContainerDarkMobile)}>
                         <Card.Content>
-                            <Title style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>College name</Title>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>Abbreviation: Some abb</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>Address: Some address</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>Phone: +38121656999</Paragraph>
-                            <Paragraph style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>email: college@gmail.com</Paragraph>
+                            <Title style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                                College name
+                            </Title>
+                            <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
+                                {i18n.t('college_abbreviation')}
+                            </Paragraph>
+                            <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
+                                {i18n.t('college_address')}
+                            </Paragraph>
+                            <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
+                                {i18n.t('college_phone')}
+                            </Paragraph>
+                            <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
+                                {i18n.t('college_email')}
+                            </Paragraph>
                         </Card.Content>
+
 
                         <Card.Actions>
                             <IconButton

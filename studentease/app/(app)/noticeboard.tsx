@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View, Platform } from 'react-native';
 import { Button, IconButton } from 'react-native-paper';;
 import dayjs from 'dayjs';
@@ -10,9 +10,11 @@ import { NoticeboardItem } from '../../model/NoticeboardItem';
 import { API_BASE_URL } from '@env';
 import Toast from 'react-native-toast-message';
 import NewNoticeboardItemModal from '../../component/noticeboard/new-noticeboard-item-modal';
-import NoticeboardDateModal from '../../component/noticeboard/noticeboard-date-modal';
 import NoticeboardSearchFilter from '../../component/noticeboard/noticeboard-filter';
 import NoticeboardContent from '../../component/noticeboard/noticeboard-content';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 export default function NoticeboardShow() {
 
@@ -28,6 +30,10 @@ export default function NoticeboardShow() {
     const [items, setItems] = useState<NoticeboardItem[]>();
     const [itemsBak, setItemsBak] = useState<NoticeboardItem[]>();
     const [newNoticeboardItemModalVisible, setNewNoticeboardItemModalVisible] = useState(false);
+
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
     
     const fetchNoticeboardItems = useCallback(async () => {
         if (!userState?.token.accessToken) return;
@@ -101,13 +107,12 @@ export default function NoticeboardShow() {
         <View style={{height:50}}/>
         </ScrollView>
 
-        <NoticeboardDateModal dateModalVisible={dateModalVisible} setDateModalVisible={setDateModalVisible} date={date} setDate={setDate} />
         <NewNoticeboardItemModal newNoticeboardItemModalVisible={newNoticeboardItemModalVisible} setNewNoticeboardItemModalVisible={setNewNoticeboardItemModalVisible} items={itemsBak} />
 
         {userState?.role !== 'STUDENT' && isFloatingButtonVisible ?(
                     Platform.OS === 'web'? (
                         <Button mode='contained' style={theme === 'light' ? styles.addNoticeboardItemButtonLight : styles.addNoticeboardItemButtonDark} onPress={() => setNewNoticeboardItemModalVisible(true)}>
-                        Create noticeboard notification
+                        {i18n.t('noticeboard_createNotification')}
                         </Button>
                     ) : (
                         <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.addNoticeboardItemButtonLightMobile : styles.addNoticeboardItemButtonDarkMobile} onPress={() => setNewNoticeboardItemModalVisible(true)}>

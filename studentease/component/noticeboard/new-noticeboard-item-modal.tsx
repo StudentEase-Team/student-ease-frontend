@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Platform, ScrollView, View, Pressable, StyleSheet } from "react-native";
 import { PaperProvider, Checkbox, Text, Modal, TextInput as PaperInput, Button } from "react-native-paper";
 import { themeLight, themeDark } from "../../context/PaperTheme";
@@ -11,6 +11,9 @@ import Toast from "react-native-toast-message";
 import { API_BASE_URL } from '@env';
 import { useTheme } from "../../context/ThemeContext";
 import { AnnouncementType } from "../../model/AnnoucementType";
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 type NewNoticeboardItemModalProps = {
     newNoticeboardItemModalVisible : boolean
@@ -32,17 +35,20 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
     const [collegeComboModalEnabled, setCollegeComboModalEnabled] = useState(true);
     const [subjectComboModalEnabled, setSubjectComboModalEnabled] = useState(true);
     const [selectedValue, setSelectedValue] = useState<AnnouncementType | null>(null);
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
     
     const options: { value: AnnouncementType; label: string }[] = [
-        { value: NoticeboardItemCategory.UNIVERSITY_ANNOUNCEMENT, label: 'University Announcement' },
-        { value: NoticeboardItemCategory.UNIVERSITY_GUEST_ANNOUNCEMENT, label: 'University Guest Announcement' },
-        { value: NoticeboardItemCategory.COLLEGE_ANNOUNCEMENT, label: 'College Announcement' },
-        { value: NoticeboardItemCategory.COLLEGE_GUEST_ANNOUNCEMENT, label: 'College Guest Announcement' },
-        { value: NoticeboardItemCategory.SUBJECT_ANNOUNCEMENT, label: 'Subject Announcement' },
-        { value: NoticeboardItemCategory.SUBJECT_EXAM_RESULT_ANNOUNCEMENT, label: 'Subject Exam Result Announcement' },
-        { value: NoticeboardItemCategory.SUBJECT_EXAM_DATE_ANNOUNCEMENT, label: 'Subject Exam Date Announcement' },
-        { value: NoticeboardItemCategory.INTERNSHIP_ANNOUNCEMENT, label: 'Internship Announcement' },
-        { value: NoticeboardItemCategory.ACTIVITIES_ANNOUNCEMENT, label: 'Activities Announcement' },
+        { value: NoticeboardItemCategory.UNIVERSITY_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_universityAnnouncement') },
+        { value: NoticeboardItemCategory.UNIVERSITY_GUEST_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_universityGuestAnnouncement') },
+        { value: NoticeboardItemCategory.COLLEGE_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_collegeAnnouncement') },
+        { value: NoticeboardItemCategory.COLLEGE_GUEST_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_collegeGuestAnnouncement') },
+        { value: NoticeboardItemCategory.SUBJECT_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_subjectAnnouncement') },
+        { value: NoticeboardItemCategory.SUBJECT_EXAM_RESULT_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_subjectExamResultAnnouncement') },
+        { value: NoticeboardItemCategory.SUBJECT_EXAM_DATE_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_subjectExamDateAnnouncement') },
+        { value: NoticeboardItemCategory.INTERNSHIP_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_internshipAnnouncement') },
+        { value: NoticeboardItemCategory.ACTIVITIES_ANNOUNCEMENT, label: i18n.t('noticeboardNewItem_activitiesAnnouncement') },
     ];
 
     const handlePress = (value: AnnouncementType) => {
@@ -102,65 +108,85 @@ function NewNoticeboardItemModal(props : NewNoticeboardItemModalProps) {
     
     return (
     <Modal visible={props.newNoticeboardItemModalVisible} contentContainerStyle={Platform.OS ==='web'? (theme === 'light' ? styles.modalFormCreateNoticeboardItemLight : styles.modalFormCreateNoticeboardItemDark) : (theme === 'light' ? styles.modalFormCreateNoticeboardItemLightMobile : styles.modalFormCreateNoticeboardItemDarkMobile)} onDismiss={() => { props.setNewNoticeboardItemModalVisible(false); } }>
-    <ScrollView>
-        <Text style={Platform.OS ==='web'? (theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark) : (theme === 'light' ? styles.titleNewItemModalLightMobile : styles.titleNewItemModalDarkMobile)}>Create a new noticeboard notification</Text>
+        <ScrollView>
+        <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleNewItemModalLight : styles.titleNewItemModalDark) : (theme === 'light' ? styles.titleNewItemModalLightMobile : styles.titleNewItemModalDarkMobile)}>
+            {i18n.t('noticeboardNewItem_createNewNotification')}
+        </Text>
         <View style={styles.container}>
             {options.map((option) => (
                 <Pressable
-                key={option.value}
-                style={[theme === 'light' ? styles.pressableLight : styles.pressableDark, selectedValue === option.value
-                    ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
-                    : { borderColor: 'grey', borderWidth: 0.5 },]}
-                onPress={() => handlePress(option.value)}
+                    key={option.value}
+                    style={[theme === 'light' ? styles.pressableLight : styles.pressableDark, selectedValue === option.value
+                        ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
+                        : { borderColor: 'grey', borderWidth: 0.5 },]}
+                    onPress={() => handlePress(option.value)}
                 >
-                <Text
-                    style={[
-                    styles.text,
-                    { color: selectedValue === option.value ? '#fff' : theme === 'light' ?  '#4dabf7' : '#9775fa' },
-                    ]}
-                >
-                    {option.label}
-                </Text>
+                    <Text
+                        style={[
+                            styles.text,
+                            { color: selectedValue === option.value ? '#fff' : theme === 'light' ? '#4dabf7' : '#9775fa' },
+                        ]}
+                    >
+                        {option.label}
+                    </Text>
                 </Pressable>
             ))}
         </View>
         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-            <CollegeSubjectDropdowns anyEnabled={false} filterableData={[]} setSelectedSubjectID={setSubjectID} setSelectedCollegeID={setCollegeID} subjectEnabled={!subjectComboModalEnabled} collegeEnabled={!collegeComboModalEnabled} setSelectedCollege={setCollege} setSelectedSubject={setSubject}/>
+            <CollegeSubjectDropdowns
+                anyEnabled={false}
+                filterableData={[]}
+                setSelectedSubjectID={setSubjectID}
+                setSelectedCollegeID={setCollegeID}
+                subjectEnabled={!subjectComboModalEnabled}
+                collegeEnabled={!collegeComboModalEnabled}
+                setSelectedCollege={setCollege}
+                setSelectedSubject={setSubject}
+            />
             <PaperInput
-                label="Title"
+                label={i18n.t('noticeboardNewItem_title')}
                 mode="outlined"
                 value={title}
                 onChangeText={text => setTitle(text)}
-                style={styles.inputTitle} />
+                style={styles.inputTitle}
+            />
             <PaperInput
-                label="Description"
+                label={i18n.t('noticeboardNewItem_description')}
                 mode="outlined"
                 multiline
                 numberOfLines={4}
                 value={description}
                 onChangeText={text => setDescription(text)}
-                style={styles.inputDescription} />
-            <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'flex-start', marginTop: 20, marginBottom: 10}}>
+                style={styles.inputDescription}
+            />
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginTop: 20, marginBottom: 10 }}>
                 <Checkbox
-                        color={theme === 'light' ? '#4dabf7' : '#9775fa'}
-                        status={checkedMail ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setCheckedMail(!checkedMail);
-                        }}
-                        />
-                <Text style={{fontSize:16}}>Send email?</Text>
+                    color={theme === 'light' ? '#4dabf7' : '#9775fa'}
+                    status={checkedMail ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                        setCheckedMail(!checkedMail);
+                    }}
+                />
+                <Text style={{ fontSize: 16 }}>{i18n.t('noticeboardNewItem_sendEmail')}</Text>
             </View>
         </PaperProvider>
 
         <View style={styles.buttonRow}>
             {Platform.OS === 'web' ? (
-                <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit announcement </Button>
+                <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}>
+                    {i18n.t('noticeboardNewItem_submitAnnouncement')}
+                </Button>
             ) : (
-                <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}> Submit </Button>
+                <Button mode='contained' onPress={() => sumbitAnnouncement()} style={theme === 'light' ? styles.createNoticeboardItemButtonLight : styles.createNoticeboardItemButtonDark}>
+                    {i18n.t('noticeboardNewItem_submit')}
+                </Button>
             )}
-            <Button mode='contained-tonal' onPress={() => props.setNewNoticeboardItemModalVisible(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}> Cancel </Button>
+            <Button mode='contained-tonal' onPress={() => props.setNewNoticeboardItemModalVisible(false)} style={theme === 'light' ? styles.cancelNoticeboardItemButtonLight : styles.cancelNoticeboardItemButtonDark}>
+                {i18n.t('noticeboardNewItem_cancel')}
+            </Button>
         </View>
     </ScrollView>
+
     </Modal>
     )
 }

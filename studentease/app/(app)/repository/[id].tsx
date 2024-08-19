@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { StyleSheet, ScrollView, View, Platform, Linking } from 'react-native';
 import { Text, Card, IconButton, Paragraph, PaperProvider, Searchbar } from 'react-native-paper';
 import { useTheme } from '../../../context/ThemeContext';
@@ -9,6 +9,9 @@ import { API_BASE_URL } from '@env';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../../../context/AuthContext';
 import { Material } from '../../../model/Material';
+import { I18n } from 'i18n-js';
+import { translations } from '../../../localization';
+import { LocaleContext } from '../../../context/LocaleContext';
 
 const MaterialPage = () => {
     const { theme } = useTheme();
@@ -18,6 +21,9 @@ const MaterialPage = () => {
     const [filteredMaterials, setFilteredMaterials] = useState<Material[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const { userState } = useAuth();
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
 
     useFocusEffect(
         useCallback(() => {
@@ -101,7 +107,7 @@ const MaterialPage = () => {
                     router.push('/subject-list')}}/> 
                     <Searchbar  
                         value={searchQuery}
-                        placeholder="Search"
+                        placeholder={i18n.t('searchPlaceholder')}
                         onChangeText={handleSearchChange} style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile}></Searchbar>
                 </View>
             </PaperProvider>

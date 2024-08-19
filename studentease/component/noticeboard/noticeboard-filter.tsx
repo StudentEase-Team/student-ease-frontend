@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Platform, Pressable, StyleSheet } from "react-native";
 import { PaperProvider, TextInput as PaperInput, Text, Searchbar } from "react-native-paper";
 import { themeLight, themeDark } from "../../context/PaperTheme";
@@ -6,6 +6,9 @@ import { useTheme } from "../../context/ThemeContext";
 import { NoticeboardFilterType } from "../../model/NoticeboardFilterType";
 import { NoticeboardItem } from "../../model/NoticeboardItem";
 import dayjs from 'dayjs';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 type NoticeboardSearchFilterProps = {
     items: NoticeboardItem[] | undefined,
@@ -18,14 +21,19 @@ type NoticeboardSearchFilterProps = {
     setDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>,
     setDateModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
 }
-
+    
 function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
+    
     const filterOptions: { value: NoticeboardFilterType; label: string }[] = [
-        { value: 'ALL', label: 'All' },
-        { value: 'UNIVERSITY', label: 'University' },
-        { value: 'COLLEGE', label: 'College' },
-        { value: 'SUBJECT', label: 'Subject' },
-        { value: 'OTHER', label: 'Other' },
+        { value: 'ALL', label: i18n.t('noticeboardFilter_all') },
+        { value: 'UNIVERSITY', label: i18n.t('noticeboardFilter_university') },
+        { value: 'COLLEGE', label: i18n.t('noticeboardFilter_college') },
+        { value: 'SUBJECT', label: i18n.t('noticeboardFilter_subject') },
+        { value: 'OTHER', label: i18n.t('noticeboardFilter_other') },
+
     ];
 
     const { theme } = useTheme();
@@ -100,7 +108,7 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
             <View style={Platform.OS === 'web' ? styles.container : styles.containerMobile}>
                 <Searchbar
-                    placeholder="Search here..."
+                    placeholder={i18n.t('searchPlaceholder')}
                     onChangeText={text => setSearchParam(text)}
                     value={searchParam}
                     style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile}

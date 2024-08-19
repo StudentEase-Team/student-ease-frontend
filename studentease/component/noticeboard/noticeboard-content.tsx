@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { Card, Title, Paragraph, IconButton } from "react-native-paper";
 import { useTheme } from "../../context/ThemeContext";
@@ -8,6 +8,9 @@ import axios, { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
 import { NoticeboardItem } from "../../model/NoticeboardItem";
 import StackGrid from 'react-stack-grid';
+import { I18n } from 'i18n-js';
+import { translations } from '../../localization';
+import { LocaleContext } from '../../context/LocaleContext';
 
 type NoticeboardContentProps = {
     items: NoticeboardItem[] | undefined,
@@ -15,9 +18,12 @@ type NoticeboardContentProps = {
 }
 
 function NoticeboardContent(props: NoticeboardContentProps) {
-
     const { theme } = useTheme();
     const { userState } = useAuth();
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
+
 
     async function deleteNoticeboardItem(id: number) {
         if (!userState?.token.accessToken) return;
@@ -64,14 +70,14 @@ function NoticeboardContent(props: NoticeboardContentProps) {
                         <Card.Content>
                             <Title style={theme === 'light' ? styles.titleLight : styles.titleDark }> {item.title} </Title>
                             <Paragraph style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}> {item.message} </Paragraph>
-                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}> Date: {formattedDate} </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}> {i18n.t('noticeboardCard_date')}: {formattedDate} </Paragraph>
                             {item.creatorName !== '' && (
-                                <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark} > Creator: {item.creatorName} </Paragraph>
+                                <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark} > {i18n.t('noticeboardCard_creator')}: {item.creatorName} </Paragraph>
                             )}
                             {item.subjectName !== '' && (
-                                <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark} > Subject: {item.subjectName} </Paragraph>
+                                <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark} > {i18n.t('noticeboardCard_subject')}: {item.subjectName} </Paragraph>
                             )}
-                            {item.collegeName !== '' && (<Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}> College: {item.collegeName} </Paragraph>
+                            {item.collegeName !== '' && (<Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}> {i18n.t('noticeboardCard_college')}: {item.collegeName} </Paragraph>
                             )}
                             <View style={{ height: 10 }}></View>
                         </Card.Content>
@@ -96,15 +102,15 @@ function NoticeboardContent(props: NoticeboardContentProps) {
                     <Card.Content>
                         <Title style={theme === 'light'? styles.titleLightMobile : styles.titleDarkMobile}> {item.title} </Title>
                         <Paragraph style={theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile}> {item.message} </Paragraph>
-                        <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile} > Date: {formattedDate} </Paragraph>
+                        <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile} > {i18n.t('noticeboardCard_date')}: {formattedDate} </Paragraph>
                         {item.creatorName !== '' && (
-                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> Creator: {item.creatorName} </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> {i18n.t('noticeboardCard_creator')}: {item.creatorName} </Paragraph>
                         )}
                         {item.subjectName !== '' && (
-                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> Subject: {item.subjectName} </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> {i18n.t('noticeboardCard_subject')}: {item.subjectName} </Paragraph>
                         )}
                         {item.collegeName !== '' && (
-                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> College: {item.collegeName} </Paragraph>
+                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}> {i18n.t('noticeboardCard_college')}: {item.collegeName} </Paragraph>
                         )}
                         <View style={{height: 10}}></View>
                     </Card.Content>

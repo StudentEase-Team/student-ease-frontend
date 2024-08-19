@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Text } from '@rneui/themed';
 import { TextInput as PaperInput, Button, Card, Modal, IconButton} from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
@@ -10,6 +10,9 @@ import axios, { AxiosResponse } from 'axios';
 import { themeDark, themeLight } from '../../../context/PaperTheme';
 import { API_BASE_URL } from '@env';
 import { useFocusEffect } from 'expo-router';
+import { I18n } from 'i18n-js';
+import { translations } from '../../../localization';
+import { LocaleContext } from '../../../context/LocaleContext';
 
 const FAQ : React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -18,6 +21,10 @@ const FAQ : React.FC = () => {
     const [answer, setAnswer] = useState('');
     const { userState } = useAuth();
     const { theme } = useTheme();
+    const i18n = new I18n(translations)
+    const { locale} = useContext(LocaleContext);
+    i18n.locale = locale
+
     const config = {
         headers: { Authorization: `Bearer ${userState?.token.accessToken}` }
     };
@@ -64,20 +71,26 @@ const FAQ : React.FC = () => {
 
     return (
         <>
-            <ScrollView style={theme === 'light'? styles.pageContainerLight : styles.pageContainerDark}>
-                <View style={Platform.OS === 'web' ? styles.faqContainer: styles.faqContainerMobile}>
+            <ScrollView style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
+                <View style={Platform.OS === 'web' ? styles.faqContainer : styles.faqContainerMobile}>
                     {items.length === 0 ? (
-                            <Card style={Platform.OS === 'web'? (theme === 'light' ? styles.faqContainerLight : styles.faqContainerDark) : (theme === 'light' ? styles.faqContainerLightMobile : styles.faqContainerDarkMobile)}>
-                                <Card.Content>
-                                    <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>No unanswered questions!</Text>
-                                </Card.Content>
-                            </Card>
+                        <Card style={Platform.OS === 'web' ? (theme === 'light' ? styles.faqContainerLight : styles.faqContainerDark) : (theme === 'light' ? styles.faqContainerLightMobile : styles.faqContainerDarkMobile)}>
+                            <Card.Content>
+                                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                                    {i18n.t('faq_noQuestions')}
+                                </Text>
+                            </Card.Content>
+                        </Card>
                     ) : (
                         items.map((item, index) => (
-                            <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.faqContainerLight : styles.faqContainerDark) : (theme === 'light' ? styles.faqContainerLightMobile : styles.faqContainerDarkMobile)}>
+                            <Card key={index} style={Platform.OS === 'web' ? (theme === 'light' ? styles.faqContainerLight : styles.faqContainerDark) : (theme === 'light' ? styles.faqContainerLightMobile : styles.faqContainerDarkMobile)}>
                                 <Card.Content>
-                                    <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.question}</Text>
-                                    <Text style={Platform.OS === 'web'? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
+                                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                                        {item.question}
+                                    </Text>
+                                    <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
+                                        {item.answer}
+                                    </Text>
                                 </Card.Content>
                                 <Card.Actions>
                                     <IconButton icon="forum" mode={theme === 'light' ? 'contained' : 'outlined'} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => {setModalVisible(true); setCurrentItem(item)}}/>
@@ -88,12 +101,27 @@ const FAQ : React.FC = () => {
                 </View>
             </ScrollView>
 
-            <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight : styles.modalContainerDark):(theme === 'light'? styles.modalContainerLightMobile : styles.modalContainerDarkMobile)}>
-                <Text style={Platform.OS === 'web' ? (theme === 'light'? styles.titleModalLight : styles.titleModalDark) : theme === 'light'? styles.titleModalLightMobile : styles.titleModalDarkMobile}>Answer:</Text>
-                <PaperInput theme={theme === 'light'? themeLight : themeDark} mode='outlined' multiline numberOfLines={4} style={styles.input} label="Answer here" value={answer} onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setAnswer(e.nativeEvent.text)}}></PaperInput>
+            <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web' ? (theme === 'light' ? styles.modalContainerLight : styles.modalContainerDark) : (theme === 'light' ? styles.modalContainerLightMobile : styles.modalContainerDarkMobile)}>
+                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleModalLight : styles.titleModalDark) : theme === 'light' ? styles.titleModalLightMobile : styles.titleModalDarkMobile}>
+                    {i18n.t('faq_answer')}
+                </Text>
+                <PaperInput 
+                    theme={theme === 'light' ? themeLight : themeDark} 
+                    mode='outlined' 
+                    multiline 
+                    numberOfLines={4} 
+                    style={styles.input} 
+                    label={i18n.t('faq_answerPlaceholder')} 
+                    value={answer} 
+                    onChange={(e : NativeSyntheticEvent<TextInputChangeEventData>) => {setAnswer(e.nativeEvent.text)}}
+                />
                 <View style={styles.buttonRow}>
-                    <Button mode='contained' onPress={() => answerQuestion()} style={ theme === 'light' ? styles.answerButtonLight : styles.answerButtonDark}> Answer </Button>
-                    <Button mode='contained-tonal' onPress={() => {setModalVisible(false); setCurrentItem(undefined);}} style={ theme === 'light' ? styles.cancelButtonLight : styles.cancelButtonDark}> Cancel </Button>
+                    <Button mode='contained' onPress={() => answerQuestion()} style={theme === 'light' ? styles.answerButtonLight : styles.answerButtonDark}>
+                        {i18n.t('faq_answerButton')}
+                    </Button>
+                    <Button mode='contained-tonal' onPress={() => {setModalVisible(false); setCurrentItem(undefined);}} style={theme === 'light' ? styles.cancelButtonLight : styles.cancelButtonDark}>
+                        {i18n.t('faq_cancelButton')}
+                    </Button>
                 </View>
             </Modal>
             <Toast/>
