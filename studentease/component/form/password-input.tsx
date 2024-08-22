@@ -4,7 +4,8 @@ import { useTheme } from "../../context/ThemeContext";
 import { TextInput } from "react-native-paper";
 
 export type PasswordProps = {
-    passwordCallback : React.Dispatch<React.SetStateAction<string>>
+    passwordCallback: React.Dispatch<React.SetStateAction<string>>
+    onSubmitEdit:() => any
 };
 
 
@@ -30,10 +31,12 @@ export function PasswordInput(props : PasswordProps) {
             secureTextEntry={hiddenText}
             mode="outlined"
             value={text}
+            autoCapitalize="none"
             theme={{
                 roundness: 5, 
               }}
             style={theme === 'light' ? { color: 'black' } : { color: 'white' }}
+            onSubmitEditing={props.onSubmitEdit}
             right={<TextInput.Icon icon={selectedIcon} 
                 color={theme === 'light' ? 'black' : 'white'}
                 onPress={() => setHidden(hidden ? false : true)}/>} 

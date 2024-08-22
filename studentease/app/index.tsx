@@ -47,7 +47,7 @@ const Login: React.FC = () => {
               }}
               onChangeText={setEmail}
             />
-            <PasswordInput passwordCallback={setPassword} />
+            <PasswordInput passwordCallback={setPassword}  onSubmitEdit={attemptLogin}/>
             <ThemeProvider>
             <Button onPress={attemptLogin} mode="contained" style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
             </ThemeProvider>
