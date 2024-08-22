@@ -1,57 +1,60 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, ImageBackground, Platform } from 'react-native';
-import { Input, Text } from '@rneui/themed';
-import { PasswordInput } from '../component/form/password-input';
-import { CustomButton } from '../component/form/custom-button';
-import axios, { AxiosResponse } from 'axios';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput, Button, PaperProvider, Text, ThemeProvider } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import NavigationBar from '../component/navigation/navigation-bar';
 import { useAuth } from '../context/AuthContext';
-import { UserState } from '../model/UserState';
 import { useTheme } from '../context/ThemeContext';
-import { Button, PaperProvider, TextInput } from 'react-native-paper';
 import { themeDark, themeLight } from '../context/PaperTheme';
-import SystemNavigationBar from 'react-native-system-navigation-bar';
+import { PasswordInput } from '../component/form/password-input';
+import { useRouter } from 'expo-router';
 
-
-const Login : React.FC = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth();
+  const { login, userState } = useAuth();
   const { theme } = useTheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    if(userState !== null)
+      router.replace("/homepage")
+  }, [userState]);
 
   function attemptLogin() {
-    login(email, password)
+    login(email, password);
   }
 
   return (
-    <ImageBackground source={require('../assets/web.jpg')} style={styles.background}>
-      <Toast />
-      <PaperProvider theme={theme === 'light'? themeLight : themeDark}>
-      <View style={styles.container}>
-        <View style={theme === 'light'? styles.formLight : styles.formDark}>
-          <Text h3 style={theme === 'light'? styles.titleLight : styles.titleDark}>Login</Text>
-          <TextInput
-            placeholder="University email"
-            keyboardType="email-address"
-            autoCapitalize="none" 
-            value={email}
-            mode='outlined'
-            label="University email"
-            style={theme === 'light'? styles.inputLight : styles.inputDark }
-            onChangeText={value => setEmail(value)}
+    <ImageBackground source={theme === 'light' ? require('../assets/web.jpg') : require('../assets/webDark.png')} style={styles.background}>
+      <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+        >
+          <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.formLight : styles.formDark) : (theme === 'light' ? styles.formLightMobile : styles.formDarkMobile)}>
+            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Login</Text>
+            <TextInput
+              placeholder="University email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              mode="outlined"
+              label="University email"
+              style={theme === 'light' ? styles.inputLight : styles.inputDark}
+              theme={{
+                roundness: 5, 
+              }}
+              onChangeText={setEmail}
             />
-          <PasswordInput passwordCallback={setPassword}/>
-          <PaperProvider>
-          <Button onPress={attemptLogin} mode='contained' style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
-          </PaperProvider>
-
-          <TouchableOpacity style={theme === 'light'? styles.signupTextLight : styles.signupTextDark}>
-            <Text style={theme === 'light'? {color:'#4dabf7'}:{color:'#9775fa'}}>You don't have a student account? Click here to sign up!</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <PasswordInput passwordCallback={setPassword}  onSubmitEdit={attemptLogin}/>
+            <ThemeProvider>
+            <Button onPress={attemptLogin} mode="contained" style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
+            </ThemeProvider>
+          </View>
+        </KeyboardAvoidingView>
       </PaperProvider>
+      <Toast />
     </ImageBackground>
   );
 }
@@ -59,22 +62,22 @@ const Login : React.FC = () => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'repeat',
+    resizeMode: 'cover',
   },
 
   container: {
-    padding: 20,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
     opacity: 0.85,
-    height: "50%"
   },
 
   inputLight: {
     marginBottom: 10,
-    color: '#242526',
   },
 
   inputDark: {
@@ -90,8 +93,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 5,
-    height: "45%"
+    width: '25%',
+  },
+
+  formLightMobile: {
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    width: '100%',
   },
 
   formDark: {
@@ -102,10 +115,29 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 5,
+    width: '25%',
+  },
+
+  formDarkMobile: {
+    padding: 20,
+    backgroundColor: '#242526',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    width: '100%',
   },
 
   titleLight: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    marginTop: 10,
+    textAlign: 'center',
+  },
+
+  titleLightMobile: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
@@ -114,38 +146,49 @@ const styles = StyleSheet.create({
   },
 
   titleDark: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    marginTop: 10,
+    textAlign: 'center',
+    color: 'white',
+  },
+
+  titleDarkMobile: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
     marginTop: 10,
     textAlign: 'center',
-    color: 'white'
+    color: 'white',
   },
 
   loginButtonLight: {
     backgroundColor: '#4dabf7',
-    marginTop: 20,
-    borderRadius: 20,
+    marginTop: 30,
+    borderRadius: 50,
+    height: 50,
+    justifyContent: 'center',
   },
 
   loginButtonDark: {
     backgroundColor: '#9775fa',
-    marginTop: 20,
-    borderRadius: 20,
+    marginTop: 30,
+    borderRadius: 50,
+    height: 50,
+    justifyContent: 'center',
   },
 
   signupTextLight: {
-    color: '#007bff',
     textAlign: 'center',
     marginTop: 10,
-    textDecorationLine: 'none'
+    color: '#4dabf7'
   },
 
   signupTextDark: {
-    color: 'white',
     textAlign: 'center',
     marginTop: 10,
-    textDecorationLine: 'none'
+    color: '#9775fa'
   },
 });
 

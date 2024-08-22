@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { API_BASE_URL } from '@env';
+import { useRouter } from 'expo-router';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -19,23 +20,32 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userState, setUserState] = useState<UserState | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const loadUserState = async () => {
       try {
+        let storedUserState: string | null = null;
+        
         if (Platform.OS === 'web') {
-          const storedUserState = Cookies.get('userState');
-          if (storedUserState) {
-            const userState: UserState = JSON.parse(storedUserState);
-            setUserState(userState);
-            setIsAuthenticated(true);
-          }
+          let state = Cookies.get('userState');
+          if(state !== undefined)
+            storedUserState = state;
         } else {
-          const storedUserState = await SecureStore.getItemAsync('userState');
-          if (storedUserState) {
-            const userState: UserState = JSON.parse(storedUserState);
+          storedUserState = await SecureStore.getItemAsync('userState');
+        }
+
+        if (storedUserState) {
+          const userState: UserState = JSON.parse(storedUserState);
+          //const isTokenValid = await checkTokenValidity(userState);
+          const isTokenValid = true;
+
+          if (isTokenValid) {
             setUserState(userState);
             setIsAuthenticated(true);
+          } else {
+            await clearUserState();
+            router.replace('/');
           }
         }
       } catch (error) {
@@ -45,6 +55,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     loadUserState();
   }, []);
+
+  const checkTokenValidity = async (userState: UserState) => {
+    try {
+      const { createdAt, expiresIn } = userState.token;
+      const expirationDate = new Date(new Date(createdAt).getTime() + expiresIn);
+      const currentTime = new Date();
+      return expirationDate > currentTime;
+    } catch (error) {
+      console.log('Failed to check token validity', error);
+      return false;
+    }
+  };
 
   const saveUserState = async (userState: UserState) => {
     try {
@@ -76,6 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const request: LoginRequest = {
       email: email,
       password: password,
+      platform: Platform.OS === 'web'? 'web':'mobile'
     };
 
     try {
@@ -89,12 +112,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsAuthenticated(true);
         setUserState(userState);
         await saveUserState(userState);
+        router.replace('/homepage');
         return userState;
       }
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: `Wrong email or password!`,
+        text1: `${error}`,
       });
       return null;
     }
