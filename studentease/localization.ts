@@ -78,12 +78,18 @@ const translations = {
         faqNewItem_prompt: "Ask your question here:",
         faqNewItem_ask: "Ask a question",
         faqNewItem_cancel: "Cancel",
+        faqNewItem_askedSuccessfully: "Asked succesfully!",
+        faqNewItem_deletedSuccessfully: "Succesfully deleted!",
+        faqNewItem_failedDelete: "Failed to delete question. Can delete only if you answered it.",
 
         faq_noQuestions: "No unanswered questions!",
         faq_answer: "Answer:",
         faq_answerPlaceholder: "Answer here",
         faq_answerButton: "Answer",
         faq_cancelButton: "Cancel",
+        faq_failedSubmit: "Failed to submit answer!", 
+
+        faq_failedFetch: 'Failed to fetch questions',
 
         userCreation_createUser: "Create a new user",
         userCreation_email: "Email",
@@ -208,12 +214,18 @@ const translations = {
         faqNewItem_prompt: "Postavite svoje pitanje ovde:",
         faqNewItem_ask: "Postavite pitanje",
         faqNewItem_cancel: "Otkaži",
+        faqNewItem_askedSuccessfully: "Pitanje je uspešno poslato!",
+        faqNewItem_deletedSuccess: "Uspešno obrisano!",
+        faqNewItem_failedDelete: "Greška prilikom brisanja pitanja. Brisanje je moguće jedino ako postoji odgovor na pitanje.",
 
         faq_noQuestions: "Nema neodgovorenih pitanja!",
         faq_answer: "Odgovor:",
         faq_answerPlaceholder: "Unesite odgovor ovde",
         faq_answerButton: "Odgovorite",
         faq_cancelButton: "Otkaži",
+        faq_failedSubmit: "Greška prilikom slanja odgovora!", 
+
+        faq_failedFetch: 'Greška prilikom učitavanja pitanja.',
 
         userCreation_createUser: "Kreirajte novog korisnika",
         userCreation_email: "Email",

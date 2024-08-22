@@ -37,7 +37,7 @@ const FAQ : React.FC = () => {
         } catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Failed to fetch questions',
+                text1: i18n.t('faq_failedFetch'),
             });
         }
     }
@@ -63,7 +63,7 @@ const FAQ : React.FC = () => {
             } catch (error) {
                 Toast.show({
                     type: 'error',
-                    text1: 'Failed to submit answer',
+                    text1: i18n.t('faq_failedSubmit'),
                 });
             }
         }
@@ -144,7 +144,8 @@ const styles = StyleSheet.create({
     
     faqContainerLight: {
         backgroundColor: 'white',
-        width: '60%'
+        width: '60%',
+        marginBottom: 20
     },
 
     faqContainerLightMobile: {

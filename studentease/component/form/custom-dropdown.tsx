@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { DropdownProps } from "react-native-element-dropdown/lib/typescript/components/Dropdown/model";
 import { useTheme } from "../../context/ThemeContext";
@@ -22,11 +22,11 @@ function CustomDropdown(props: DropdownProps<any>) {
             onBlur={() => setIsFocus(false)}
             disable={props.disable}
             activeColor={theme === 'light' ? '#f2f2f2' : '#18191a'}
-            placeholderStyle={[ props.placeholderStyle, theme === 'light' ? styles.placeholderStyleLight : styles.placeholderStyleDark]}
+            placeholderStyle={[ props.placeholderStyle, Platform.OS === 'web' ? (theme === 'light' ? styles.placeholderStyleLight : styles.placeholderStyleDark) : (theme === 'light' ? styles.placeholderStyleLightMobile : styles.placeholderStyleDarkMobile)]}
             itemTextStyle={theme === 'light' ? styles.selectedTextStyleLight : styles.selectedTextStyleDark}
             containerStyle={theme === 'light' ? styles.itemLight : styles.itemDark}
             itemContainerStyle={theme === 'light' ? styles.itemLight : styles.itemDark}
-            selectedTextStyle={[ props.selectedTextStyle, theme === 'light' ? styles.selectedTextStyleLight : styles.selectedTextStyleDark]}
+            selectedTextStyle={[ props.selectedTextStyle, Platform.OS === 'web' ? (theme === 'light' ? styles.selectedTextStyleLight : styles.selectedTextStyleDark) : (theme === 'light' ? styles.selectedTextStyleLightMobile : styles.selectedTextStyleDarkMobile)]}
             inputSearchStyle={theme === 'light' ? styles.inputSearchStyleLight : styles.inputSearchStyleDark}
             data={props.data}
             labelField={props.labelField}
@@ -98,12 +98,24 @@ const styles = StyleSheet.create({
     },
 
     placeholderStyleLight: {
+        fontSize: 18,
+        color: '#707070',
+        padding: 10,
+    },
+
+    placeholderStyleLightMobile: {
         fontSize: 16,
         color: '#707070',
         padding: 10,
     },
 
     placeholderStyleDark: {
+        fontSize: 18,
+        color: '#929292',
+        padding: 10,
+    },
+
+    placeholderStyleDarkMobile: {
         fontSize: 16,
         color: '#929292',
         padding: 10,
@@ -111,10 +123,20 @@ const styles = StyleSheet.create({
 
     selectedTextStyleLight: {
         color: 'black',
+        fontSize: 18,
+    },
+
+    selectedTextStyleLightMobile: {
+        color: 'black',
         fontSize: 16,
     },
 
     selectedTextStyleDark: {
+        color: 'white',
+        fontSize: 18,
+    },
+
+    selectedTextStyleDarkMobile: {
         color: 'white',
         fontSize: 16,
     },

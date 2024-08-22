@@ -40,7 +40,7 @@ const FAQ: React.FC = () => {
     if (response.status === 201) {
       Toast.show({
         type: 'success',
-        text1: 'Asked succesfully!',
+        text1: i18n.t('faqNewItem_askedSuccessfully'),
       });
       setModalVisible(false);
       itemsBak?.push(newQuestion);
@@ -72,7 +72,7 @@ const FAQ: React.FC = () => {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to fetch questions',
+        text1: i18n.t('faq_failedFetch'),
       });
     }
   }, []);
@@ -89,13 +89,13 @@ const FAQ: React.FC = () => {
         fetchFAQ();
         Toast.show({
           type: 'success',
-          text1: 'Succesfully deleted!',
+          text1: i18n.t('faqNewItem_deletedSuccessfully'),
         });
       }
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to delete question. Can delete only if you answered it.',
+        text1: i18n.t('faqNewItem_failedDelete'),
       });
     }
   }
