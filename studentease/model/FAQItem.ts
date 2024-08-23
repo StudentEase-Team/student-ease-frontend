@@ -3,4 +3,5 @@ export interface FAQItem {
     question: string,
     answer: string,
     isAnswered: boolean
+    creationDate: Date
 }

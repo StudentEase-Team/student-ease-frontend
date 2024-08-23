@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { View, StyleSheet, Dimensions, Platform, ScrollView } from 'react-native';
 import { Card, Title, Paragraph, IconButton, TextInput as PaperInput, Text, PaperProvider, Button, Modal, Searchbar } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
@@ -7,6 +7,11 @@ import { useAuth } from '../../context/AuthContext';
 import { I18n } from 'i18n-js';
 import { translations } from '../../localization';
 import { LocaleContext } from '../../context/LocaleContext';
+import axios, { AxiosResponse } from 'axios';
+import Toast from 'react-native-toast-message';
+import {College} from '../../model/College';
+import { API_BASE_URL } from '@env';
+import { useFocusEffect } from 'expo-router';
 
 const cardMargin = 10;
 
@@ -14,10 +19,57 @@ const FacultyList: React.FC = () => {
   const { theme } = useTheme();
   const { userState } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
+  const [items, setItems] = useState<College[]>();
+  const [itemsBak, setItemsBak] = useState<College[]>();
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const i18n = new I18n(translations)
   const { locale} = useContext(LocaleContext);
   i18n.locale = locale
+
+  const fetchFAQ = useCallback(async () => {
+    if (!userState?.token.accessToken) return;
+
+    const config = {
+      headers: { Authorization: `Bearer ${userState.token.accessToken}` }
+    };
+    try {
+      const response: AxiosResponse = await axios.get(`${API_BASE_URL}/college`, config);
+      if (response.status === 200) {
+        setItems(response.data);
+        setItemsBak(response.data);
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to fetch questions',
+      });
+    }
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchFAQ();
+  }, []));
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+
+    if (query === '') {
+        setItems(itemsBak);
+    } else {
+      if (itemsBak !== undefined) {
+        const filteredItems = itemsBak.filter(college =>
+            college.name.toLowerCase().includes(query.toLowerCase()) ||
+            college.abbreviation.toLowerCase().includes(query.toLowerCase()) ||
+            college.address.toLowerCase().includes(query.toLowerCase()) ||
+            college.phoneNumber.toLowerCase().includes(query.toLowerCase()) ||
+            college.email.toLowerCase().includes(query.toLowerCase())
+        );
+        setItems(filteredItems);
+      }
+    }
+  };
 
   return (
     <>
@@ -26,33 +78,33 @@ const FacultyList: React.FC = () => {
             <View style={Platform.OS === 'web' ? styles.container : styles.containerMobile}>
                 <Searchbar
                     placeholder={i18n.t('searchPlaceholder')}
-                    value=''
+                    value={searchQuery}
+                    onChangeText={handleSearchChange}
                     style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile}
                 />
             </View>
         </PaperProvider>
 
       <View style={Platform.OS ==='web'? styles.contentGrid : styles.contentGridMobile}>
-                {Array.from({ length: 10 }).map((_, index) => (
+                {items?.map((item, index) => (
                     <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark) : (theme === 'light'? styles.qaContainerLightMobile:styles.qaContainerDarkMobile)}>
                         <Card.Content>
                             <Title style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
-                                College name
+                                { item.name }
                             </Title>
                             <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
-                                {i18n.t('college_abbreviation')}
+                                {i18n.t('college_abbreviation')}: { item.abbreviation }
                             </Paragraph>
                             <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
-                                {i18n.t('college_address')}
+                                {i18n.t('college_address')}: { item.address }
                             </Paragraph>
                             <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
-                                {i18n.t('college_phone')}
+                                {i18n.t('college_phone')}: { item.phoneNumber }
                             </Paragraph>
                             <Paragraph style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
-                                {i18n.t('college_email')}
+                                {i18n.t('college_email')}: { item.email }
                             </Paragraph>
                         </Card.Content>
-
 
                         <Card.Actions>
                             <IconButton

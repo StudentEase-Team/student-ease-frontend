@@ -13,6 +13,7 @@ import { useFocusEffect } from 'expo-router';
 import { I18n } from 'i18n-js';
 import { translations } from '../../../localization';
 import { LocaleContext } from '../../../context/LocaleContext';
+import StackGrid from 'react-stack-grid';
 
 const FAQ: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,7 +35,8 @@ const FAQ: React.FC = () => {
       id: 0,
       answer: '',
       isAnswered: false,
-      question: question
+      question: question,
+      creationDate: new Date()
     };
     const response: AxiosResponse = await axios.post(`${API_BASE_URL}/faq/item`, newQuestion, config);
     if (response.status === 201) {
@@ -66,8 +68,14 @@ const FAQ: React.FC = () => {
     try {
       const response: AxiosResponse = await axios.get(`${API_BASE_URL}/faq/items`, config);
       if (response.status === 200) {
-        setItems(response.data);
-        setItemsBak(response.data);
+        const sortedItems = response.data.sort((a, b) => {
+          if (a.answer === '' && b.answer !== '') return 1;
+          if (a.answer !== '' && b.answer === '') return -1;
+          return 0;
+        });
+  
+        setItems(sortedItems);
+        setItemsBak(sortedItems);
       }
     } catch (error) {
       Toast.show({
@@ -112,13 +120,20 @@ const FAQ: React.FC = () => {
             <Searchbar placeholder={i18n.t('searchPlaceholder')} style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
           </PaperProvider>
 
-        <View style={Platform.OS === 'web'? styles.faqContainer:styles.faqContainerMobile} >
+          <StackGrid
+            columnWidth={'30%'}
+            gutter={15}
+            style={styles.contentGrid}
+            >
           {items?.map((item, index) => (
             <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark):(theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile)}>
               <Card.Content>
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.question}</Text>
                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
-                <View style={{height:10}}/>
+                <View style={{height:15}}/>
+                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionDateLight : styles.descriptionDateDark) : (theme === 'light' ? styles.descriptionDateLightMobile : styles.descriptionDateDarkMobile)}>
+                  {i18n.t('faq_creationDate')}: {new Date(item.creationDate).toLocaleDateString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric' })}</Text>
+                  <View style={{height:10}}/>
               </Card.Content>
               {userState?.role !== "STUDENT"? (
               <Card.Actions>
@@ -130,7 +145,7 @@ const FAQ: React.FC = () => {
 
             </Card>
           ))}
-        </View>
+        </StackGrid>
         <View style={{height:50}}/>
       </ScrollView>
 
@@ -186,6 +201,12 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#18191A'
   },
+
+  contentGrid: {
+    marginTop: 20,
+    width: '80%',
+    alignSelf:'center',
+},
 
   modalContainerLight: {
     backgroundColor: 'white',
@@ -269,10 +290,9 @@ const styles = StyleSheet.create({
   },
 
   qaContainerLight: {
-    marginTop: 15,
-    width: '60%',
     backgroundColor: 'white',
     alignSelf: 'center',
+    margin: 10
   },
 
   qaContainerLightMobile: {
@@ -282,10 +302,9 @@ const styles = StyleSheet.create({
   },
 
   qaContainerDark: {
-    marginTop: 15,
-    width: '60%',
     alignSelf: 'center',
     backgroundColor: '#242526',
+    margin: 10
   },
   
   qaContainerDarkMobile: {
@@ -360,8 +379,20 @@ const styles = StyleSheet.create({
     color: 'black'
   },
 
+  descriptionDateLight: {
+    fontSize: 16,
+    marginTop: 20,
+    color: '#666'
+  },
+
   descriptionLightMobile: {
     fontSize: 16,
+    marginTop: 20,
+    color: '#666'
+  },
+
+  descriptionDateLightMobile: {
+    fontSize: 14,
     marginTop: 20,
     color: 'black'
   },
@@ -372,10 +403,22 @@ const styles = StyleSheet.create({
     color: 'white'
   },
 
+  descriptionDateDark: {
+    fontSize: 16,
+    marginTop: 20,
+    color: '#d3d3d3'
+  },
+
   descriptionDarkMobile: {
     fontSize: 16,
     marginTop: 20,
     color: 'white'
+  },
+
+  descriptionDateDarkMobile: {
+    fontSize: 14,
+    marginTop: 20,
+    color: '#d3d3d3'
   },
 
   askQuestionButtonLight: {

@@ -51,8 +51,11 @@ function SubjectListContentWeb({i18n, subjects}: SubjectListContentWebProp) {
         const colorIndex = index % 10;
         const rowIndex = Math.floor(colorIndex / 3);
         const colorPosition = colorIndex % 3;
-        return themeColors[colorGroupIndex * 2 + rowIndex][colorPosition];
-    };    
+        const colorGroup = themeColors[(colorGroupIndex * 2 + rowIndex) % themeColors.length];
+    
+        return colorGroup[colorPosition];
+    };
+       
 
     return (
         <StackGrid

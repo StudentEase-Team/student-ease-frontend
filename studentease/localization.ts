@@ -70,10 +70,10 @@ const translations = {
 
         noticeboard_createNotification: "Create noticeboard notification",
         
-        college_abbreviation: "Abbreviation: Some abb",
-        college_address: "Address: Some address",
-        college_phone: "Phone: +38121656999",
-        college_email: "email: college@gmail.com",
+        college_abbreviation: "Abbreviation",
+        college_address: "Address",
+        college_phone: "Phone",
+        college_email: "email",
 
         faqNewItem_prompt: "Ask your question here:",
         faqNewItem_ask: "Ask a question",
@@ -84,6 +84,8 @@ const translations = {
         faq_answerPlaceholder: "Answer here",
         faq_answerButton: "Answer",
         faq_cancelButton: "Cancel",
+
+        faq_creationDate: "Creation date",
 
         userCreation_createUser: "Create a new user",
         userCreation_email: "Email",
@@ -200,10 +202,10 @@ const translations = {
 
         noticeboard_createNotification: "Kreirajte obaveštenje na oglasnoj tabli",
 
-        college_abbreviation: "Skraćenica: neka skraćenica",
-        college_address: "Adresa: neka adresa",
-        college_phone: "Telefon: +38121656999",
-        college_email: "email: fakultet@gmail.com",
+        college_abbreviation: "Skraćenica",
+        college_address: "Adresa",
+        college_phone: "Telefon",
+        college_email: "email",
 
         faqNewItem_prompt: "Postavite svoje pitanje ovde:",
         faqNewItem_ask: "Postavite pitanje",
@@ -214,6 +216,8 @@ const translations = {
         faq_answerPlaceholder: "Unesite odgovor ovde",
         faq_answerButton: "Odgovorite",
         faq_cancelButton: "Otkaži",
+
+        faq_creationDate: "Datum postavljanja pitanja",
 
         userCreation_createUser: "Kreirajte novog korisnika",
         userCreation_email: "Email",
