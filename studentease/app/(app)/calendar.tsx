@@ -13,11 +13,14 @@ import { Obligation } from '../../model/Obligation';
 import { I18n } from 'i18n-js';
 import { translations } from '../../localization';
 import { LocaleContext } from '../../context/LocaleContext';
-import CalendarFilter from '../../component/calendar/calendar-filter';
+import CalendarFilter from '../../components/calendar/calendar-filter';
 import { Event } from '../../model/Event';
-import WebCalendar from '../../component/calendar/web-calendar';
-import MobileCalendar from '../../component/calendar/mobile-calendar';
+import WebCalendar from '../../components/calendar/web-calendar';
+import MobileCalendar from '../../components/calendar/mobile-calendar';
 
+type ItemsByDate = {
+  [date: string]: Item[];
+};
 
 export interface Item {
   title: string;
@@ -26,37 +29,31 @@ export interface Item {
   category: string;
 }
 
-type ItemsByDate = {
-  [date: string]: Item[];
-};
-
-
 export interface ItemColor {
   marked: boolean,
   selectedColor: string
 }
 
-
-const CalendarWidget = () => {
+const Calendar = () => {
   const { theme } = useTheme();
   const [selectedCalendarType, setSelectedCalendarType] = useState<Mode | undefined>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(false);
-  const {userState} = useAuth();
+  const { userState } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [itemsByDate, setItemsByDate] = useState({});
   const i18n = new I18n(translations)
   const { locale } = useContext(LocaleContext);
   i18n.locale = locale;
-  
+
   const mapItemsToDateObject = (items: Item[]): ItemsByDate => {
     return items.reduce((acc: ItemsByDate, item: Item) => {
       const dateKey = item.start.toISOString().split('T')[0];
-  
+
       if (!acc[dateKey]) {
         acc[dateKey] = [];
       }
-  
+
       acc[dateKey].push(item);
       return acc;
     }, {});
@@ -67,7 +64,7 @@ const CalendarWidget = () => {
     Exercise: '#8e24aa',
     Exam: '#00796b',
   };
-  
+
   useEffect(() => {
     if (Platform.OS === 'web') return;
 
@@ -82,23 +79,23 @@ const CalendarWidget = () => {
 
   const fetchObligations = useCallback(async () => {
     if (!userState?.token.accessToken) return;
-  
+
     const config = {
       headers: { Authorization: `Bearer ${userState.token.accessToken}` },
     };
-  
+
     const handleResponse = (response: AxiosResponse) => {
       if (response.status !== 200) return;
-  
+
       const result: Obligation[] = response.data;
-  
+
       const events: Event[] = result.map(obligation => ({
         title: obligation.title,
         start: new Date(obligation.startDate),
         end: new Date(obligation.endDate),
         category: obligation.category,
       }));
-  
+
       const items: Item[] = result.map(obligation => ({
         title: obligation.title,
         start: new Date(obligation.startDate),
@@ -107,12 +104,12 @@ const CalendarWidget = () => {
         marked: true,
         selectedColor: categoryColors[obligation.category],
       }));
-  
+
       const itemsByDate = mapItemsToDateObject(items);
       setItemsByDate(itemsByDate);
       setEvents(events);
     };
-  
+
     try {
       let endpoint = '';
       if (userState.role === UserRole.STUDENT) {
@@ -120,7 +117,7 @@ const CalendarWidget = () => {
       } else if (userState.role === UserRole.PROFESSOR) {
         endpoint = `${API_BASE_URL}/obligations/professor`;
       }
-  
+
       if (endpoint) {
         const response: AxiosResponse = await axios.get(endpoint, config);
         handleResponse(response);
@@ -133,40 +130,39 @@ const CalendarWidget = () => {
     }
   }, [userState]);
 
-useFocusEffect(
-  React.useCallback(() => {
-    fetchObligations();
-}, []));
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchObligations();
+    }, []));
 
   return (
     <>
-    {Platform.OS === 'web' ? (
-      <View style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
-        <CalendarFilter 
-        selectedDate={selectedDate} 
-        setSelectedDate={setSelectedDate} 
-        i18n={i18n} 
-        selectedCalendarType={selectedCalendarType} 
-        setSelectedCalendarType={setSelectedCalendarType}/>
+      {Platform.OS === 'web' ? (
+        <View style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
+          <CalendarFilter
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            i18n={i18n}
+            selectedCalendarType={selectedCalendarType}
+            setSelectedCalendarType={setSelectedCalendarType} />
 
-        <WebCalendar 
-        selectedDate={selectedDate} 
-        setSelectedDate={setSelectedDate} 
-        i18n={i18n} 
-        selectedCalendarType={selectedCalendarType} 
-        setSelectedCalendarType={setSelectedCalendarType} 
-        events={events}/>
-      </View>
-   
-    ) : (
-        isLoading? (
+          <WebCalendar
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            i18n={i18n}
+            selectedCalendarType={selectedCalendarType}
+            setSelectedCalendarType={setSelectedCalendarType}
+            events={events} />
+        </View>
+      ) : (
+        isLoading ? (
           <View style={theme === 'light' ? styles.spinnerContainerLight : styles.spinnerContainerDark}>
-            <ActivityIndicator size="large" color={theme === 'light' ? '#4dabf7' : '#9775fa' }/>
+            <ActivityIndicator size="large" color={theme === 'light' ? '#4dabf7' : '#9775fa'} />
           </View>
-        ):(
-          <MobileCalendar 
-          itemsByDate={itemsByDate} 
-          setItemsByDate={setItemsByDate}/>
+        ) : (
+          <MobileCalendar
+            itemsByDate={itemsByDate}
+            setItemsByDate={setItemsByDate} />
         )
       )}
     </>
@@ -212,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CalendarWidget;
+export default Calendar;

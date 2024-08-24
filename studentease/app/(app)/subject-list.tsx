@@ -10,12 +10,11 @@ import { useFocusEffect } from 'expo-router';
 import { College } from '../../model/College';
 import { I18n } from 'i18n-js';
 import { translations } from '../../localization';
-
 import { LocaleContext } from '../../context/LocaleContext';
-import SubjectListFilterWeb from '../../component/subject-list/subject-list-filter-web';
-import SubjectListContentWeb from '../../component/subject-list/subject-list-content-web';
-import SubjectListFilterMobile from '../../component/subject-list/subject-list-filter-mobile';
-import SubjectListContentMobile from '../../component/subject-list/subject-list-content-mobile';
+import SubjectListFilterWeb from '../../components/subject-list/subject-list-filter-web';
+import SubjectListContentWeb from '../../components/subject-list/subject-list-content-web';
+import SubjectListFilterMobile from '../../components/subject-list/subject-list-filter-mobile';
+import SubjectListContentMobile from '../../components/subject-list/subject-list-content-mobile';
 import { UserRole } from '../../model/UserRole';
 
 const SubjectPage = () => {
@@ -108,47 +107,46 @@ const SubjectPage = () => {
         }
     };
 
-    if(Platform.OS === 'web')
     return (
-        <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
-
-            <SubjectListFilterWeb 
-            handleCollegeChange={handleCollegeChange} 
-            searchQuery={searchQuery}
-            handleSearchChange={handleSearchChange} 
-            collegeDropdownData={collegeDropdownData} 
-            i18n={i18n} />
-
-            <SubjectListContentWeb i18n={i18n} subjects={subjects} />
-
-            <View style={{ height: 50 }}></View>
-           </ScrollView>
-
-    );
-    else return (
-        <ScrollView style={theme === 'light' ? styles.containerLight : styles.containerDark}>
-
-            <SubjectListFilterMobile
-                        handleCollegeChange={handleCollegeChange} 
+        <ScrollView style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
+            {Platform.OS === 'web' ? (
+                <>
+                    <SubjectListFilterWeb
+                        handleCollegeChange={handleCollegeChange}
                         searchQuery={searchQuery}
-                        handleSearchChange={handleSearchChange} 
-                        collegeDropdownData={collegeDropdownData} 
-                        i18n={i18n}/>
-
-            <SubjectListContentMobile i18n={i18n} subjects={subjects} />
-
+                        handleSearchChange={handleSearchChange}
+                        collegeDropdownData={collegeDropdownData}
+                        i18n={i18n} />
+                    <SubjectListContentWeb 
+                        i18n={i18n} 
+                        subjects={subjects}/>
+                </>
+            ) : (
+                <>
+                    <SubjectListFilterMobile
+                        handleCollegeChange={handleCollegeChange}
+                        searchQuery={searchQuery}
+                        handleSearchChange={handleSearchChange}
+                        collegeDropdownData={collegeDropdownData}
+                        i18n={i18n} />
+                    <SubjectListContentMobile 
+                        i18n={i18n} 
+                        subjects={subjects}/>
+                </>
+            )}
             <View style={{ height: 50 }}></View>
         </ScrollView>
+
     );
 };
 
 const styles = StyleSheet.create({
-    containerLight: {
+    pageContainerLight: {
         flex: 1,
         padding: 20,
     },
     
-    containerDark: {
+    pageContainerDark: {
         flex: 1,
         padding: 20,
         backgroundColor: '#18191a',

@@ -1,23 +1,24 @@
 import { router } from "expo-router";
 import React from "react";
-import { View, TouchableOpacity, Platform, StyleSheet, Text } from "react-native";
+import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Card } from "react-native-paper";
+import StackGrid from 'react-stack-grid';
 import { useTheme } from "../../context/ThemeContext";
 import { I18n } from "i18n-js";
 import { Subject } from "../../model/Subject";
 
-type SubjectListContentMobileProp = {
+type SubjectListContentWebProp = {
     i18n: I18n,
     subjects: Subject[]
 }
 
-function SubjectListContentMobile({i18n, subjects}: SubjectListContentMobileProp) {
-    const {theme} = useTheme();
+function SubjectListContentWeb({ i18n, subjects }: SubjectListContentWebProp) {
+    const { theme } = useTheme();
     const colors = {
         light: [
             ['#8E24AA', '#1976D2', '#D32F2F'],
             ['#E91E63', '#00796B', '#8E24AA'],
-            ['#5C6BC0', '#66BB6A', '#FFA726'], 
+            ['#5C6BC0', '#66BB6A', '#FFA726'],
             ['#00897B', '#7B1FA2', '#FF7043'],
             ['#7E57C2', '#F4511E', '#9CCC65'],
             ['#3949AB', '#EF5350', '#42A5F5'],
@@ -26,12 +27,12 @@ function SubjectListContentMobile({i18n, subjects}: SubjectListContentMobileProp
             ['#9CCC65', '#FF5722', '#66BB6A'],
             ['#26C6DA', '#EF5350', '#5C6BC0'],
             ['#FFA726', '#EC407A', '#66BB6A']
-        ],    
-        
+        ],
+
         dark: [
             ['#8E24AA', '#2196F3', '#E57373'],
             ['#EC407A', '#00897B', '#8E24AA'],
-            ['#3949AB', '#2E7D32', '#FBC02D'],  
+            ['#3949AB', '#2E7D32', '#FBC02D'],
             ['#00796B', '#8E24AA', '#F57C00'],
             ['#673AB7', '#FF5722', '#689F38'],
             ['#303F9F', '#D32F2F', '#3949AB'],
@@ -50,78 +51,76 @@ function SubjectListContentMobile({i18n, subjects}: SubjectListContentMobileProp
         const rowIndex = Math.floor(colorIndex / 3);
         const colorPosition = colorIndex % 3;
         const colorGroup = themeColors[(colorGroupIndex * 2 + rowIndex) % themeColors.length];
-    
+
         return colorGroup[colorPosition];
-    };  
+    };
 
     return (
-        <View style={styles.contentGridMobile}>
+        <StackGrid
+            columnWidth={'30%'}
+            gutter={15}
+            style={styles.contentGrid}>
             {subjects.map((subject, index) => (
-                <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
+                <TouchableOpacity key={index}
                     onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
                     <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
                         <Card.Content>
-                            <Text style={theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile}>
+                            <Text style={theme === 'light' ? styles.cardTitleLight : styles.cardTitleDark}>
                                 {subject.name}
                             </Text>
-                            <Text style={theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile}>
+                            <Text style={theme === 'light' ? styles.cardDetailsLight : styles.cardDeatilsDark}>
                                 {i18n.t('subjectList_professor') + subject.professorName}
                             </Text>
-                            <Text style={theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile}>
+                            <Text style={theme === 'light' ? styles.cardDetailsLight : styles.cardDeatilsDark}>
                                 {i18n.t('subjectList_college') + subject.collegeName}
                             </Text>
                         </Card.Content>
                     </Card>
                 </TouchableOpacity>
             ))}
-        </View>
+        </StackGrid>
     )
 }
 
 const styles = StyleSheet.create({
-    cardContent: {
-        margin: 5
-    },
-
     card: {
-        borderRadius: 15,
-        marginBottom: 10,
         padding: 10,
+        margin: 10
     },
 
-    contentGridMobile: {
-        flexDirection: 'column',
-        justifyContent: 'space-evenly',
-        marginTop: 10
+    contentGrid: {
+        marginTop: 20,
+        width: '80%',
+        alignSelf: 'center',
     },
 
     cardContentMobile: {
         width: '100%'
     },
 
-    titleLightMobile: {
-        fontSize: 20,
+    cardTitleLight: {
+        fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
         color: 'white',
     },
 
-    titleDarkMobile: {
-        fontSize: 20,
+    cardTitleDark: {
+        fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
         color: 'white',
     },
 
-    infoLightMobile: {
-        fontSize: 16,
+    cardDetailsLight: {
+        fontSize: 18,
         color: 'white',
     },
 
-    infoDarkMobile: {
-        fontSize: 16,
+    cardDeatilsDark: {
+        fontSize: 18,
         color: 'white',
     },
-})
+});
 
-export default SubjectListContentMobile;
+export default SubjectListContentWeb;

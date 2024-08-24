@@ -1,18 +1,17 @@
 import { router } from "expo-router";
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Platform, StyleSheet, Text } from "react-native";
 import { Card } from "react-native-paper";
-import StackGrid from 'react-stack-grid';
 import { useTheme } from "../../context/ThemeContext";
 import { I18n } from "i18n-js";
 import { Subject } from "../../model/Subject";
 
-type SubjectListContentWebProp = {
+type SubjectListContentMobileProp = {
     i18n: I18n,
     subjects: Subject[]
 }
 
-function SubjectListContentWeb({i18n, subjects}: SubjectListContentWebProp) {
+function SubjectListContentMobile({i18n, subjects}: SubjectListContentMobileProp) {
     const {theme} = useTheme();
     const colors = {
         light: [
@@ -53,75 +52,76 @@ function SubjectListContentWeb({i18n, subjects}: SubjectListContentWebProp) {
         const colorGroup = themeColors[(colorGroupIndex * 2 + rowIndex) % themeColors.length];
     
         return colorGroup[colorPosition];
-    }; 
+    };  
 
     return (
-        <StackGrid
-        columnWidth={'30%'}
-        gutter={15}
-        style={styles.contentGrid}
-        >
+        <View style={styles.contentGridMobile}>
             {subjects.map((subject, index) => (
-                <TouchableOpacity key={index} 
+                <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
                     onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
-                    <Card style={[ styles.cardContent, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
+                    <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
                         <Card.Content>
-                            <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>
+                            <Text style={theme === 'light' ? styles.cardTitleLightMobile : styles.cardTitleDarkMobile}>
                                 {subject.name}
                             </Text>
-                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>
+                            <Text style={theme === 'light' ? styles.cardDetailsLightMobile : styles.cardDetailsDarkMobile}>
                                 {i18n.t('subjectList_professor') + subject.professorName}
                             </Text>
-                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>
+                            <Text style={theme === 'light' ? styles.cardDetailsLightMobile : styles.cardDetailsDarkMobile}>
                                 {i18n.t('subjectList_college') + subject.collegeName}
                             </Text>
                         </Card.Content>
                     </Card>
                 </TouchableOpacity>
             ))}
-        </StackGrid>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     cardContent: {
-        padding: 10,
-        margin: 10
+        margin: 5
     },
 
-    contentGrid: {
-        marginTop: 20,
-        width: '80%',
-        alignSelf:'center',
+    card: {
+        borderRadius: 15,
+        marginBottom: 10,
+        padding: 10,
+    },
+
+    contentGridMobile: {
+        flexDirection: 'column',
+        justifyContent: 'space-evenly',
+        marginTop: 10
     },
 
     cardContentMobile: {
         width: '100%'
     },
 
-    titleLight: {
-        fontSize: 24,
+    cardTitleLightMobile: {
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
         color: 'white',
     },
 
-    titleDark: {
-        fontSize: 24,
+    cardTitleDarkMobile: {
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
         color: 'white',
     },
-    
-    infoLight: {
-        fontSize: 18,
+
+    cardDetailsLightMobile: {
+        fontSize: 16,
         color: 'white',
     },
 
-    infoDark: {
-        fontSize: 18,
+    cardDetailsDarkMobile: {
+        fontSize: 16,
         color: 'white',
     },
-});
+})
 
-export default SubjectListContentWeb;
+export default SubjectListContentMobile;

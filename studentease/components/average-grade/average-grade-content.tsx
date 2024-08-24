@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, DataTable } from "react-native-paper";
 import CustomDropdown from "../form/custom-dropdown";
 import { useTheme } from '../../context/ThemeContext';
@@ -19,12 +19,12 @@ type AverageGradeContentProps = {
 function AverageGradeContent({i18n, passedSubjects, setPassedSubjects, failedSubjects, setFailedSubjects, grades, setGrades}:AverageGradeContentProps) {
     const {theme} = useTheme();
     const combinedSubjects = [...passedSubjects, ...failedSubjects];
+    const allGradesValid = combinedSubjects.every(subject => subject.grade !== -1 || grades[subject.subjectName]);
 
     const handleGradeChange = (subjectName: string, grade: number) => {
         setGrades(prevGrades => ({ ...prevGrades, [subjectName]: grade }));
     };
 
-    const allGradesValid = combinedSubjects.every(subject => subject.grade !== -1 || grades[subject.subjectName]);
     const average = allGradesValid
         ? combinedSubjects.reduce((sum, subject) => {
             const grade = subject.grade !== -1 ? subject.grade : grades[subject.subjectName];
@@ -40,7 +40,7 @@ function AverageGradeContent({i18n, passedSubjects, setPassedSubjects, failedSub
     };
 
     return(
-        <Card style={Platform.OS === 'web' ? theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark : theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile}>
+        <Card style={Platform.OS === 'web' ? theme === 'light' ? styles.cardContainerLight : styles.cardContainerDark : theme === 'light' ? styles.cardContainerLightMobile : styles.cardContainerDarkMobile}>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.headingLight : styles.headingDark) : (theme === 'light' ? styles.headingLightMobile : styles.headingDarkMobile)}>
                 {i18n.t('averageGrade_title')}
             </Text>
@@ -110,27 +110,27 @@ function AverageGradeContent({i18n, passedSubjects, setPassedSubjects, failedSub
 }
 
 const styles = StyleSheet.create({
-    qaContainerLight: {
+    cardContainerLight: {
         width: '80%',
         marginTop: 20,
         backgroundColor: 'white',
         alignSelf: 'center'
     },
 
-    qaContainerLightMobile: {
+    cardContainerLightMobile: {
         width: '100%',
         marginTop: 10,
         backgroundColor: 'white',
     },
 
-    qaContainerDark: {
+    cardContainerDark: {
         width: '80%',
         marginTop: 20,
         backgroundColor: '#242526',
         alignSelf: 'center'
     },
 
-    qaContainerDarkMobile: {
+    cardContainerDarkMobile: {
         width: '100%',
         marginTop: 10,
         backgroundColor: '#242526',

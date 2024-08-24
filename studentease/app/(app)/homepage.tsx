@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Platform } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { useRouter } from 'expo-router';
@@ -11,11 +11,11 @@ import { LocaleContext } from '../../context/LocaleContext';
 
 const HomePage = () => {
     const router = useRouter();
-    const {theme} = useTheme();
-    const { isAuthenticated, userState } = useAuth();
+    const { theme } = useTheme();
+    const { userState } = useAuth();
 
     const i18n = new I18n(translations)
-    const { locale} = useContext(LocaleContext);
+    const { locale } = useContext(LocaleContext);
     i18n.locale = locale
 
     const adminCards = [
@@ -25,24 +25,22 @@ const HomePage = () => {
         { title: i18n.t('adminCards_createUser'), route: '/user-creation', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
         { title: i18n.t('adminCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
     ];
-    
+
     const professorCards = [
         { title: i18n.t('professorCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
         { title: i18n.t('professorCards_repository'), route: 'Repository', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
         { title: i18n.t('professorCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
         { title: i18n.t('professorCards_seeCalendar'), route: 'calendar', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
     ];
-    
+
     const studentCards = [
         { title: i18n.t('studentCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
         { title: i18n.t('studentCards_showFAQ'), route: 'faq/faq-show', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
         { title: i18n.t('studentCards_calculateGrades'), route: 'average-grade', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
         { title: i18n.t('studentCards_seeCalendar'), route: 'calendar', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2b5876', '#4e4376'] },
     ];
-    
 
     let cardsToShow: { title: string; route: string; lightColors: string[]; darkColors: string[]; }[] = [];
-
 
     if (userState?.role === 'ADMIN') {
         cardsToShow = adminCards;
@@ -53,12 +51,12 @@ const HomePage = () => {
     }
 
     return (
-        <ScrollView style={Platform.OS === 'web' ? (theme === 'light' ? styles.containerLight : styles.containerDark) : (theme === 'light' ? styles.containerLightMobile : styles.containerDarkMobile)}>
+        <ScrollView style={Platform.OS === 'web' ? (theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark) : (theme === 'light' ? styles.pageContainerLightMobile : styles.pageContainerDarkMobile)}>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.welcomeTextLight : styles.welcomeTextDark) : (theme === 'light' ? styles.welcomeTextLightMobile : styles.welcomeTextDarkMobile)}>{i18n.t('welcomeBack')}</Text>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.quoteTextLight : styles.quoteTextDark) : (theme === 'light' ? styles.quoteTextLightMobile : styles.quoteTextDarkMobile)}>{i18n.t('quoteText')}</Text>
             <View style={Platform.OS === 'web' ? styles.cardContainer : styles.cardContainerMobile}>
                 {cardsToShow.map((card, index) => (
-                    <TouchableOpacity activeOpacity={0.7} key={index} onPress={ () => {router.push(card.route)}}>
+                    <TouchableOpacity activeOpacity={0.7} key={index} onPress={() => { router.push(card.route) }}>
                         <LinearGradient key={index} colors={theme === 'light' ? card.lightColors : card.darkColors} style={Platform.OS === 'web' ? styles.gradient : styles.gradientMobile}>
                             <View style={styles.cardContent}>
                                 <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.cardTitleLight : styles.cardTitleDark) : (theme === 'light' ? styles.cardTitleLightMobile : styles.cardTitleDarkMobile)}>{card.title}</Text>
@@ -72,25 +70,25 @@ const HomePage = () => {
 };
 
 const styles = StyleSheet.create({
-    containerLight: {
+    pageContainerLight: {
         flex: 1,
         padding: 40,
         backgroundColor: '#fff',
     },
 
-    containerLightMobile: {
+    pageContainerLightMobile: {
         flex: 1,
         padding: 20,
         backgroundColor: '#fff',
     },
 
-    containerDark: {
+    pageContainerDark: {
         flex: 1,
         padding: 40,
         backgroundColor: '#18191a',
     },
 
-    containerDarkMobile: {
+    pageContainerDarkMobile: {
         flex: 1,
         padding: 20,
         backgroundColor: '#18191a',
@@ -101,7 +99,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 16,
-        color: 'black', 
+        color: 'black',
     },
 
     welcomeTextLightMobile: {
@@ -109,7 +107,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'left',
         marginVertical: 16,
-        color: 'black', 
+        color: 'black',
     },
 
     welcomeTextDark: {

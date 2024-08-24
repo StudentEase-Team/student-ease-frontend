@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import SubjectGrade from '../../model/SubjectGrade';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { API_BASE_URL } from '@env';
 import { useTheme } from '../../context/ThemeContext';
 import { useFocusEffect } from 'expo-router';
@@ -10,8 +10,8 @@ import { I18n } from 'i18n-js';
 import { translations } from '../../localization';
 import { LocaleContext } from '../../context/LocaleContext';
 import { FilterType } from '../../model/FilterType';
-import AverageGradeFilter from '../../component/average-grade/average-grade-filter';
-import AverageGradeContent from '../../component/average-grade/average-grade-content';
+import AverageGradeFilter from '../../components/average-grade/average-grade-filter';
+import AverageGradeContent from '../../components/average-grade/average-grade-content';
 
 function AverageGrade() {
     const { userState } = useAuth();
@@ -22,10 +22,10 @@ function AverageGrade() {
     const [failedSubjects, setFailedSubjects] = useState<SubjectGrade[]>([]);
     const [year, setYear] = useState('all');
     const [grades, setGrades] = useState<{ [key: string]: number }>({});
-    const {theme} = useTheme();
+    const { theme } = useTheme();
     const [selectedFilterType, setSelectedFilterType] = useState<FilterType | null>('ALL');
     const i18n = new I18n(translations)
-    const { locale} = useContext(LocaleContext);
+    const { locale } = useContext(LocaleContext);
     i18n.locale = locale
 
     const getGrades = async () => {
@@ -33,14 +33,14 @@ function AverageGrade() {
         await axios.get(`${API_BASE_URL}/subjects/passed/${year}`, config).catch((reason) => {
             setPassedSubjects([]);
         }).then((res) => {
-            if(res !== undefined)
+            if (res !== undefined)
                 setPassedSubjects(res.data);
         });
 
         await axios.get(`${API_BASE_URL}/subjects/failed/${year}`, config).catch((reason) => {
             setFailedSubjects([]);
         }).then((res) => {
-            if(res !== undefined)
+            if (res !== undefined)
                 setFailedSubjects(res.data);
         });
     };
@@ -53,24 +53,27 @@ function AverageGrade() {
         React.useCallback(() => {
             setGrades({});
             setSelectedFilterType('ALL');
-            return () => {};
+            return () => { };
         }, [])
     );
 
     return (
         <ScrollView style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
-            <AverageGradeFilter i18n={i18n} year={year} setYear={setYear} />
+            <AverageGradeFilter
+                i18n={i18n}
+                year={year}
+                setYear={setYear} />
 
-            <AverageGradeContent 
-            i18n={i18n} 
-            passedSubjects={passedSubjects} 
-            setPassedSubjects={setPassedSubjects} 
-            failedSubjects={failedSubjects} 
-            setFailedSubjects={setFailedSubjects} 
-            grades={grades} 
-            setGrades={setGrades} />
+            <AverageGradeContent
+                i18n={i18n}
+                passedSubjects={passedSubjects}
+                setPassedSubjects={setPassedSubjects}
+                failedSubjects={failedSubjects}
+                setFailedSubjects={setFailedSubjects}
+                grades={grades}
+                setGrades={setGrades} />
 
-            <View style={{height:150}}/>
+            <View style={{ height: 150 }} />
         </ScrollView>
     );
 }

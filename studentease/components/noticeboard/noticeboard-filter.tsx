@@ -21,12 +21,12 @@ type NoticeboardSearchFilterProps = {
     setDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>,
     setDateModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
 }
-    
+
 function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
     const i18n = new I18n(translations)
-    const { locale} = useContext(LocaleContext);
+    const { locale } = useContext(LocaleContext);
     i18n.locale = locale
-    
+
     const filterOptions: { value: NoticeboardFilterType; label: string }[] = [
         { value: 'ALL', label: i18n.t('noticeboardFilter_all') },
         { value: 'UNIVERSITY', label: i18n.t('noticeboardFilter_university') },
@@ -84,7 +84,7 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
             props.setItems(filtered);
             return;
         }
-    
+
         const filteredItems2 = filtered?.filter(item =>
             (item.title?.toLowerCase().includes(searchParam.toLowerCase()) || false) ||
             (item.message?.toLowerCase().includes(searchParam.toLowerCase()) || false) ||
@@ -92,7 +92,7 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
             (item.subjectName?.toLowerCase().includes(searchParam.toLowerCase()) || false) ||
             (item.collegeName?.toLowerCase().includes(searchParam.toLowerCase()) || false)
         );
-    
+
         props.setItems(filteredItems2);
     };
 
@@ -113,7 +113,7 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
                     value={searchParam}
                     style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile}
                 />
-                <View style={Platform.OS === 'web' ? styles.containerRadioButtons : styles.containerRadioButtonsMobile}>
+                <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile}>
                     {filterOptions.map((option, index) => (
                         <View key={index}>
                             <Pressable
@@ -121,13 +121,13 @@ function NoticeboardSearchFilter(props: NoticeboardSearchFilterProps) {
                                     theme === 'light' ? styles.pressableLight : styles.pressableDark,
                                     selectedFilterType === option.value
                                         ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' }
-                                        : { borderColor: 'grey'},
+                                        : { borderColor: 'grey' },
                                 ]}
                                 onPress={() => handlePressFilterOptions(option.value)}
                             >
                                 <Text
                                     style={[
-                                        Platform.OS === 'web' ? styles.text : styles.textMobile,
+                                        Platform.OS === 'web' ? styles.pressableText : styles.pressableTextMobile,
                                         { color: selectedFilterType === option.value ? '#fff' : theme === 'light' ? '#4dabf7' : '#9775fa' },
                                     ]}
                                 >
@@ -173,13 +173,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#242526'
     },
 
-    text: {
+    pressableText: {
         fontSize: 16,
         fontWeight: 'bold',
     },
 
-    textMobile: {
-        fontSize: 12,
+    pressableTextMobile: {
+        fontSize: 14,
         fontWeight: 'bold',
     },
 
@@ -191,20 +191,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         height: 60,
     },
-    
+
     searchBarMobile: {
         marginBottom: 20,
         alignSelf: 'center',
         borderRadius: 10,
     },
 
-    containerRadioButtons: {
+    radioButtons: {
         flex: 1,
         flexDirection: 'row',
         alignSelf: 'center',
     },
 
-    containerRadioButtonsMobile: {
+    radioButtonsMobile: {
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',

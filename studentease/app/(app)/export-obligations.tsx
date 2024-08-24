@@ -1,25 +1,23 @@
-import { useRouter } from 'expo-router';
 import React, { useContext } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import axios, { AxiosResponse } from 'axios';
 import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing'; 
+import * as Sharing from 'expo-sharing';
 import { API_BASE_URL } from '@env';
 import { UserRole } from '../../model/UserRole';
-import Toast from 'react-native-toast-message'; 
+import Toast from 'react-native-toast-message';
 import { Platform, View, Text, StyleSheet } from 'react-native';
-import {Button} from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import { useTheme } from '../../context/ThemeContext';
 import { I18n } from 'i18n-js';
 import { translations } from '../../localization';
 import { LocaleContext } from '../../context/LocaleContext';
 
 const ExportObligationsICS: React.FC = () => {
-    const router = useRouter();
     const { theme } = useTheme();
     const { userState } = useAuth();
     const i18n = new I18n(translations)
-    const { locale} = useContext(LocaleContext);
+    const { locale } = useContext(LocaleContext);
     i18n.locale = locale
 
     const download = async () => {
@@ -28,17 +26,17 @@ const ExportObligationsICS: React.FC = () => {
                 headers: { Authorization: `Bearer ${userState?.token.accessToken}` },
             };
 
-            const endpoint = userState?.role === UserRole.STUDENT 
-                ? `${API_BASE_URL}/obligations/student/download` 
-                : userState?.role === UserRole.PROFESSOR 
-                ? `${API_BASE_URL}/obligations/professor/download` 
-                : null;
+            const endpoint = userState?.role === UserRole.STUDENT
+                ? `${API_BASE_URL}/obligations/student/download`
+                : userState?.role === UserRole.PROFESSOR
+                    ? `${API_BASE_URL}/obligations/professor/download`
+                    : null;
 
             if (endpoint) {
                 const response: AxiosResponse = await axios.get(endpoint, config);
 
                 if (response.status === 200) {
-                    const calendarContent = response.data; 
+                    const calendarContent = response.data;
                     await downloadFile(calendarContent);
                 }
             }
@@ -60,7 +58,7 @@ const ExportObligationsICS: React.FC = () => {
             } else if (Platform.OS === 'web') {
                 const blob = new Blob([calendarContent], { type: 'text/calendar' });
                 const url = URL.createObjectURL(blob);
-    
+
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = 'obligations.ics';
@@ -75,8 +73,8 @@ const ExportObligationsICS: React.FC = () => {
                 text2: `The file has been successfully downloaded.`,
                 position: 'bottom',
                 type: 'success',
-                visibilityTime: 4000, 
-                autoHide: true, 
+                visibilityTime: 4000,
+                autoHide: true,
             });
 
         } catch (error) {
@@ -89,26 +87,26 @@ const ExportObligationsICS: React.FC = () => {
     };
 
     return (
-        <View style={theme === 'light' ? styles.containerLight : styles.containerDark}>
+        <View style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{i18n.t('exportObligations_title')}</Text>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>
                 {i18n.t('exportObligations_downloadInstructions')}
             </Text>
-                <Button mode='contained' onPress={handleDownload} style={theme === 'light' ? styles.downloadButtonLight : styles.downloadButtonDark}>{i18n.t('exportObligations_downloadButton')}</Button>
+            <Button mode='contained' onPress={handleDownload} style={theme === 'light' ? styles.downloadButtonLight : styles.downloadButtonDark}>{i18n.t('exportObligations_downloadButton')}</Button>
             <Toast />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    containerLight: {
+    pageContainerLight: {
         flex: 1,
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center',
     },
 
-    containerDark: {
+    pageContainerDark: {
         flex: 1,
         padding: 20,
         backgroundColor: '#18191A',
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         marginBottom: 20,
-        color: '#333', 
+        color: '#333',
         textAlign: 'center',
     },
 
@@ -128,7 +126,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
-        color: '#333', 
+        color: '#333',
         textAlign: 'center',
     },
 
@@ -136,7 +134,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         marginBottom: 20,
-        color: 'white', 
+        color: 'white',
         textAlign: 'center',
     },
 
@@ -144,7 +142,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
-        color: 'white', 
+        color: 'white',
         textAlign: 'center',
     },
 
@@ -193,7 +191,7 @@ const styles = StyleSheet.create({
         height: 50,
         justifyContent: 'center',
     },
-    
+
     downloadButtonDark: {
         backgroundColor: '#9775fa',
         marginTop: 30,

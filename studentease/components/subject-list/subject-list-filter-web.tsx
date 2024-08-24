@@ -19,7 +19,7 @@ function SubjectListFilterWeb({handleCollegeChange, searchQuery, handleSearchCha
 
     return (
         <View>
-        <CustomDropdown style={{ width: '40%' }}
+        <CustomDropdown style={styles.dropdown}
             data={collegeDropdownData}
             labelField={'label'}
             valueField={'value'}
@@ -48,6 +48,10 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         borderRadius: 10,
     },
+
+    dropdown: {
+        width: '40%',
+    }
 })
 
 export default SubjectListFilterWeb;

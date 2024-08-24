@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Card, Title, Paragraph, IconButton } from "react-native-paper";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
@@ -12,18 +12,17 @@ import { I18n } from 'i18n-js';
 import { translations } from '../../localization';
 import { LocaleContext } from '../../context/LocaleContext';
 
-type NoticeboardContentProps = {
+type NoticeboardContentWebProps = {
     items: NoticeboardItem[] | undefined,
     fetchNoticeboardItems: () => void
 }
 
-function NoticeboardContent(props: NoticeboardContentProps) {
+function NoticeboardContentWeb(props: NoticeboardContentWebProps) {
     const { theme } = useTheme();
     const { userState } = useAuth();
     const i18n = new I18n(translations)
-    const { locale} = useContext(LocaleContext);
+    const { locale } = useContext(LocaleContext);
     i18n.locale = locale
-
 
     async function deleteNoticeboardItem(id: number) {
         if (!userState?.token.accessToken) return;
@@ -54,21 +53,18 @@ function NoticeboardContent(props: NoticeboardContentProps) {
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     };
-
-    if(Platform.OS === 'web')
     return (
         <StackGrid
             columnWidth={'30%'}
             gutter={15}
-            style={styles.contentGrid}
-        >
+            style={styles.contentGrid}>
             {props.items?.map((item, index) => {
                 const date = new Date(item.updatedAt);
                 const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
                 return (
-                    <Card key={index} style={theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark}>
+                    <Card key={index} style={theme === 'light' ? styles.cardLight : styles.cardDark}>
                         <Card.Content>
-                            <Title style={theme === 'light' ? styles.titleLight : styles.titleDark }>{item.title} </Title>
+                            <Title style={theme === 'light' ? styles.cardTitleLight : styles.cardTitleDark}>{item.title} </Title>
                             <Paragraph style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>{item.message}</Paragraph>
                             <View style={{ height: 15 }}></View>
                             <Paragraph style={theme === 'light' ? styles.metaLight : styles.metaDark}>{i18n.t('noticeboardCard_date')}: {formattedDate} </Paragraph>
@@ -84,67 +80,34 @@ function NoticeboardContent(props: NoticeboardContentProps) {
 
                         {userState?.role !== 'STUDENT' && (
                             <Card.Actions>
-                                <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteNoticeboardItem(item.id)}/>
+                                <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteNoticeboardItem(item.id)} />
                             </Card.Actions>
                         )}
-                        <View style={{height: 10}}></View>
+                        <View style={{ height: 10 }}></View>
                     </Card>
                 );
             })}
         </StackGrid>
     );
-    else return (
-        <View style={styles.contentGridMobile}>
-        {props.items?.map((item, index) => {
-            const date = new Date(item.updatedAt);
-            const formattedDate = isNaN(date.getTime()) ? 'Invalid date' : formatDate(date);
-            return (
-                <Card key={index} style={theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile}>
-                    <Card.Content>
-                        <Title style={theme === 'light'? styles.titleLightMobile : styles.titleDarkMobile}>{item.title} </Title>
-                        <Paragraph style={theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile}>{item.message}</Paragraph>
-                        <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile} >{i18n.t('noticeboardCard_date')}: {formattedDate} </Paragraph>
-                        {item.creatorName !== '' && (
-                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}>{i18n.t('noticeboardCard_creator')}: {item.creatorName} </Paragraph>
-                        )}
-                        {item.subjectName !== '' && (
-                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}>{i18n.t('noticeboardCard_subject')}: {item.subjectName} </Paragraph>
-                        )}
-                        {item.collegeName !== '' && (
-                            <Paragraph style={theme === 'light' ? styles.metaLightMobile : styles.metaDarkMobile}>{i18n.t('noticeboardCard_college')}: {item.collegeName} </Paragraph>
-                        )}
-                        <View style={{height: 10}}></View>
-                    </Card.Content>
-
-                    {userState?.role !== 'STUDENT' && (
-                        <Card.Actions>
-                            <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteNoticeboardItem(item.id)}/>
-                        </Card.Actions>
-                    )}
-                </Card>
-            );
-        })}
-    </View>
-    )
 }
 
 const styles = StyleSheet.create({
-    qaContainerLight: {
+    cardLight: {
         backgroundColor: 'white',
         margin: 10
     },
 
-    qaContainerLightMobile: {
+    cardLightMobile: {
         backgroundColor: 'white',
         marginBottom: 10
     },
 
-    qaContainerDark: {
+    cardDark: {
         backgroundColor: '#242526',
         margin: 10
     },
 
-    qaContainerDarkMobile: {
+    cardDarkMobile: {
         backgroundColor: '#242526',
         marginBottom: 10
     },
@@ -152,7 +115,7 @@ const styles = StyleSheet.create({
     contentGrid: {
         marginTop: 20,
         width: '80%',
-        alignSelf:'center',
+        alignSelf: 'center',
     },
 
     contentGridMobile: {
@@ -205,29 +168,29 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
 
-    titleLight: {
+    cardTitleLight: {
         fontSize: 24,
         fontWeight: 'bold',
         color: 'black',
     },
 
-    titleLightMobile: {
+    cardTitleLightMobile: {
         fontSize: 20,
         fontWeight: 'bold',
         color: 'black',
     },
 
-    titleDark: {
+    cardTitleDark: {
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white'
     },
 
-    titleDarkMobile: {
+    cardTitleDarkMobile: {
         fontSize: 20,
         fontWeight: 'bold',
         color: 'white'
     },
 });
 
-export default NoticeboardContent;
+export default NoticeboardContentWeb;

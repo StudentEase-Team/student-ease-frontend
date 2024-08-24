@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { themeDark, themeLight } from '../context/PaperTheme';
-import { PasswordInput } from '../component/form/password-input';
+import { PasswordInput } from '../components/form/password-input';
 import { useRouter } from 'expo-router';
 
 const Login: React.FC = () => {
@@ -25,13 +25,12 @@ const Login: React.FC = () => {
   }
 
   return (
-    <ImageBackground source={theme === 'light' ? require('../assets/web.jpg') : require('../assets/webDark.png')} style={styles.background}>
+    <ImageBackground source={theme === 'light' ? require('../assets/web.jpg') : require('../assets/webDark.png')} style={styles.backgroundImage}>
       <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
         <KeyboardAvoidingView
-          style={styles.container}
+          style={styles.keyboardContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-        >
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
           <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.formLight : styles.formDark) : (theme === 'light' ? styles.formLightMobile : styles.formDarkMobile)}>
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Login</Text>
             <TextInput
@@ -45,8 +44,7 @@ const Login: React.FC = () => {
               theme={{
                 roundness: 5, 
               }}
-              onChangeText={setEmail}
-            />
+              onChangeText={setEmail}/>
             <PasswordInput passwordCallback={setPassword}  onSubmitEdit={attemptLogin}/>
             <ThemeProvider>
             <Button onPress={attemptLogin} mode="contained" style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
@@ -60,12 +58,12 @@ const Login: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
-  background: {
+  backgroundImage: {
     flex: 1,
     resizeMode: 'cover',
   },
 
-  container: {
+  keyboardContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -177,18 +175,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     height: 50,
     justifyContent: 'center',
-  },
-
-  signupTextLight: {
-    textAlign: 'center',
-    marginTop: 10,
-    color: '#4dabf7'
-  },
-
-  signupTextDark: {
-    textAlign: 'center',
-    marginTop: 10,
-    color: '#9775fa'
   },
 });
 

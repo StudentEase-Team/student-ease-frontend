@@ -46,7 +46,7 @@ function AverageGradeFilter({i18n, year, setYear}:AverageGradeFilterProps) {
             {filterOptions.map((option) => (
             <View style={Platform.OS === 'web' ? styles.radioButtons : styles.radioButtonsMobile} key={option.value}>
                 <Pressable key={option.value} style={[theme === 'light' ? styles.pressableLight : styles.pressableDark, selectedFilterType === option.value ? { backgroundColor: theme === 'light' ? '#4dabf7' : '#9775fa' } : { borderColor: 'grey' },]} onPress={() => handleYearChange(option.value)}>
-                    <Text style={[Platform.OS === 'web' ? styles.text : styles.textMobile, { color: selectedFilterType === option.value ? '#fff' : theme === 'light' ?  '#4dabf7' : '#9775fa' }, ]}>{option.label}</Text>
+                    <Text style={[Platform.OS === 'web' ? styles.pressableText : styles.pressableTextMobile, { color: selectedFilterType === option.value ? '#fff' : theme === 'light' ?  '#4dabf7' : '#9775fa' }, ]}>{option.label}</Text>
                 </Pressable>
             </View>
             ))}
@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#242526',
     },
 
-    text: {
+    pressableText: {
         fontSize: 16,
         fontWeight: 'bold',
     },
 
-    textMobile: {
-        fontSize: 12,
+    pressableTextMobile: {
+        fontSize: 14,
         fontWeight: 'bold',
     },
 })
