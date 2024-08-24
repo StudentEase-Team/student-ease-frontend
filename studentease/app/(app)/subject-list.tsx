@@ -16,6 +16,7 @@ import SubjectListFilterWeb from '../../component/subject-list/subject-list-filt
 import SubjectListContentWeb from '../../component/subject-list/subject-list-content-web';
 import SubjectListFilterMobile from '../../component/subject-list/subject-list-filter-mobile';
 import SubjectListContentMobile from '../../component/subject-list/subject-list-content-mobile';
+import { UserRole } from '../../model/UserRole';
 
 const SubjectPage = () => {
     const initialCollegeData = [{ label: 'Any', value: 'any' }];
@@ -46,9 +47,18 @@ const SubjectPage = () => {
                     return [...acc, ...college.subjects];
                 }, []);
     
-                setSubjects(allSubjects);
-                setOriginalSubjects(allSubjects);
-    
+                if(userState.role === UserRole.PROFESSOR) {
+                    const response2: AxiosResponse = await axios.get(`${API_BASE_URL}/subjects/professor`, config);
+                    if(response2.status === 200) {
+                        setSubjects(response2.data);
+                        setOriginalSubjects(response2.data);
+                    }
+                }
+                else 
+                {
+                    setSubjects(allSubjects);
+                    setOriginalSubjects(allSubjects);
+                }
                 const updatedCollegeData = [{ label: 'Any', value: 'any' }, ...allColleges.map(c => ({ label: c.abbreviation, value: c.id }))];
                 setCollegeDropdownData(updatedCollegeData);
             }
