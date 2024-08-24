@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React from "react";
-import { TouchableOpacity, Platform, View, ScrollView, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Card } from "react-native-paper";
 import StackGrid from 'react-stack-grid';
 import { useTheme } from "../../context/ThemeContext";
@@ -13,7 +13,6 @@ type SubjectListContentWebProp = {
 }
 
 function SubjectListContentWeb({i18n, subjects}: SubjectListContentWebProp) {
-
     const {theme} = useTheme();
     const colors = {
         light: [
@@ -54,8 +53,7 @@ function SubjectListContentWeb({i18n, subjects}: SubjectListContentWebProp) {
         const colorGroup = themeColors[(colorGroupIndex * 2 + rowIndex) % themeColors.length];
     
         return colorGroup[colorPosition];
-    };
-       
+    }; 
 
     return (
         <StackGrid
@@ -64,17 +62,17 @@ function SubjectListContentWeb({i18n, subjects}: SubjectListContentWebProp) {
         style={styles.contentGrid}
         >
             {subjects.map((subject, index) => (
-                <TouchableOpacity key={index} style={Platform.OS === 'web' ? styles.cardContent : styles.cardContentMobile}
+                <TouchableOpacity key={index} 
                     onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
-                    <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
+                    <Card style={[ styles.cardContent, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
                         <Card.Content>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                            <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>
                                 {subject.name}
                             </Text>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>
                                 {i18n.t('subjectList_professor') + subject.professorName}
                             </Text>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                            <Text style={theme === 'light' ? styles.infoLight : styles.infoDark}>
                                 {i18n.t('subjectList_college') + subject.collegeName}
                             </Text>
                         </Card.Content>
@@ -82,19 +80,13 @@ function SubjectListContentWeb({i18n, subjects}: SubjectListContentWebProp) {
                 </TouchableOpacity>
             ))}
         </StackGrid>
-
     )
 }
 
 const styles = StyleSheet.create({
     cardContent: {
-        margin: 5
-    },
-
-    card: {
-        borderRadius: 15,
-        marginBottom: 10,
         padding: 10,
+        margin: 10
     },
 
     contentGrid: {
@@ -114,22 +106,8 @@ const styles = StyleSheet.create({
         color: 'white',
     },
 
-    titleLightMobile: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: 'white',
-    },
-
     titleDark: {
         fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: 'white',
-    },
-
-    titleDarkMobile: {
-        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
         color: 'white',
@@ -140,18 +118,8 @@ const styles = StyleSheet.create({
         color: 'white',
     },
 
-    infoLightMobile: {
-        fontSize: 16,
-        color: 'white',
-    },
-
     infoDark: {
         fontSize: 18,
-        color: 'white',
-    },
-
-    infoDarkMobile: {
-        fontSize: 16,
         color: 'white',
     },
 });

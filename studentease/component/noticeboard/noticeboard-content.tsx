@@ -188,7 +188,8 @@ const styles = StyleSheet.create({
     descriptionLightMobile: {
         fontSize: 16,
         marginVertical: 5,
-        color: 'black'
+        color: 'black',
+        marginBottom: 10
     },
 
     descriptionDark: {
@@ -200,19 +201,20 @@ const styles = StyleSheet.create({
     descriptionDarkMobile: {
         fontSize: 16,
         marginVertical: 5,
-        color: 'white'
+        color: 'white',
+        marginBottom: 10
     },
 
     titleLight: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: 'black'
+        color: 'black',
     },
 
     titleLightMobile: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'black'
+        color: 'black',
     },
 
     titleDark: {

@@ -120,70 +120,93 @@ const FAQ: React.FC = () => {
             <Searchbar placeholder={i18n.t('searchPlaceholder')} style={Platform.OS === 'web'? styles.searchBar : styles.searchBarMobile} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)}/>
           </PaperProvider>
 
-          <StackGrid
-            columnWidth={'30%'}
-            gutter={15}
-            style={styles.contentGrid}
-            >
-          {items?.map((item, index) => (
-            <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark):(theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile)}>
-              <Card.Content>
-                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>{item.question}</Text>
-                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionLight : styles.descriptionDark) : (theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile)}>{item.answer}</Text>
-                <View style={{height:15}}/>
-                <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.descriptionDateLight : styles.descriptionDateDark) : (theme === 'light' ? styles.descriptionDateLightMobile : styles.descriptionDateDarkMobile)}>
-                  {i18n.t('faq_creationDate')}: {new Date(item.creationDate).toLocaleDateString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric' })}</Text>
-                  <View style={{height:10}}/>
-              </Card.Content>
-              {userState?.role !== "STUDENT"? (
-              <Card.Actions>
-                <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteFAQ(item.id)}/>
-              </Card.Actions>
-              ):(
-                ''
-              )}
+          {Platform.OS === 'web' ? (
+            <StackGrid
+              columnWidth={'30%'}
+              gutter={15}
+              style={styles.contentGrid}
+              >
+              {items?.map((item, index) => (
+                <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark):(theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile)}>
+                  <Card.Content>
+                    <Text style={theme === 'light' ? styles.titleLight : styles.titleDark}>{item.question}</Text>
+                    <Text style={theme === 'light' ? styles.descriptionLight : styles.descriptionDark}>{item.answer}</Text>
+                    <View style={{height:15}}/>
+                    <Text style={theme === 'light' ? styles.descriptionDateLight : styles.descriptionDateDark}>
+                      {i18n.t('faq_creationDate')}: {new Date(item.creationDate).toLocaleDateString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric' })}</Text>
+                      <View style={{height:10}}/>
+                  </Card.Content>
+                  {userState?.role !== "STUDENT"? (
+                  <Card.Actions>
+                    <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteFAQ(item.id)}/>
+                  </Card.Actions>
+                  ):(
+                    ''
+                  )}
 
-            </Card>
-          ))}
-        </StackGrid>
+                </Card>
+              ))}
+            </StackGrid>
+          ) : (
+            <View style={styles.faqContainerMobile} >
+              {items?.map((item, index) => (
+                <Card key={index} style={Platform.OS === 'web'? (theme === 'light' ? styles.qaContainerLight : styles.qaContainerDark):(theme === 'light' ? styles.qaContainerLightMobile : styles.qaContainerDarkMobile)}>
+                  <Card.Content>
+                    <Text style={theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile}>{item.question}</Text>
+                    <Text style={theme === 'light' ? styles.descriptionLightMobile : styles.descriptionDarkMobile}>{item.answer}</Text>
+                    <View style={{height:15}}/>
+                    <Text style={theme === 'light' ? styles.descriptionDateLight : styles.descriptionDateDark}>
+                      {i18n.t('faq_creationDate')}: {new Date(item.creationDate).toLocaleDateString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric' })}</Text>
+                      <View style={{height:10}}/>
+                  </Card.Content>
+                  {userState?.role !== "STUDENT"? (
+                  <Card.Actions>
+                    <IconButton icon="delete" mode={theme === 'light' ? 'contained' : 'outlined'} size={25} iconColor={theme === 'light' ? '#4dabf7' : '#9775fa'} onPress={() => deleteFAQ(item.id)}/>
+                  </Card.Actions>
+                  ):(
+                    ''
+                  )}
+                </Card>
+              ))}
+            </View>
+          )}
         <View style={{height:50}}/>
       </ScrollView>
 
-
-        <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight: styles.modalContainerDark) : (theme === 'light'? styles.modalContainerLightMobile: styles.modalContainerDarkMobile)}>
-          <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleModalLight : styles.titleModalDark) : (theme === 'light' ? styles.titleModalLightMobile : styles.titleModalDarkMobile)}>
-              {i18n.t('faqNewItem_prompt')}
-          </Text>
-          <PaperInput 
-              theme={theme === 'light' ? themeLight : themeDark} 
-              mode='outlined' 
-              multiline 
-              numberOfLines={4} 
-              style={styles.input} 
-              value={question} 
-              onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => { 
-                  setQuestion(e.nativeEvent.text); 
-              }} 
-          />
-          <View style={styles.buttonRow}>
-              <Button mode='contained' onPress={() => submitQuestion()} style={theme === 'light' ? styles.createQuestionButtonLight : styles.createQuestionButtonDark}>
-                  {i18n.t('faqNewItem_ask')}
-              </Button>
-              <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={theme === 'light' ? styles.cancelQuestionButtonLight : styles.cancelQuestionButtonDark}>
-                  {i18n.t('faqNewItem_cancel')}
-              </Button>
-          </View>
-        </Modal>
+      <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={Platform.OS === 'web'? (theme === 'light'? styles.modalContainerLight: styles.modalContainerDark) : (theme === 'light'? styles.modalContainerLightMobile: styles.modalContainerDarkMobile)}>
+        <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleModalLight : styles.titleModalDark) : (theme === 'light' ? styles.titleModalLightMobile : styles.titleModalDarkMobile)}>
+            {i18n.t('faqNewItem_prompt')}
+        </Text>
+        <PaperInput 
+            theme={theme === 'light' ? themeLight : themeDark} 
+            mode='outlined' 
+            multiline 
+            numberOfLines={4} 
+            style={styles.input} 
+            value={question} 
+            onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => { 
+                setQuestion(e.nativeEvent.text); 
+            }} 
+        />
+        <View style={styles.buttonRow}>
+            <Button mode='contained' onPress={() => submitQuestion()} style={theme === 'light' ? styles.createQuestionButtonLight : styles.createQuestionButtonDark}>
+                {i18n.t('faqNewItem_ask')}
+            </Button>
+            <Button mode='contained-tonal' onPress={() => setModalVisible(false)} style={theme === 'light' ? styles.cancelQuestionButtonLight : styles.cancelQuestionButtonDark}>
+                {i18n.t('faqNewItem_cancel')}
+            </Button>
+        </View>
+      </Modal>
 
             
-        {Platform.OS === 'web' ? (
-          <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
-          {i18n.t('faqNewItem_ask')}
-          </Button>
-        ) : (
-          <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.askQuestionButtonLightMobile : styles.askQuestionButtonDarkMobile} onPress={() => setModalVisible(true)}>
-            </IconButton>
-        )}
+      {Platform.OS === 'web' ? (
+        <Button mode='contained' style={ theme === 'light' ? styles.askQuestionButtonLight : styles.askQuestionButtonDark} onPress={() => setModalVisible(true)}>
+        {i18n.t('faqNewItem_ask')}
+        </Button>
+      ) : (
+        <IconButton icon='plus' iconColor='white' size={45} style={theme === 'light' ? styles.askQuestionButtonLightMobile : styles.askQuestionButtonDarkMobile} onPress={() => setModalVisible(true)}>
+          </IconButton>
+      )}
         
       <Toast/>
     </>
@@ -260,13 +283,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  faqContainer: {
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-
   faqContainerMobile: {
     flexDirection: 'column',
     flexWrap: 'wrap',
@@ -320,7 +336,7 @@ const styles = StyleSheet.create({
   },
 
   titleLightMobile: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'black'  
   },
@@ -332,7 +348,7 @@ const styles = StyleSheet.create({
   },
 
   titleDarkMobile: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white'
   },
@@ -376,19 +392,19 @@ const styles = StyleSheet.create({
   descriptionLight: {
     fontSize: 18,
     marginTop: 20,
-    color: 'black'
+    color: 'black',
+    marginBottom: 10
   },
 
   descriptionDateLight: {
     fontSize: 16,
-    marginTop: 20,
     color: '#666'
   },
 
   descriptionLightMobile: {
     fontSize: 16,
-    marginTop: 20,
-    color: '#666'
+    marginTop: 10,
+    color: 'black'
   },
 
   descriptionDateLightMobile: {

@@ -13,7 +13,6 @@ type SubjectListContentMobileProp = {
 
 function SubjectListContentMobile({i18n, subjects}: SubjectListContentMobileProp) {
     const {theme} = useTheme();
-
     const colors = {
         light: [
             ['#8E24AA', '#1976D2', '#D32F2F'],
@@ -50,8 +49,10 @@ function SubjectListContentMobile({i18n, subjects}: SubjectListContentMobileProp
         const colorIndex = index % 10;
         const rowIndex = Math.floor(colorIndex / 3);
         const colorPosition = colorIndex % 3;
-        return themeColors[colorGroupIndex * 2 + rowIndex][colorPosition];
-    };    
+        const colorGroup = themeColors[(colorGroupIndex * 2 + rowIndex) % themeColors.length];
+    
+        return colorGroup[colorPosition];
+    };  
 
     return (
         <View style={styles.contentGridMobile}>
@@ -60,13 +61,13 @@ function SubjectListContentMobile({i18n, subjects}: SubjectListContentMobileProp
                     onPress={() => { router.navigate(`/repository/${subject.id}`) }}>
                     <Card style={[styles.card, { backgroundColor: getColorForSubject(subject.id - 1, theme) }]}>
                         <Card.Content>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>
+                            <Text style={theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile}>
                                 {subject.name}
                             </Text>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                            <Text style={theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile}>
                                 {i18n.t('subjectList_professor') + subject.professorName}
                             </Text>
-                            <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.infoLight : styles.infoDark) : (theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile)}>
+                            <Text style={theme === 'light' ? styles.infoLightMobile : styles.infoDarkMobile}>
                                 {i18n.t('subjectList_college') + subject.collegeName}
                             </Text>
                         </Card.Content>
@@ -98,22 +99,8 @@ const styles = StyleSheet.create({
         width: '100%'
     },
 
-    titleLight: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: 'white',
-    },
-
     titleLightMobile: {
         fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: 'white',
-    },
-
-    titleDark: {
-        fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
         color: 'white',
@@ -125,19 +112,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: 'white',
     },
-    
-    infoLight: {
-        fontSize: 18,
-        color: 'white',
-    },
 
     infoLightMobile: {
         fontSize: 16,
-        color: 'white',
-    },
-
-    infoDark: {
-        fontSize: 18,
         color: 'white',
     },
 
