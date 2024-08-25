@@ -27,7 +27,7 @@ const translations = {
         adminCards_answerFAQ: "Answer FAQ",
 
         professorCards_showNoticeboard: "Show Noticeboard",
-        professorCards_repository: "Repository",
+        professorCards_subjects: "Your subjects",
         professorCards_answerFAQ: "Answer FAQ",
         professorCards_seeCalendar: "See your calendar",
 
@@ -159,7 +159,7 @@ const translations = {
         adminCards_answerFAQ: "Odgovori na često postavljena pitanja",
 
         professorCards_showNoticeboard: "Prikaži oglasnu tablu",
-        professorCards_repository: "Repozitorijum",
+        professorCards_subjects: "Vaši predmeti",
         professorCards_answerFAQ: "Odgovori na često postavljena pitanja",
         professorCards_seeCalendar: "Pogledaj svoj kalendar",
 

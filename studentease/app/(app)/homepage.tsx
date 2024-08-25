@@ -28,7 +28,7 @@ const HomePage = () => {
 
     const professorCards = [
         { title: i18n.t('professorCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
-        { title: i18n.t('professorCards_repository'), route: 'Repository', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
+        { title: i18n.t('professorCards_subjects'), route: '/subject-list', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
         { title: i18n.t('professorCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
         { title: i18n.t('professorCards_seeCalendar'), route: 'calendar', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
     ];
