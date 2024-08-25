@@ -24,15 +24,16 @@ const SubjectPage = () => {
     const [colleges, setColleges] = useState<College[]>();
     const [collegeDropdownData, setCollegeDropdownData] = useState<{ label: any, value: any }[]>(initialCollegeData);
     const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [filteredSubjects, setFilteredSubjects] = useState<Subject[]>([]); // Novo stanje za filtrirane predmete
     const [originalSubjects, setOriginalSubjects] = useState<Subject[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const i18n = new I18n(translations)
-    const { locale} = useContext(LocaleContext);
-    i18n.locale = locale
+    const i18n = new I18n(translations);
+    const { locale } = useContext(LocaleContext);
+    i18n.locale = locale;
 
     const fetchColleges = useCallback(async () => {
         if (!userState?.token.accessToken) return;
-    
+
         const config = {
             headers: { Authorization: `Bearer ${userState.token.accessToken}` }
         };
@@ -41,20 +42,18 @@ const SubjectPage = () => {
             if (response.status === 200) {
                 const allColleges = response.data;
                 setColleges(allColleges);
-    
+
                 const allSubjects = allColleges.reduce((acc: Subject[], college: College) => {
                     return [...acc, ...college.subjects];
                 }, []);
-    
-                if(userState.role === UserRole.PROFESSOR) {
+
+                if (userState.role === UserRole.PROFESSOR) {
                     const response2: AxiosResponse = await axios.get(`${API_BASE_URL}/subjects/professor`, config);
-                    if(response2.status === 200) {
+                    if (response2.status === 200) {
                         setSubjects(response2.data);
                         setOriginalSubjects(response2.data);
                     }
-                }
-                else 
-                {
+                } else {
                     setSubjects(allSubjects);
                     setOriginalSubjects(allSubjects);
                 }
@@ -67,43 +66,46 @@ const SubjectPage = () => {
                 text1: i18n.t('failed_to_fetch_toast'),
             });
         }
-    }, []);
-    
+    }, [userState?.token.accessToken, userState?.role]);
+
     useFocusEffect(
-        React.useCallback(() => {
+        useCallback(() => {
             fetchColleges();
-        }, [])
+        }, [fetchColleges])
     );
 
     function handleCollegeChange(selectedCollege: { label: any, value: any }) {
-        const collegeId : string = selectedCollege.value;
-    
+        const collegeId: string = selectedCollege.value;
+
         if (colleges !== undefined) {
             if (collegeId === 'any') {
+                setFilteredSubjects(originalSubjects);
                 setSubjects(originalSubjects);
             } else {
-                const selectedCollegeData = colleges.find(college =>  college.id === parseInt(collegeId, 10));
+                const selectedCollegeData = colleges.find(college => college.id === parseInt(collegeId, 10));
                 if (selectedCollegeData) {
+                    setFilteredSubjects(selectedCollegeData.subjects);
                     setSubjects(selectedCollegeData.subjects);
                 } else {
+                    setFilteredSubjects([]);
                     setSubjects([]);
                 }
             }
         }
     }
-    
+
     const handleSearchChange = (query: string) => {
         setSearchQuery(query);
 
         if (query === '') {
-            setSubjects(originalSubjects);
+            setSubjects(filteredSubjects);
         } else {
-            const filteredSubjects = originalSubjects.filter(subject =>
+            const filtered = filteredSubjects.filter(subject =>
                 subject.name.toLowerCase().includes(query.toLowerCase()) ||
                 subject.professorName.toLowerCase().includes(query.toLowerCase()) ||
                 subject.collegeName.toLowerCase().includes(query.toLowerCase())
             );
-            setSubjects(filteredSubjects);
+            setSubjects(filtered);
         }
     };
 
@@ -117,9 +119,9 @@ const SubjectPage = () => {
                         handleSearchChange={handleSearchChange}
                         collegeDropdownData={collegeDropdownData}
                         i18n={i18n} />
-                    <SubjectListContentWeb 
-                        i18n={i18n} 
-                        subjects={subjects}/>
+                    <SubjectListContentWeb
+                        i18n={i18n}
+                        subjects={subjects} />
                 </>
             ) : (
                 <>
@@ -129,14 +131,13 @@ const SubjectPage = () => {
                         handleSearchChange={handleSearchChange}
                         collegeDropdownData={collegeDropdownData}
                         i18n={i18n} />
-                    <SubjectListContentMobile 
-                        i18n={i18n} 
-                        subjects={subjects}/>
+                    <SubjectListContentMobile
+                        i18n={i18n}
+                        subjects={subjects} />
                 </>
             )}
             <View style={{ height: 50 }}></View>
         </ScrollView>
-
     );
 };
 
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
     },
-    
+
     pageContainerDark: {
         flex: 1,
         padding: 20,
