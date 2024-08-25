@@ -171,6 +171,7 @@ const styles = StyleSheet.create({
   loginButtonLight: {
     backgroundColor: '#4dabf7',
     marginTop: 30,
+    marginBottom: 20,
     borderRadius: 50,
     height: 50,
     justifyContent: 'center',
@@ -179,6 +180,7 @@ const styles = StyleSheet.create({
   loginButtonDark: {
     backgroundColor: '#9775fa',
     marginTop: 30,
+    marginBottom: 20,
     borderRadius: 50,
     height: 50,
     justifyContent: 'center',
