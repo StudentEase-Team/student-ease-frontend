@@ -13,31 +13,29 @@ const HomePage = () => {
     const router = useRouter();
     const { theme } = useTheme();
     const { userState } = useAuth();
-
     const i18n = new I18n(translations)
     const { locale } = useContext(LocaleContext);
     i18n.locale = locale
 
     const adminCards = [
         { title: i18n.t('adminCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
-        { title: i18n.t('adminCards_collegeList'), route: '/college-list', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
-        { title: i18n.t('adminCards_subjectList'), route: '/subject-list', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
+        { title: i18n.t('adminCards_collegeList'), route: '/college-list', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#243447', '#1a2a35'] },
         { title: i18n.t('adminCards_createUser'), route: '/user-creation', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
-        { title: i18n.t('adminCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
+        { title: i18n.t('adminCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#2b5876', '#4e4376'] },
     ];
 
     const professorCards = [
         { title: i18n.t('professorCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
         { title: i18n.t('professorCards_subjects'), route: '/subject-list', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2c3e50', '#4ca1af'] },
-        { title: i18n.t('professorCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#fd22a8', '#ffb6b9'], darkColors: ['#2b5876', '#4e4376'] },
-        { title: i18n.t('professorCards_seeCalendar'), route: 'calendar', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
+        { title: i18n.t('professorCards_seeCalendar'), route: 'calendar', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#243447', '#1a2a35'] },
+        { title: i18n.t('professorCards_answerFAQ'), route: 'faq/faq-answer', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#2b5876', '#4e4376'] },
     ];
 
     const studentCards = [
-        { title: i18n.t('studentCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
-        { title: i18n.t('studentCards_showFAQ'), route: 'faq/faq-show', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#6a3093', '#a044ff'] },
-        { title: i18n.t('studentCards_calculateGrades'), route: 'average-grade', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#333333', '#4c4c4c'] },
+        { title: i18n.t('studentCards_showNoticeboard'), route: '/noticeboard', lightColors: ['#f5a623', '#fbd786'], darkColors: ['#2c3e50', '#4ca1af'] },
+        { title: i18n.t('studentCards_calculateGrades'), route: 'average-grade', lightColors: ['#ff6a88', '#f78fb3'], darkColors: ['#4e54c8', '#8f94fb'] },
         { title: i18n.t('studentCards_seeCalendar'), route: 'calendar', lightColors: ['#67e6dc', '#3dc1d3'], darkColors: ['#2b5876', '#4e4376'] },
+        { title: i18n.t('studentCards_showFAQ'), route: 'faq/faq-show', lightColors: ['#9b6ecc', '#d0b3ff'], darkColors: ['#243447', '#1a2a35'] },
     ];
 
     let cardsToShow: { title: string; route: string; lightColors: string[]; darkColors: string[]; }[] = [];

@@ -69,9 +69,8 @@ const ExportObligationsICS: React.FC = () => {
             }
 
             Toast.show({
-                text1: 'File Downloaded',
-                text2: `The file has been successfully downloaded.`,
-                position: 'bottom',
+                text1: i18n.t('exportObligations_toast'),
+                position: 'top',
                 type: 'success',
                 visibilityTime: 4000,
                 autoHide: true,

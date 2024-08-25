@@ -63,7 +63,7 @@ const translations = {
         noticeboardNewItem_createNewNotification: "Create a new noticeboard notification",
         noticeboardNewItem_title: "Title",
         noticeboardNewItem_description: "Description",
-        noticeboardNewItem_sendEmail: "Send email?",
+        noticeboardNewItem_sendEmail: "Notify students by email?",
         noticeboardNewItem_submitAnnouncement: "Submit announcement",
         noticeboardNewItem_submit: "Submit",
         noticeboardNewItem_cancel: "Cancel",
@@ -84,6 +84,7 @@ const translations = {
         faq_answerPlaceholder: "Answer here",
         faq_answerButton: "Answer",
         faq_cancelButton: "Cancel",
+        faq_answer_modal_toast: "Failed to submit answer",
 
         faq_creationDate: "Creation date",
 
@@ -118,6 +119,7 @@ const translations = {
         exportObligations_title: "Export your obligations",
         exportObligations_downloadInstructions: "Take control of your time and responsibilities! Click the button below to download your obligations in .ics format, and seamlessly integrate them into your calendar. Stay organized and make every moment count!",
         exportObligations_downloadButton: "Download .ics file",
+        exportObligations_toast: "File downloaded",
 
         averageGrade_any: "Any",
         averageGrade_first: "First",
@@ -130,7 +132,16 @@ const translations = {
         averageGrade_grade: "Grade",
         averageGrade_date: "Date",
         averageGrade_invalidDate: "Invalid date",
-        averageGrade_average: "Average: "
+        averageGrade_average: "Average: ",
+
+        failed_to_fetch_toast: "Failed to fetch data", 
+        successfully_deleted_toast: "Succesfully deleted!",
+        failed_to_delete_toast1: "Failed to delete question.",
+        failed_to_delete_toast2: "Can delete only if you answered it.",
+        successfully_created_toast: "Successfully created!",
+        failed_to_create_toast: "All fields must be filled!",
+        failed_to_create_user_toast: "Failed to create user. Please try again.",
+        successfully_logged_toast: "Logged in successfully!"
     },
     sr: {
         welcomeBack: "Dobrodošli nazad!",
@@ -140,7 +151,7 @@ const translations = {
         noticeboard: 'Oglasna tabla',
         collegeList: 'Lista fakulteta',
         showFAQ: 'Prikaži FAQ',
-        answerFAQ: 'Odgovori na FAQ',
+        answerFAQ: 'Odgovorite na FAQ',
         calculateGrades: 'Izračunaj prosek ocena',
         createUser: 'Kreiraj korisnika',
         showMaps: 'Prikaži mape zgrada',
@@ -156,11 +167,11 @@ const translations = {
         adminCards_collegeList: "Spisak fakulteta",
         adminCards_subjectList: "Spisak predmeta",
         adminCards_createUser: "Kreiraj korisnika",
-        adminCards_answerFAQ: "Odgovori na često postavljena pitanja",
+        adminCards_answerFAQ: "Odgovorite na često postavljena pitanja",
 
         professorCards_showNoticeboard: "Prikaži oglasnu tablu",
         professorCards_subjects: "Vaši predmeti",
-        professorCards_answerFAQ: "Odgovori na često postavljena pitanja",
+        professorCards_answerFAQ: "Odgovorite na često postavljena pitanja",
         professorCards_seeCalendar: "Pogledaj svoj kalendar",
 
         studentCards_showNoticeboard: "Prikaži oglasnu tablu",
@@ -195,7 +206,7 @@ const translations = {
         noticeboardNewItem_createNewNotification: "Kreirajte novo obaveštenje na oglasnoj tabli",
         noticeboardNewItem_title: "Naslov",
         noticeboardNewItem_description: "Opis",
-        noticeboardNewItem_sendEmail: "Poslati email?",
+        noticeboardNewItem_sendEmail: "Obavestiti studente putem email-a?",
         noticeboardNewItem_submitAnnouncement: "Kreiraj obaveštenje",
         noticeboardNewItem_submit: "Kreiraj",
         noticeboardNewItem_cancel: "Otkaži",
@@ -216,6 +227,7 @@ const translations = {
         faq_answerPlaceholder: "Unesite odgovor ovde",
         faq_answerButton: "Odgovorite",
         faq_cancelButton: "Otkaži",
+        faq_answer_modal_toast: "Neuspešno slanje odgovora",
 
         faq_creationDate: "Datum postavljanja pitanja",
 
@@ -250,6 +262,7 @@ const translations = {
         exportObligations_title: "Izvezite svoje obaveze",
         exportObligations_downloadInstructions: "Preuzmite kontrolu nad svojim vremenom i obavezama! Kliknite dugme ispod da preuzmete svoje obaveze u .ics formatu, i besprekorno ih integrišite u svoj kalendar. Ostanite organizovani i iskoristite svaki trenutak!",
         exportObligations_downloadButton: "Preuzmi .ics datoteku",
+        exportObligations_toast: "Dadoteka je preuzeta",
 
         averageGrade_any: "Bilo koja",
         averageGrade_first: "Prva",
@@ -262,7 +275,16 @@ const translations = {
         averageGrade_grade: "Ocena",
         averageGrade_date: "Datum",
         averageGrade_invalidDate: "Neispravan datum",
-        averageGrade_average: "Prosek: "
+        averageGrade_average: "Prosek: ",
+
+        failed_to_fetch_toast: "Neuspešno pribavljanje podataka", 
+        successfully_deleted_toast: "Uspešno obrisano!",
+        failed_to_delete_toast1: "Nije moguće obrisati pitanje.",
+        failed_to_delete_toast2: "Može biti obrisano samo ako ste Vi odgovorili na pitanje.",
+        successfully_created_toast: "Uspešno kreirano!",
+        failed_to_create_toast: "Sva polja moraju biti popunjena!",
+        failed_to_create_user_toast: "Neuspešno kreiranje korisnika. Pokušajte ponovo.",
+        successfully_logged_toast: "Uspešno prijavljivanje!"
     }
 }
 export { translations };

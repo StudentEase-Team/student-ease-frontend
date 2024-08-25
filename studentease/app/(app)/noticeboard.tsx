@@ -48,7 +48,7 @@ export default function NoticeboardShow() {
         } catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Failed to noticeboard items',
+                text1: i18n.t('failed_to_fetch_toast'),
             });
         }
     }, []);

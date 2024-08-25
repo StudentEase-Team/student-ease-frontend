@@ -43,7 +43,7 @@ function UserCreationContent({ i18n, collegeData }: UserCreationContentProps) {
         if (!email || !password || !firstName || !lastName || !phone || !collegeName || !userRole) {
             Toast.show({
                 type: 'error',
-                text1: 'All fields must be filled!',
+                text1: i18n.t('failed_to_create_toast'),
             });
             return;
         }
@@ -62,7 +62,7 @@ function UserCreationContent({ i18n, collegeData }: UserCreationContentProps) {
             if (response.status === 200) {
                 Toast.show({
                     type: 'success',
-                    text1: 'Successfully created user!',
+                    text1: i18n.t('successfully_created_toast'),
                 });
                 setEmail('');
                 setPassword('');
@@ -75,7 +75,7 @@ function UserCreationContent({ i18n, collegeData }: UserCreationContentProps) {
         } catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Failed to create user. Please try again.',
+                text1: i18n.t('failed_to_create_user_toast'),
             });
         }
     }

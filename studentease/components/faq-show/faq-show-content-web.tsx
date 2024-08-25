@@ -75,7 +75,6 @@ function FAQShowContentWeb({i18n, items, fetchFAQ}: FAQShowContentWebProp) {
 
 const styles = StyleSheet.create({
     contentGrid: {
-        marginTop: 20,
         width: '80%',
         alignSelf:'center',
     },

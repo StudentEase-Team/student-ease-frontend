@@ -7,6 +7,9 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { API_BASE_URL } from '@env';
 import { useRouter } from 'expo-router';
+import { I18n } from 'i18n-js';
+import { translations } from '../localization';
+import { LocaleContext } from '../context/LocaleContext';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -21,6 +24,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userState, setUserState] = useState<UserState | null>(null);
   const router = useRouter();
+  const i18n = new I18n(translations)
+  const { locale } = useContext(LocaleContext);
+  i18n.locale = locale
 
   useEffect(() => {
     const loadUserState = async () => {
@@ -37,7 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         if (storedUserState) {
           const userState: UserState = JSON.parse(storedUserState);
-          //const isTokenValid = await checkTokenValidity(userState);
+          
           const isTokenValid = true;
 
           if (isTokenValid) {
@@ -55,18 +61,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     loadUserState();
   }, []);
-
-  const checkTokenValidity = async (userState: UserState) => {
-    try {
-      const { createdAt, expiresIn } = userState.token;
-      const expirationDate = new Date(new Date(createdAt).getTime() + expiresIn);
-      const currentTime = new Date();
-      return expirationDate > currentTime;
-    } catch (error) {
-      console.log('Failed to check token validity', error);
-      return false;
-    }
-  };
 
   const saveUserState = async (userState: UserState) => {
     try {
@@ -106,7 +100,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (result.status === 200) {
         Toast.show({
           type: 'success',
-          text1: 'Logged in successfully!',
+          text1: i18n.t('successfully_logged_toast'),
         });
         const userState: UserState = result.data;
         setIsAuthenticated(true);

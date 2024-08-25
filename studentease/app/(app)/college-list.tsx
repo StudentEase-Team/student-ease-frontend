@@ -38,7 +38,7 @@ const FacultyList: React.FC = () => {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to fetch questions',
+        text1: i18n.t('failed_to_fetch_toast'),
       });
     }
   }, []);

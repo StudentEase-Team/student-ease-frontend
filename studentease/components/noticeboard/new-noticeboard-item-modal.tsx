@@ -97,7 +97,7 @@ function NewNoticeboardItemModal(props: NewNoticeboardItemModalProps) {
             if (response.status == 201) {
                 Toast.show({
                     type: 'success',
-                    text1: 'Succesfully created!',
+                    text1: i18n.t('successfully_created_toast'),
                 });
                 props.setNewNoticeboardItemModalVisible(false);
                 props.items?.push(newNoticeboardItem);

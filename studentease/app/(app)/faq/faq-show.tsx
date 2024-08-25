@@ -58,7 +58,7 @@ const FAQ: React.FC = () => {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to fetch questions',
+        text1: i18n.t('failed_to_fetch_toast'),
       });
     }
   }, []);
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 
   searchBar: {
     marginTop: 10,
-    marginBottom: 50,
+    marginBottom: 40,
     width: '40%',
     alignSelf: 'center',
     borderRadius: 10,

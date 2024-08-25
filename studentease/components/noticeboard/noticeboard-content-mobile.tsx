@@ -35,13 +35,14 @@ function NoticeboardContentMobile(props: NoticeboardContentMobileProps){
                 props.fetchNoticeboardItems();
                 Toast.show({
                     type: 'success',
-                    text1: 'Succesfully deleted!',
+                    text1: i18n.t('successfully_deleted_toast'),
                 });
             }
         } catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Failed to delete question. Can delete only if you answered it.',
+                text1: i18n.t('failed_to_delete_toast1'),
+                text2: i18n.t('failed_to_delete_toast2')
             });
         }
     };

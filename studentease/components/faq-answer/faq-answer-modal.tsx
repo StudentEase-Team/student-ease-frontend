@@ -41,7 +41,7 @@ function FAQAnswerModal({modalVisible, setModalVisible, currentItem, setCurrentI
             } catch (error) {
                 Toast.show({
                     type: 'error',
-                    text1: 'Failed to submit answer',
+                    text1: i18n.t('faq_answer_modal_toast'),
                 });
             }
         }

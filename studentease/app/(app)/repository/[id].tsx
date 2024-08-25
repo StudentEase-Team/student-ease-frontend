@@ -40,7 +40,7 @@ const MaterialPage = () => {
                 } catch (error) {
                     Toast.show({
                         type: 'error',
-                        text1: 'Failed to fetch materials',
+                        text1: i18n.t('failed_to_fetch_toast'),
                     });
                 }
             };
@@ -52,7 +52,7 @@ const MaterialPage = () => {
     return (
         <ScrollView style={theme === 'light' ? styles.pageContainerLight : styles.pageContainerDark}>
             <RepositoryFilter
-                i18n={new I18n}
+                i18n={i18n}
                 materials={materials}
                 setMaterials={setMaterials}
                 setFilteredMaterials={setFilteredMaterials} />
