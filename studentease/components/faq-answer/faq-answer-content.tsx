@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
     
     cardLight: {
         backgroundColor: 'white',
-        width: '60%'
+        width: '60%',
+        marginBottom: 15
     },
 
     cardLightMobile: {
@@ -86,10 +87,12 @@ const styles = StyleSheet.create({
 
     cardDark: {
         backgroundColor: '#242526',
-        width: '60%'
+        width: '60%',
+        marginBottom: 15
     },
 
     cardDarkMobile: {
+        marginTop: 10,
         backgroundColor: '#242526',
         width: '100%'
     },

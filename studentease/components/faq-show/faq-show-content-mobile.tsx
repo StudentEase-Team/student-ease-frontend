@@ -107,8 +107,7 @@ const styles = StyleSheet.create({
     
     cardDescriptionDateLightMobile: {
         fontSize: 14,
-        marginTop: 20,
-        color: 'black'
+        color: '#666'
     },
     
     cardDescriptionDarkMobile: {
@@ -119,7 +118,6 @@ const styles = StyleSheet.create({
     
     cardDescriptionDateDarkMobile: {
         fontSize: 14,
-        marginTop: 20,
         color: '#d3d3d3'
     },
 })

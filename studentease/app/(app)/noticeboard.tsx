@@ -42,8 +42,15 @@ export default function NoticeboardShow() {
         try {
             const response: AxiosResponse = await axios.get(`${API_BASE_URL}/noticeboard/items/all`, config);
             if (response.status === 200) {
-                setItems(response.data);
-                setItemsBak(response.data);
+                const sortedItems = response.data.sort((a, b) => {
+                    const dateA = new Date(a.updatedAt);
+                    const dateB = new Date(b.updatedAt);
+    
+                    return dateB.getTime() - dateA.getTime();
+                });
+    
+                setItems(sortedItems);
+                setItemsBak(sortedItems);
             }
         } catch (error) {
             Toast.show({

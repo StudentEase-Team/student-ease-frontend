@@ -52,10 +52,12 @@ const SubjectPage = () => {
                     if (response2.status === 200) {
                         setSubjects(response2.data);
                         setOriginalSubjects(response2.data);
+                        setFilteredSubjects(response2.data);
                     }
                 } else {
                     setSubjects(allSubjects);
                     setOriginalSubjects(allSubjects);
+                    setFilteredSubjects(allSubjects);
                 }
                 const updatedCollegeData = [{ label: 'Any', value: 'any' }, ...allColleges.map(c => ({ label: c.abbreviation, value: c.id }))];
                 setCollegeDropdownData(updatedCollegeData);

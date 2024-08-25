@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { PaperProvider, Searchbar } from 'react-native-paper';
 import { NativeSyntheticEvent, Platform, ScrollView, StyleSheet, TextInputChangeEventData, View } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -26,15 +26,17 @@ const FAQ: React.FC = () => {
   const { locale } = useContext(LocaleContext);
   i18n.locale = locale
 
-  const handleSearch = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    const searchValue = e.nativeEvent.text;
-    setSearchParam(searchValue);
-    if (searchValue === '') {
+  const handleSearch = () => {
+    if (searchParam === '') {
       setItems(itemsBak);
     } else {
-      setItems(itemsBak?.filter(i => i.question.toLowerCase().includes(searchValue.toLowerCase())));
+      setItems(itemsBak?.filter(i => i.question.toLowerCase().includes(searchParam.toLowerCase())));
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+}, [searchParam]);
 
   const fetchFAQ = useCallback(async () => {
     if (!userState?.token.accessToken) return;
@@ -49,7 +51,11 @@ const FAQ: React.FC = () => {
         const sortedItems = response.data.sort((a, b) => {
           if (a.answer === '' && b.answer !== '') return 1;
           if (a.answer !== '' && b.answer === '') return -1;
-          return 0;
+          
+          const dateA = new Date(a.creationDate); 
+          const dateB = new Date(b.creationDate);
+
+          return dateB.getTime() - dateA.getTime();
         });
 
         setItems(sortedItems);
@@ -72,7 +78,12 @@ const FAQ: React.FC = () => {
     <>
       <ScrollView style={theme === 'light' ? styles.pageLightContainer : styles.pageDarkContainer}>
         <PaperProvider theme={theme === 'light' ? themeLight : themeDark}>
-          <Searchbar placeholder={i18n.t('searchPlaceholder')} style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} value={searchParam} onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleSearch(e)} />
+          <Searchbar 
+          placeholder={i18n.t('searchPlaceholder')} 
+          style={Platform.OS === 'web' ? styles.searchBar : styles.searchBarMobile} 
+          value={searchParam}  
+          onChangeText={text => setSearchParam(text)}
+          />
         </PaperProvider>
 
         {Platform.OS === 'web' ? (

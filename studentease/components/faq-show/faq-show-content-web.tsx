@@ -105,9 +105,8 @@ const styles = StyleSheet.create({
 
     cardDescriptionLight: {
         fontSize: 18,
-        marginTop: 20,
+        marginTop: 10,
         color: 'black',
-        marginBottom: 10
     },
     
     cardDescriptionDateLight: {
@@ -117,13 +116,12 @@ const styles = StyleSheet.create({
 
     cardDescriptionDark: {
         fontSize: 18,
-        marginTop: 20,
+        marginTop: 10,
         color: 'white'
     },
 
     cardDescriptionDateDark: {
         fontSize: 16,
-        marginTop: 20,
         color: '#d3d3d3'
     },
 }) 

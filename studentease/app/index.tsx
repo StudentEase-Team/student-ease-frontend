@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, ImageBackground, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { TextInput, Button, PaperProvider, Text, ThemeProvider } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../context/AuthContext';
@@ -32,6 +32,10 @@ const Login: React.FC = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
           <View style={Platform.OS === 'web' ? (theme === 'light' ? styles.formLight : styles.formDark) : (theme === 'light' ? styles.formLightMobile : styles.formDarkMobile)}>
+          <Image 
+            source={theme === 'light' ? require('../assets/logolight.png') : require('../assets/logodark.png')}  
+            style={styles.logo}
+            resizeMode="contain" />
             <Text style={Platform.OS === 'web' ? (theme === 'light' ? styles.titleLight : styles.titleDark) : (theme === 'light' ? styles.titleLightMobile : styles.titleDarkMobile)}>Login</Text>
             <TextInput
               placeholder="University email"
@@ -47,7 +51,7 @@ const Login: React.FC = () => {
               onChangeText={setEmail}/>
             <PasswordInput passwordCallback={setPassword}  onSubmitEdit={attemptLogin}/>
             <ThemeProvider>
-            <Button onPress={attemptLogin} mode="contained" style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
+              <Button onPress={attemptLogin} mode="contained" style={theme === 'light' ? styles.loginButtonLight : styles.loginButtonDark}>Login</Button>
             </ThemeProvider>
           </View>
         </KeyboardAvoidingView>
@@ -71,7 +75,12 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
-    opacity: 0.85,
+  },
+
+  logo: {
+    width: '50%',
+    height: 80,
+    alignSelf:'center'
   },
 
   inputLight: {
@@ -128,35 +137,33 @@ const styles = StyleSheet.create({
   },
 
   titleLight: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: 'bold',
     marginBottom: 30,
-    marginTop: 10,
     textAlign: 'center',
+    color: '#333'
   },
 
   titleLightMobile: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 30,
-    marginTop: 10,
     textAlign: 'center',
+    color: '#333'
   },
 
   titleDark: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: 'bold',
     marginBottom: 30,
-    marginTop: 10,
     textAlign: 'center',
-    color: 'white',
+    color: '#f6f6f6',
   },
 
   titleDarkMobile: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 30,
-    marginTop: 10,
     textAlign: 'center',
     color: 'white',
   },
